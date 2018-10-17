@@ -4,12 +4,11 @@
 -- @Date   : 10/16/2018, 3:59:45 PM
 
 LoadAddOn('Blizzard_DebugTools')
--- LoadAddOn('Blizzard_Console')
 
--- DeveloperConsole:Show()
+BINDING_HEADER_TDDEVTOOLS = 'tdDevTools'
 
-local ns         = select(2, ...)
-local Util       = {}
+local ns   = select(2, ...)
+local Util = {}
 
 ns.Util = Util
 
@@ -47,4 +46,8 @@ function Util.GetMousePosition(frame)
                     (y <= frame:GetBottom() + 10   and 8 or 0)      -- bottom
 
     return VALUE_POS[value], value
+end
+
+function Util.GetLogPrefix(depth)
+    return format('|cff00ff00%s.%03d|r %s : ', date('%H:%M:%S'), floor(GetTime() * 1000) % 1000, Util.GetCodePath(depth + 1))
 end

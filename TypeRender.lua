@@ -72,14 +72,12 @@ TypeRender.ClickValue = function(link)
     if linkType == 'widget' then
         local widget = widgets[linkContent]
         if widget then
-            UIParentLoadAddOn('Blizzard_DebugTools')
-            DisplayTableInspectorWindow(widget)
+            inspect(widget)
         end
     elseif linkType == 'table' then
         local tbl = tables[linkContent]
         if tbl then
-            UIParentLoadAddOn('Blizzard_DebugTools')
-            DisplayTableInspectorWindow(tbl)
+            inspect(tbl)
         end
     end
 end

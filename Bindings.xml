@@ -1,0 +1,8 @@
+<Bindings>
+    <Binding name="Toggle console frame" category="BINDING_HEADER_DEBUG" header="TDDEVTOOLS">
+        tdDevToolsFrame:SetShown(not tdDevToolsFrame:IsShown())
+    </Binding>
+    <Binding name="Reload UI" category="BINDING_HEADER_DEBUG">
+        C_UI.Reload()
+    </Binding>
+</Bindings>
