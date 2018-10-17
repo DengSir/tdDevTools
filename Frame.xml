@@ -1,132 +1,15 @@
 <Ui xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\FrameXML\UI.xsd">
-    <Texture name="tdDevToolsLineLeftTemplate" parentKey="BorderLeft" virtual="true">
-        <Size x="1" />
-        <Color r="0.5" g="0.5" b="0.5" />
-        <Anchors>
-            <Anchor point="TOPLEFT" />
-            <Anchor point="BOTTOMLEFT" />
-        </Anchors>
-    </Texture>
-    <Texture name="tdDevToolsLineRightTemplate" parentKey="BorderRight" virtual="true">
-        <Size x="1" />
-        <Color r="0.5" g="0.5" b="0.5" />
-        <Anchors>
-            <Anchor point="TOPRIGHT" />
-            <Anchor point="BOTTOMRIGHT" />
-        </Anchors>
-    </Texture>
-    <Texture name="tdDevToolsLineTopTemplate" parentKey="BorderTop" virtual="true">
-        <Size y="1" />
-        <Color r="0.5" g="0.5" b="0.5" />
-        <Anchors>
-            <Anchor point="TOPLEFT" />
-            <Anchor point="TOPRIGHT" />
-        </Anchors>
-    </Texture>
-    <Texture name="tdDevToolsLineBottomTemplate" parentKey="BorderBottom" virtual="true">
-        <Size y="1" />
-        <Color r="0.5" g="0.5" b="0.5" />
-        <Anchors>
-            <Anchor point="BOTTOMLEFT" />
-            <Anchor point="BOTTOMRIGHT" />
-        </Anchors>
-    </Texture>
-    <Texture name="tdDevToolsBackgroundTemplate" parentKey="Background" setAllPoints="true" virtual="true">
-        <Color r="0" g="0" b="0" a="0.5" />
-    </Texture>
-    <Frame name="tdDevToolsBackdropFrameTemplate" virtual="true">
-        <Layers>
-            <Layer level="BORDER">
-                <Texture inherits="tdDevToolsLineLeftTemplate" />
-                <Texture inherits="tdDevToolsLineRightTemplate" />
-                <Texture inherits="tdDevToolsLineTopTemplate" />
-                <Texture inherits="tdDevToolsLineBottomTemplate" />
-            </Layer>
-            <Layer level="BACKGROUND">
-                <Texture inherits="tdDevToolsBackgroundTemplate" />
-            </Layer>
-        </Layers>
-    </Frame>
-    <Button name="tdDevToolsButtonTemplate" inherits="tdDevToolsBackdropFrameTemplate" virtual="true">
-        <Size x="80" y="22" />
-        <ButtonText parentKey="Text"/>
-        <NormalFont style="GameFontNormal"/>
-        <HighlightFont style="GameFontHighlight"/>
-        <DisabledFont style="GameFontDisable"/>
-    </Button>
     <Button name="tdDevToolsTabButtonTemplate" inherits="tdDevToolsButtonTemplate" virtual="true">
         <Scripts>
             <OnClick>
-                self:GetParent():OnTabClick(self:GetID())
+                self:GetParent():SetTab(self:GetID())
             </OnClick>
         </Scripts>
+        <DisabledFont style="tdDevToolsFontSelected"/>
     </Button>
-    <Slider name="tdDevToolsScrollBarTemplate" inherits="tdDevToolsBackdropFrameTemplate" parentKey="ScrollBar" virtual="true">
-        <Size x="16" />
-        <Anchors>
-            <Anchor point="TOPRIGHT" x="0" y="-15" />
-            <Anchor point="BOTTOMRIGHT" x="0" y="15" />
-        </Anchors>
-        <ThumbTexture parentKey="thumbTexture">
-            <Size x="16" y="16"/>
-            <Color r="0.5" g="0.5" b="0.5" />
-        </ThumbTexture>
-        <Frames>
-            <Button parentKey="ScrollUp" inherits="tdDevToolsBackdropFrameTemplate">
-                <Size x="16" y="16" />
-                <Anchors>
-                    <Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT" x="0" y="-1" />
-                    <Anchor point="BOTTOMRIGHT" relativePoint="TOPRIGHT" x="0" y="-1" />
-                </Anchors>
-                <Scripts>
-                    <OnLoad function="HybridScrollFrameScrollUp_OnLoad" />
-                    <OnClick function="HybridScrollFrameScrollButton_OnClick" />
-                </Scripts>
-            </Button>
-            <Button parentKey="ScrollDown" inherits="tdDevToolsBackdropFrameTemplate">
-                <Size x="16" y="16" />
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" x="0" y="1" />
-                    <Anchor point="TOPRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="1" />
-                </Anchors>
-                <Scripts>
-                    <OnLoad function="HybridScrollFrameScrollDown_OnLoad" />
-                    <OnClick function="HybridScrollFrameScrollButton_OnClick" />
-                </Scripts>
-            </Button>
-        </Frames>
-        <Scripts>
-            <OnValueChanged>
-                HybridScrollFrame_SetOffset(self:GetParent(), value)
-            </OnValueChanged>
-        </Scripts>
-    </Slider>
-    <ScrollFrame name="tdDevToolsScrollFrameTemplate" inherits="HybridScrollFrameTemplate" virtual="true">
-        <Frames>
-            <Slider parentKey="scrollBar" inherits="tdDevToolsScrollBarTemplate"/>
-        </Frames>
-    </ScrollFrame>
-    <Button name="tdDevToolsErrorItemTemplate" virtual="true">
-        <Size x="80" y="24" />
-        <Frames>
-            <Button parentKey="RemoveButton">
-                <Size x="17" y="17" />
-                <Anchors>
-                    <Anchor point="RIGHT" x="-5" y="0" />
-                </Anchors>
-                <NormalTexture file="Interface\FriendsFrame\ClearBroadcastIcon" />
-            </Button>
-        </Frames>
-        <ButtonText parentKey="Text"/>
-        <NormalFont style="GameFontNormal"/>
-        <HighlightFont style="GameFontHighlight"/>
-        <DisabledFont style="GameFontDisable"/>
-        <HighlightTexture>
-            <Color r="1" g="1" b="1" a="0.2" />
-        </HighlightTexture>
-    </Button>
-    <Frame name="tdDevToolsFrame" parent="UIParent" frameLevel="9000" resizable="true" enableMouse="true" frameStrata="FULLSCREEN_DIALOG">
+
+    <Frame name="tdDevToolsFrame" parent="UIParent" userPlaced="false" frameLevel="9000" resizable="true" enableMouse="true" frameStrata="FULLSCREEN_DIALOG">
         <Size y="300" />
         <Anchors>
             <Anchor point="TOPLEFT" />
@@ -146,12 +29,32 @@
             </Layer>
         </Layers>
         <Frames>
-            <Button parentKey="Resize">
-                <Size y="7" />
+            <Button parentKey="Tab1" parentArray="tabs" inherits="tdDevToolsTabButtonTemplate" text="Console" id="1">
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" />
-                    <Anchor point="TOPRIGHT" relativePoint="BOTTOMRIGHT" />
+                    <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" x="10" y="1" />
                 </Anchors>
+            </Button>
+            <Button parentKey="Tab2" parentArray="tabs" inherits="tdDevToolsTabButtonTemplate" text="Error" id="2">
+                <Anchors>
+                    <Anchor point="LEFT" relativeKey="$parent.Tab1" relativePoint="RIGHT" x="5" y="0" />
+                </Anchors>
+            </Button>
+            <Button parentKey="Resize" inherits="tdDevToolsBaseButtonTemplate">
+                <Size x="200" y="7" />
+                <Anchors>
+                    <Anchor point="TOP" relativePoint="BOTTOM" y="1" />
+                </Anchors>
+                <Layers>
+                    <Layer level="BORDER">
+                        <Texture inherits="_tdDevToolsLineTemplate">
+                            <Anchors>
+                                <Anchor point="CENTER" />
+                                <Anchor point="LEFT" x="3" y="0" />
+                                <Anchor point="RIGHT" x="-3" y="0" />
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                </Layers>
                 <Scripts>
                     <OnMouseDown>
                         self:GetParent():StartSizing('BOTTOM')
@@ -167,62 +70,6 @@
                     <Anchor point="BOTTOMRIGHT" />
                 </Anchors>
             </Frame>
-            <Frame parentKey="Console" parentArray="tabFrames" enableMouseWheel="true">
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.Inset" relativePoint="TOPLEFT" />
-                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent.Inset" relativePoint="BOTTOMRIGHT" />
-                </Anchors>
-                <Frames>
-                    <Frame parentKey="Header">
-                        <Size y="25" />
-                        <Anchors>
-                            <Anchor point="TOPLEFT" />
-                            <Anchor point="TOPRIGHT" />
-                        </Anchors>
-                        <Layers>
-                            <Layer level="BORDER">
-                                <Texture inherits="tdDevToolsLineBottomTemplate" />
-                            </Layer>
-                        </Layers>
-                    </Frame>
-                    <ScrollingMessageFrame parentKey="MessageFrame">
-                        <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parent.Header" relativePoint="BOTTOMLEFT" x="3" y="-1" />
-                            <Anchor point="BOTTOMRIGHT" x="-20" y="2" />
-                        </Anchors>
-                    </ScrollingMessageFrame>
-                    <Slider parentKey="ScrollBar" inherits="tdDevToolsScrollBarTemplate">
-                        <Anchors>
-                            <Anchor point="TOPRIGHT" relativeKey="$parent.Header" relativePoint="BOTTOMRIGHT" x="0" y="-14" />
-                            <Anchor point="BOTTOMRIGHT" x="0" y="15" />
-                        </Anchors>
-                    </Slider>
-                </Frames>
-            </Frame>
-            <Frame parentKey="Error" parentArray="tabFrames" hidden="true">
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.Inset" relativePoint="TOPLEFT" />
-                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent.Inset" relativePoint="BOTTOMRIGHT" />
-                </Anchors>
-                <Frames>
-                    <ScrollFrame parentKey="ErrorList" inherits="tdDevToolsScrollFrameTemplate">
-                        <Anchors>
-                            <Anchor point="TOPLEFT" />
-                            <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOM" />
-                        </Anchors>
-                    </ScrollFrame>
-                </Frames>
-            </Frame>
-            <Button parentKey="Tab1" parentArray="tabs" inherits="tdDevToolsTabButtonTemplate" text="Console" id="1">
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" x="10" y="1" />
-                </Anchors>
-            </Button>
-            <Button parentKey="Tab2" parentArray="tabs" inherits="tdDevToolsTabButtonTemplate" text="Error" id="2">
-                <Anchors>
-                    <Anchor point="LEFT" relativeKey="$parent.Tab1" relativePoint="RIGHT" x="5" y="0" />
-                </Anchors>
-            </Button>
         </Frames>
     </Frame>
 </Ui>

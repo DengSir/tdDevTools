@@ -13,7 +13,7 @@ ns.Console = Console
 function Console:OnLoad()
     local MessageFrame = self.MessageFrame
     MessageFrame:SetMaxLines(9000)
-    MessageFrame:SetFontObject(ConsoleFontNormal)
+    MessageFrame:SetFontObject('tdDevToolsConsoleFont')
     MessageFrame:SetIndentedWordWrap(true)
     MessageFrame:SetJustifyH('LEFT')
     MessageFrame:SetFading(false)
@@ -21,48 +21,35 @@ function Console:OnLoad()
     MessageFrame:SetScript('OnHyperlinkClick', function(_, link)
         TypeRender.ClickValue(link)
     end)
-    MessageFrame:SetOnDisplayRefreshedCallback(function()
-        local maxValue = self.MessageFrame:GetMaxScrollRange()
-        local atBottom = self.MessageFrame:AtBottom()
-        self.ScrollBar:SetMinMaxValues(0, maxValue)
+    MessageFrame:SetOnDisplayRefreshedCallback(function(self)
+        local maxValue = self:GetMaxScrollRange()
+        local atBottom = self:AtBottom()
+        self.scrollBar:SetMinMaxValues(0, maxValue)
         if atBottom then
-            self.ScrollBar:SetValue(maxValue)
+            self.scrollBar:SetValue(maxValue)
         end
     end)
 
-    self.ScrollBar:SetScript('OnValueChanged', function(ScrollBar, value)
-        local minValue, maxValue = ScrollBar:GetMinMaxValues()
+    self.MessageFrame.scrollBar:SetScript('OnValueChanged', function(self, value)
+        local minValue, maxValue = self:GetMinMaxValues()
         local value = floor(value + 0.5)
-        MessageFrame:SetScrollOffset(maxValue - value)
+        self:GetParent():SetScrollOffset(maxValue - value)
+        HybridScrollFrame_UpdateButtonStates(self:GetParent(), value)
     end)
 
+    self.MessageFrame.scrollUp:SetScript('OnClick', function(_, _, down)
+        if down then
+            self.MessageFrame:ScrollUp()
+            PlaySound(SOUNDKIT.U_CHAT_SCROLL_BUTTON)
+        end
+    end)
 
-    tinsert(UISpecialFrames, self:GetName())
-
-    self:SetScript('OnMouseWheel', self.OnMouseWheel)
-    -- self:SetScript('OnMouseDown', self.OnMouseDown)
-    -- self:SetScript('OnMouseUp', self.StopMovingOrSizing)
-
-    -- UIParent:HookScript('OnSizeChanged', function()
-    --     self:ClearAllPoints()
-    --     self:SetPoint('TOPLEFT')
-    --     self:SetPoint('TOPRIGHT')
-    -- end)
-end
-
-function Console:OnMouseWheel(delta)
-    if IsControlKeyDown() then
-
-    else
-        self.ScrollBar:SetValue(self.ScrollBar:GetValue() - delta)
-    end
-end
-
-function Console:OnMouseDown()
-    local position, value = Util.GetMousePosition(self)
-    if value >= 8 then
-        self:StartSizing(position)
-    end
+    self.MessageFrame.scrollDown:SetScript('OnClick', function(_, _, down)
+        if down then
+            self.MessageFrame:ScrollDown()
+            PlaySound(SOUNDKIT.U_CHAT_SCROLL_BUTTON)
+        end
+    end)
 end
 
 function Console:Print(text, r, g, b)
@@ -75,10 +62,6 @@ function Console:RenderAll(...)
         table.insert(sb, TypeRender((select(i, ...))))
     end
     return unpack(sb)
-end
-
-function Console:Toggle()
-    self:SetShown(not self:IsShown())
 end
 
 Console:OnLoad()

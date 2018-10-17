@@ -1,0 +1,135 @@
+<Ui xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\FrameXML\UI.xsd">
+    <Button name="tdDevToolsErrorItemTemplate" virtual="true">
+        <Size x="80" y="24" />
+        <Frames>
+            <Button parentKey="RemoveButton">
+                <Size x="16" y="16" />
+                <Anchors>
+                    <Anchor point="RIGHT" x="-5" y="0" />
+                </Anchors>
+                <Layers>
+                    <Layer level="ARTWORK">
+                        <Line thickness="1">
+                            <StartAnchor relativePoint="TOPLEFT" x="3" y="-3" />
+                            <EndAnchor relativePoint="BOTTOMRIGHT" x="-3" y="3" />
+                            <Color r="0.8" g="0.8" b="0.8" />
+                        </Line>
+                        <Line thickness="1">
+                            <StartAnchor relativePoint="TOPRIGHT" x="-3" y="-3" />
+                            <EndAnchor relativePoint="BOTTOMLEFT" x="3" y="3" />
+                            <Color r="0.8" g="0.8" b="0.8" />
+                        </Line>
+                    </Layer>
+                </Layers>
+                <Scripts>
+                    <OnEnter>
+                        self:GetParent():LockHighlight()
+                    </OnEnter>
+                    <OnLeave>
+                        self:GetParent():UnlockHighlight()
+                    </OnLeave>
+                </Scripts>
+            </Button>
+        </Frames>
+        <ButtonText parentKey="Text" justifyH="LEFT">
+            <Anchors>
+                <Anchor point="LEFT" x="5" y="0" />
+                <Anchor point="RIGHT" relativeKey="$parent.RemoveButton" relativePoint="LEFT" x="-5" y="0" />
+            </Anchors>
+        </ButtonText>
+        <NormalFont style="tdDevToolsFontNormal" />
+        <HighlightFont style="tdDevToolsFontHighlight"/>
+        <DisabledFont style="tdDevToolsFontDisabled"/>
+        <HighlightTexture>
+            <Color r="1" g="1" b="1" a="0.2" />
+        </HighlightTexture>
+    </Button>
+
+    <Frame parent="tdDevToolsFrame" parentKey="Error" parentArray="tabFrames" hidden="true">
+        <Anchors>
+            <Anchor point="TOPLEFT" relativeKey="$parent.Inset" relativePoint="TOPLEFT" />
+            <Anchor point="BOTTOMRIGHT" relativeKey="$parent.Inset" relativePoint="BOTTOMRIGHT" />
+        </Anchors>
+        <Frames>
+            <Frame parentKey="Header">
+                <Size y="25" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" />
+                    <Anchor point="TOPRIGHT" />
+                </Anchors>
+                <Layers>
+                    <Layer level="BORDER">
+                        <Texture inherits="_tdDevToolsLineTemplate">
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" />
+                                <Anchor point="TOPRIGHT" relativePoint="BOTTOMRIGHT" />
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                </Layers>
+            </Frame>
+            <ScrollFrame parentKey="ErrorList" inherits="tdDevToolsHybridScrollFrameTemplate">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.Header" relativePoint="BOTTOMLEFT" />
+                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOM" />
+                </Anchors>
+            </ScrollFrame>
+            <Frame parentKey="Right">
+                <Anchors>
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.Header" relativePoint="BOTTOMRIGHT" />
+                    <Anchor point="BOTTOMLEFT" relativePoint="BOTTOM" />
+                </Anchors>
+                <Frames>
+                    <ScrollFrame parentKey="EditBoxScroll" inherits="UIPanelScrollFrameCodeTemplate">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" x="3" y="-3" />
+                            <Anchor point="BOTTOMRIGHT" x="-3" y="3" />
+                        </Anchors>
+                        <Frames>
+                            <Slider parentKey="ScrollBar" inherits="tdDevToolsPanelScrollBarTemplate">
+                                <Anchors>
+                                    <Anchor point="TOPRIGHT" x="3" y="-12" />
+                                    <Anchor point="BOTTOMRIGHT" x="3" y="12" />
+                                </Anchors>
+                            </Slider>
+                        </Frames>
+                        <ScrollChild>
+                            <EditBox parentKey="EditBox" autoFocus="false" multiLine="true">
+                                <Size x="500" y="1" />
+                                <Anchors>
+                                    <Anchor point="TOPLEFT" />
+                                </Anchors>
+                                <Scripts>
+                                    <OnUpdate function="ScrollingEdit_OnUpdate" />
+                                    <OnCursorChanged function="ScrollingEdit_OnCursorChanged" />
+                                    <OnEscapePressed function="EditBox_ClearFocus" />
+                                    <OnTextChanged>
+                                        local text = self:GetText()
+                                        if text ~= self.prevText then
+                                            ScrollingEdit_OnTextChanged(self, self:GetParent())
+                                        end
+                                        self.prevText = text
+                                    </OnTextChanged>
+                                </Scripts>
+                                <FontString inherits="ChatFontNormal"/>
+                            </EditBox>
+                        </ScrollChild>
+                        <Scripts>
+                            <OnMouseDown>
+                                if self.EditBox:HasFocus() then
+                                    return
+                                end
+                                self.EditBox:SetFocus()
+                                self.EditBox:SetCursorPosition(#self.EditBox:GetText())
+                            </OnMouseDown>
+                            <OnSizeChanged>
+                                self.EditBox:SetWidth(self:GetWidth() - 30)
+                            </OnSizeChanged>
+                        </Scripts>
+                    </ScrollFrame>
+                </Frames>
+            </Frame>
+        </Frames>
+    </Frame>
+</Ui>

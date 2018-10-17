@@ -1,0 +1,211 @@
+<Ui xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\FrameXML\UI.xsd">
+    <Font name="tdDevToolsConsoleFont" inherits="ConsoleFontNormal" virtual="true">
+        <Color r="1.0" g="1.0" b="1.0"/>
+    </Font>
+
+    <Font name="tdDevToolsFontNormal" inherits="ConsoleFontNormal" virtual="true">
+        <Color r="0.7" g="0.7" b="0.7"/>
+    </Font>
+
+    <Font name="tdDevToolsFontHighlight" inherits="ConsoleFontNormal" virtual="true">
+        <Color r="1.0" g="1.0" b="1.0"/>
+    </Font>
+
+    <Font name="tdDevToolsFontDisabled" inherits="ConsoleFontNormal" virtual="true">
+        <Color r="0.4" g="0.4" b="0.4"/>
+    </Font>
+
+    <Font name="tdDevToolsFontSelected" inherits="ConsoleFontNormal" virtual="true">
+        <Color r="1.0" g="0.82" b="0"/>
+    </Font>
+
+    <!-- <Font name="tdDevToolsFontNormalLeft" inherits="tdDevToolsFontNormal" justifyH="LEFT" virtual="true" />
+    <Font name="tdDevToolsFontHighlightLeft" inherits="tdDevToolsFontHighlight" justifyH="LEFT" virtual="true" />
+    <Font name="tdDevToolsFontDisabledLeft" inherits="tdDevToolsFontDisabled" justifyH="LEFT" virtual="true" />
+    <Font name="tdDevToolsFontFontSelectedLeft" inherits="tdDevToolsFontSelected" justifyH="LEFT" virtual="true" /> -->
+
+    <Texture name="_tdDevToolsLineTemplate" virtual="true">
+        <Size y="1" />
+        <Color r="0.5" g="0.5" b="0.5" />
+    </Texture>
+
+    <Texture name="!tdDevToolsLineTemplate" virtual="true">
+        <Size x="1" />
+        <Color r="0.5" g="0.5" b="0.5" />
+    </Texture>
+
+    <Texture name="tdDevToolsLineLeftTemplate" inherits="!tdDevToolsLineTemplate" parentKey="BorderLeft" virtual="true">
+        <Anchors>
+            <Anchor point="TOPLEFT" />
+            <Anchor point="BOTTOMLEFT" />
+        </Anchors>
+    </Texture>
+
+    <Texture name="tdDevToolsLineRightTemplate" inherits="!tdDevToolsLineTemplate" parentKey="BorderRight" virtual="true">
+        <Anchors>
+            <Anchor point="TOPRIGHT" />
+            <Anchor point="BOTTOMRIGHT" />
+        </Anchors>
+    </Texture>
+
+    <Texture name="tdDevToolsLineTopTemplate" inherits="_tdDevToolsLineTemplate" parentKey="BorderTop" virtual="true">
+        <Anchors>
+            <Anchor point="TOPLEFT" />
+            <Anchor point="TOPRIGHT" />
+        </Anchors>
+    </Texture>
+
+    <Texture name="tdDevToolsLineBottomTemplate" inherits="_tdDevToolsLineTemplate" parentKey="BorderBottom" virtual="true">
+        <Anchors>
+            <Anchor point="BOTTOMLEFT" />
+            <Anchor point="BOTTOMRIGHT" />
+        </Anchors>
+    </Texture>
+
+    <Texture name="tdDevToolsBackgroundTemplate" parentKey="Background" setAllPoints="true" virtual="true">
+        <Color r="0" g="0" b="0" a="0.8" />
+    </Texture>
+
+    <Frame name="tdDevToolsBackdropFrameTemplate" virtual="true">
+        <Layers>
+            <Layer level="BORDER">
+                <Texture inherits="tdDevToolsLineLeftTemplate" />
+                <Texture inherits="tdDevToolsLineRightTemplate" />
+                <Texture inherits="tdDevToolsLineTopTemplate" />
+                <Texture inherits="tdDevToolsLineBottomTemplate" />
+            </Layer>
+            <Layer level="BACKGROUND">
+                <Texture inherits="tdDevToolsBackgroundTemplate" />
+            </Layer>
+        </Layers>
+    </Frame>
+
+    <Button name="tdDevToolsBaseButtonTemplate" inherits="tdDevToolsBackdropFrameTemplate" virtual="true">
+        <HighlightTexture>
+            <Color r="1" g="1" b="1" a="0.2" />
+        </HighlightTexture>
+    </Button>
+
+    <Button name="tdDevToolsButtonTemplate" inherits="tdDevToolsBaseButtonTemplate" virtual="true">
+        <Size x="80" y="22" />
+        <ButtonText parentKey="Text"/>
+        <NormalFont style="tdDevToolsFontNormal"/>
+        <HighlightFont style="tdDevToolsFontHighlight"/>
+        <DisabledFont style="tdDevToolsFontDisabled"/>
+    </Button>
+
+    <Button name="tdDevToolsBaseScrollUpTemplate" inherits="tdDevToolsBaseButtonTemplate" virtual="true">
+        <Size x="16" y="16" />
+        <Anchors>
+            <Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT" x="0" y="-1" />
+            <Anchor point="BOTTOMRIGHT" relativePoint="TOPRIGHT" x="0" y="-1" />
+        </Anchors>
+        <Layers>
+            <Layer level="ARTWORK">
+                <Line thickness="1">
+                    <StartAnchor relativePoint="BOTTOMLEFT" x="3" y="5" />
+                    <EndAnchor relativePoint="CENTER" x="0" y="2" />
+                    <Color r="0.8" g="0.8" b="0.8" />
+                </Line>
+                <Line thickness="1">
+                    <StartAnchor relativePoint="BOTTOMRIGHT" x="-3" y="5" />
+                    <EndAnchor relativePoint="CENTER" x="0" y="2" />
+                    <Color r="0.8" g="0.8" b="0.8" />
+                </Line>
+            </Layer>
+        </Layers>
+        <Scripts>
+            <OnLoad function="HybridScrollFrameScrollUp_OnLoad" />
+            <OnClick function="HybridScrollFrameScrollButton_OnClick" />
+        </Scripts>
+    </Button>
+
+    <Button name="tdDevToolsBaseScrollDownTemplate" inherits="tdDevToolsBaseButtonTemplate" virtual="true">
+        <Size x="16" y="16" />
+        <Anchors>
+            <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" x="0" y="1" />
+            <Anchor point="TOPRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="1" />
+        </Anchors>
+        <Layers>
+            <Layer level="ARTWORK">
+                <Line thickness="1">
+                    <StartAnchor relativePoint="TOPLEFT" x="3" y="-5" />
+                    <EndAnchor relativePoint="CENTER" x="0" y="-2" />
+                    <Color r="0.8" g="0.8" b="0.8" />
+                </Line>
+                <Line thickness="1">
+                    <StartAnchor relativePoint="TOPRIGHT" x="-3" y="-5" />
+                    <EndAnchor relativePoint="CENTER" x="0" y="-2" />
+                    <Color r="0.8" g="0.8" b="0.8" />
+                </Line>
+            </Layer>
+        </Layers>
+        <Scripts>
+            <OnLoad function="HybridScrollFrameScrollDown_OnLoad" />
+            <OnClick function="HybridScrollFrameScrollButton_OnClick" />
+        </Scripts>
+    </Button>
+
+    <Slider name="tdDevToolsBaseScrollBarTemplate" inherits="tdDevToolsBackdropFrameTemplate" virtual="true">
+        <Size x="16" />
+        <Anchors>
+            <Anchor point="TOPRIGHT" x="0" y="-15" />
+            <Anchor point="BOTTOMRIGHT" x="0" y="15" />
+        </Anchors>
+        <ThumbTexture parentKey="thumbTexture">
+            <Size x="16" y="16"/>
+            <Color r="0.5" g="0.5" b="0.5" />
+        </ThumbTexture>
+    </Slider>
+
+    <Slider name="tdDevToolsHybridScrollBarTemplate" inherits="tdDevToolsBaseScrollBarTemplate" virtual="true">
+        <Frames>
+            <Button parentKey="scrollUp" inherits="tdDevToolsBaseScrollUpTemplate">
+                <Scripts>
+                    <OnLoad function="HybridScrollFrameScrollUp_OnLoad" />
+                    <OnClick function="HybridScrollFrameScrollButton_OnClick" />
+                </Scripts>
+            </Button>
+            <Button parentKey="scrollDown" inherits="tdDevToolsBaseScrollDownTemplate">
+                <Scripts>
+                    <OnLoad function="HybridScrollFrameScrollDown_OnLoad" />
+                    <OnClick function="HybridScrollFrameScrollButton_OnClick" />
+                </Scripts>
+            </Button>
+        </Frames>
+        <Scripts>
+            <OnValueChanged function="HybridScrollFrame_OnValueChanged" />
+        </Scripts>
+    </Slider>
+
+    <ScrollFrame name="tdDevToolsHybridScrollFrameTemplate" inherits="HybridScrollFrameTemplate" virtual="true">
+        <Frames>
+            <Slider parentKey="scrollBar" inherits="tdDevToolsHybridScrollBarTemplate"/>
+        </Frames>
+    </ScrollFrame>
+
+    <Slider name="tdDevToolsPanelScrollBarTemplate" inherits="tdDevToolsBaseScrollBarTemplate" virtual="true">
+        <Frames>
+            <Button parentKey="ScrollUpButton" inherits="tdDevToolsBaseScrollUpTemplate">
+                <Scripts>
+                    <OnClick function="UIPanelScrollBarScrollUpButton_OnClick"/>
+                </Scripts>
+            </Button>
+            <Button parentKey="ScrollDownButton" inherits="tdDevToolsBaseScrollDownTemplate">
+                <Scripts>
+                    <OnClick function="UIPanelScrollBarScrollDownButton_OnClick"/>
+                </Scripts>
+            </Button>
+        </Frames>
+        <Scripts>
+            <OnValueChanged function="UIPanelScrollBar_OnValueChanged"/>
+        </Scripts>
+    </Slider>
+
+    <ScrollFrame name="tdDevToolsPanelScrollFrameTemplate" inherits="UIPanelScrollFrameCodeTemplate" virtual="true">
+        <Frames>
+            <Slider parentKey="ScrollBar" inherits="tdDevToolsPanelScrollBarTemplate"/>
+        </Frames>
+    </ScrollFrame>
+</Ui>

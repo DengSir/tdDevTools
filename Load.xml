@@ -1,6 +1,9 @@
 <Ui xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\FrameXML\UI.xsd">
+    <Include file="Template.xml" />
     <Include file="Frame.xml" />
+    <Include file="Console.xml" />
+    <Include file="Error.xml" />
     <Script file="Frame.lua" />
     <Script file="Util.lua" />
     <Script file="TypeRender.lua" />

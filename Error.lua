@@ -17,6 +17,8 @@ function Error:OnLoad()
     self:SetScript('OnShow', self.UpdateErrorList)
     self:SetScript('OnSizeChanged', self.OnSizeChanged)
 
+    print(self.Right.EditBoxScroll.EditBox)
+
     self:OnSizeChanged()
 end
 
@@ -36,7 +38,7 @@ function Error:UpdateErrorList()
 
         button:SetText(items[i + offset])
         button:Show()
-        button:SetWidth(self.ErrorList:GetWidth() - 18)
+        button:SetWidth(self.ErrorList:GetWidth() - 16)
     end
 
     local totalHeight = #items * 24

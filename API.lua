@@ -12,7 +12,7 @@ setprinthandler(function(...)
 end)
 
 local orig_DevTools_RunDump = DevTools_RunDump
-local function Build_DevTools_RunDump()
+local function BuildRunDumpContext()
     local prefix = Util.GetLogPrefix(4)
     local function Write(_, text)
         return Console:Print(prefix .. 'Dump: ' .. text)
@@ -24,7 +24,7 @@ local function Build_DevTools_RunDump()
 end
 
 function dump(...)
-    DevTools_RunDump = Build_DevTools_RunDump()
+    DevTools_RunDump = BuildRunDumpContext()
     DevTools_Dump({...}, 'value')
     DevTools_RunDump = orig_DevTools_RunDump
 end
