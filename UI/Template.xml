@@ -16,14 +16,14 @@
         <Color r="0.4" g="0.4" b="0.4"/>
     </Font>
 
-    <Font name="tdDevToolsFontSelected" inherits="ConsoleFontNormal" virtual="true">
+    <Font name="tdDevToolsFontImportant" inherits="ConsoleFontNormal" virtual="true">
         <Color r="1.0" g="0.82" b="0"/>
     </Font>
 
     <!-- <Font name="tdDevToolsFontNormalLeft" inherits="tdDevToolsFontNormal" justifyH="LEFT" virtual="true" />
     <Font name="tdDevToolsFontHighlightLeft" inherits="tdDevToolsFontHighlight" justifyH="LEFT" virtual="true" />
     <Font name="tdDevToolsFontDisabledLeft" inherits="tdDevToolsFontDisabled" justifyH="LEFT" virtual="true" />
-    <Font name="tdDevToolsFontFontSelectedLeft" inherits="tdDevToolsFontSelected" justifyH="LEFT" virtual="true" /> -->
+    <Font name="tdDevToolsFontFontSelectedLeft" inherits="tdDevToolsFontImportant" justifyH="LEFT" virtual="true" /> -->
 
     <Texture name="_tdDevToolsLineTemplate" virtual="true">
         <Size y="1" />
@@ -147,19 +147,15 @@
         </Scripts>
     </Button>
 
-    <Slider name="tdDevToolsBaseScrollBarTemplate" inherits="tdDevToolsBackdropFrameTemplate" virtual="true">
+    <Slider name="tdDevToolsHybridScrollBarTemplate" inherits="tdDevToolsBackdropFrameTemplate" virtual="true">
+        <KeyValues>
+            <KeyValue key="doNotHide" value="true" type="boolean" />
+        </KeyValues>
         <Size x="16" />
         <Anchors>
             <Anchor point="TOPRIGHT" x="0" y="-15" />
             <Anchor point="BOTTOMRIGHT" x="0" y="15" />
         </Anchors>
-        <ThumbTexture parentKey="thumbTexture">
-            <Size x="16" y="16"/>
-            <Color r="0.5" g="0.5" b="0.5" />
-        </ThumbTexture>
-    </Slider>
-
-    <Slider name="tdDevToolsHybridScrollBarTemplate" inherits="tdDevToolsBaseScrollBarTemplate" virtual="true">
         <Frames>
             <Button parentKey="scrollUp" inherits="tdDevToolsBaseScrollUpTemplate">
                 <Scripts>
@@ -177,6 +173,10 @@
         <Scripts>
             <OnValueChanged function="HybridScrollFrame_OnValueChanged" />
         </Scripts>
+        <ThumbTexture parentKey="thumbTexture">
+            <Size x="16" y="16"/>
+            <Color r="0.5" g="0.5" b="0.5" />
+        </ThumbTexture>
     </Slider>
 
     <ScrollFrame name="tdDevToolsHybridScrollFrameTemplate" inherits="HybridScrollFrameTemplate" virtual="true">
@@ -185,7 +185,12 @@
         </Frames>
     </ScrollFrame>
 
-    <Slider name="tdDevToolsPanelScrollBarTemplate" inherits="tdDevToolsBaseScrollBarTemplate" virtual="true">
+    <Slider name="tdDevToolsPanelScrollBarTemplate" inherits="tdDevToolsBackdropFrameTemplate" virtual="true">
+        <Size x="16" />
+        <Anchors>
+            <Anchor point="TOPRIGHT" x="0" y="-15" />
+            <Anchor point="BOTTOMRIGHT" x="0" y="15" />
+        </Anchors>
         <Frames>
             <Button parentKey="ScrollUpButton" inherits="tdDevToolsBaseScrollUpTemplate">
                 <Scripts>
@@ -201,6 +206,10 @@
         <Scripts>
             <OnValueChanged function="UIPanelScrollBar_OnValueChanged"/>
         </Scripts>
+        <ThumbTexture parentKey="ThumbTexture">
+            <Size x="16" y="16"/>
+            <Color r="0.5" g="0.5" b="0.5" />
+        </ThumbTexture>
     </Slider>
 
     <ScrollFrame name="tdDevToolsPanelScrollFrameTemplate" inherits="UIPanelScrollFrameCodeTemplate" virtual="true">
@@ -208,4 +217,26 @@
             <Slider parentKey="ScrollBar" inherits="tdDevToolsPanelScrollBarTemplate"/>
         </Frames>
     </ScrollFrame>
+
+
+    <Button name="tdDevToolsClearButtonTemplate" virtual="true">
+        <Size x="16" y="16" />
+        <Anchors>
+            <Anchor point="RIGHT" x="-5" y="0" />
+        </Anchors>
+        <Layers>
+            <Layer level="ARTWORK">
+                <Line thickness="1">
+                    <StartAnchor relativePoint="TOPLEFT" x="3" y="-3" />
+                    <EndAnchor relativePoint="BOTTOMRIGHT" x="-3" y="3" />
+                    <Color r="0.8" g="0.8" b="0.8" />
+                </Line>
+                <Line thickness="1">
+                    <StartAnchor relativePoint="TOPRIGHT" x="-3" y="-3" />
+                    <EndAnchor relativePoint="BOTTOMLEFT" x="3" y="3" />
+                    <Color r="0.8" g="0.8" b="0.8" />
+                </Line>
+            </Layer>
+        </Layers>
+    </Button>
 </Ui>

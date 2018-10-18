@@ -6,7 +6,7 @@
                 self:GetParent():SetTab(self:GetID())
             </OnClick>
         </Scripts>
-        <DisabledFont style="tdDevToolsFontSelected"/>
+        <DisabledFont style="tdDevToolsFontImportant"/>
     </Button>
 
     <Frame name="tdDevToolsFrame" parent="UIParent" userPlaced="false" frameLevel="9000" resizable="true" enableMouse="true" frameStrata="FULLSCREEN_DIALOG">
@@ -36,7 +36,7 @@
             </Button>
             <Button parentKey="Tab2" parentArray="tabs" inherits="tdDevToolsTabButtonTemplate" text="Error" id="2">
                 <Anchors>
-                    <Anchor point="LEFT" relativeKey="$parent.Tab1" relativePoint="RIGHT" x="5" y="0" />
+                    <Anchor point="TOPLEFT" relativeKey="$parent.Tab1" relativePoint="TOPRIGHT" x="5" y="0" />
                 </Anchors>
             </Button>
             <Button parentKey="Resize" inherits="tdDevToolsBaseButtonTemplate">

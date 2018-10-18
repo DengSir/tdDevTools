@@ -2,26 +2,18 @@
 ..\FrameXML\UI.xsd">
     <Button name="tdDevToolsErrorItemTemplate" virtual="true">
         <Size x="80" y="24" />
+        <Layers>
+            <Layer level="BACKGROUND">
+                <Texture parentKey="Selected">
+                    <Color r="1" g="1" b="1" a="0.2" />
+                </Texture>
+            </Layer>
+        </Layers>
         <Frames>
-            <Button parentKey="RemoveButton">
-                <Size x="16" y="16" />
+            <Button parentKey="RemoveButton" inherits="tdDevToolsClearButtonTemplate">
                 <Anchors>
                     <Anchor point="RIGHT" x="-5" y="0" />
                 </Anchors>
-                <Layers>
-                    <Layer level="ARTWORK">
-                        <Line thickness="1">
-                            <StartAnchor relativePoint="TOPLEFT" x="3" y="-3" />
-                            <EndAnchor relativePoint="BOTTOMRIGHT" x="-3" y="3" />
-                            <Color r="0.8" g="0.8" b="0.8" />
-                        </Line>
-                        <Line thickness="1">
-                            <StartAnchor relativePoint="TOPRIGHT" x="-3" y="-3" />
-                            <EndAnchor relativePoint="BOTTOMLEFT" x="3" y="3" />
-                            <Color r="0.8" g="0.8" b="0.8" />
-                        </Line>
-                    </Layer>
-                </Layers>
                 <Scripts>
                     <OnEnter>
                         self:GetParent():LockHighlight()
@@ -29,6 +21,9 @@
                     <OnLeave>
                         self:GetParent():UnlockHighlight()
                     </OnLeave>
+                    <OnClick>
+                        self:GetParent().owner:OnItemDeleteClick(self:GetParent())
+                    </OnClick>
                 </Scripts>
             </Button>
         </Frames>
@@ -44,6 +39,11 @@
         <HighlightTexture>
             <Color r="1" g="1" b="1" a="0.2" />
         </HighlightTexture>
+        <Scripts>
+            <OnClick>
+                self.owner:OnItemClick(self)
+            </OnClick>
+        </Scripts>
     </Button>
 
     <Frame parent="tdDevToolsFrame" parentKey="Error" parentArray="tabFrames" hidden="true">
@@ -53,7 +53,7 @@
         </Anchors>
         <Frames>
             <Frame parentKey="Header">
-                <Size y="25" />
+                <Size y="20" />
                 <Anchors>
                     <Anchor point="TOPLEFT" />
                     <Anchor point="TOPRIGHT" />
@@ -67,6 +67,18 @@
                             </Anchors>
                         </Texture>
                     </Layer>
+                    <Layer level="ARTWORK">
+                        <FontString inherits="tdDevToolsFontImportant" text="Error list">
+                            <Anchors>
+                                <Anchor point="LEFT" x="5" y="0"/>
+                            </Anchors>
+                        </FontString>
+                        <FontString inherits="tdDevToolsFontImportant" text="Call stack">
+                            <Anchors>
+                                <Anchor point="LEFT" relativePoint="CENTER" x="5" y="0"/>
+                            </Anchors>
+                        </FontString>
+                    </Layer>
                 </Layers>
             </Frame>
             <ScrollFrame parentKey="ErrorList" inherits="tdDevToolsHybridScrollFrameTemplate">
@@ -74,8 +86,13 @@
                     <Anchor point="TOPLEFT" relativeKey="$parent.Header" relativePoint="BOTTOMLEFT" />
                     <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOM" />
                 </Anchors>
+                <Layers>
+                    <Layer level="BORDER">
+                        <Texture inherits="tdDevToolsLineRightTemplate" />
+                    </Layer>
+                </Layers>
             </ScrollFrame>
-            <Frame parentKey="Right">
+            <Frame parentKey="RightSide">
                 <Anchors>
                     <Anchor point="TOPRIGHT" relativeKey="$parent.Header" relativePoint="BOTTOMRIGHT" />
                     <Anchor point="BOTTOMLEFT" relativePoint="BOTTOM" />
@@ -112,7 +129,7 @@
                                         self.prevText = text
                                     </OnTextChanged>
                                 </Scripts>
-                                <FontString inherits="ChatFontNormal"/>
+                                <FontString inherits="tdDevToolsFontHighlight"/>
                             </EditBox>
                         </ScrollChild>
                         <Scripts>

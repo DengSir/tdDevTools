@@ -30,6 +30,7 @@ function Frame:SetTab(id)
     for i = 1, self.numTabs do
         self.tabFrames[i]:SetShown(i == id)
         self.tabs[i]:SetEnabled(i ~= id)
+        self.tabs[i]:SetHeight(i == id and 25 or 22)
     end
 end
 

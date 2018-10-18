@@ -79,5 +79,7 @@ TypeRender.ClickValue = function(link)
         if tbl then
             inspect(tbl)
         end
+    elseif linkType == 'error' then
+        ns.Frame.Error:Toggle(tonumber(linkContent))
     end
 end

@@ -3,8 +3,6 @@
 -- @Link   : https://dengsir.github.io
 -- @Date   : 10/16/2018, 3:59:45 PM
 
-LoadAddOn('Blizzard_DebugTools')
-
 BINDING_HEADER_TDDEVTOOLS = 'tdDevTools'
 
 local ns   = select(2, ...)
@@ -26,15 +24,6 @@ local VALUE_POS = {
     [10] = 'BOTTOMRIGHT',
 }
 
-function Util.GetCodePath(depth)
-    return (
-        debugstack(depth, 1, 1)
-        :gsub(': in.+$', '')
-        :gsub('^[^\\]*%\\AddOns%\\', '')
-        :gsub('^(.+):(%d+)$', '|cff00ffff%1|r:|cffff00ff%2|r')
-    )
-end
-
 function Util.GetMousePosition(frame)
     local x, y = GetCursorPosition()
     local scale = frame:GetEffectiveScale()
@@ -48,6 +37,23 @@ function Util.GetMousePosition(frame)
     return VALUE_POS[value], value
 end
 
+function Util.ShortPath(path)
+    return (path:gsub('^[^\\]*%\\AddOns%\\', ''):gsub('^.+[\r\n]', ''))
+end
+
+function Util.FindPath(text)
+    local path = text:match('([^:]+:%d+): ')
+    return path and Util.ShortPath(path)
+end
+
+function Util.FormatPath(path)
+    return path and path:gsub('^(.+):(%d+)$', '|cff00ffff%1|r|cffffffff:|r|cffff00ff%2|r') or ''
+end
+
+function Util.FormatLogPrefix(path)
+    return format('|cff00ff00%s.%03d|r %s|cffffffff:|r ', date('%H:%M:%S'), floor(GetTime() * 1000) % 1000, Util.FormatPath(path))
+end
+
 function Util.GetLogPrefix(depth)
-    return format('|cff00ff00%s.%03d|r %s : ', date('%H:%M:%S'), floor(GetTime() * 1000) % 1000, Util.GetCodePath(depth + 1))
+    return Util.FormatLogPrefix(Util.FindPath(debugstack(depth, 1, 1)))
 end
