@@ -5,8 +5,9 @@
 
 BINDING_HEADER_TDDEVTOOLS = 'tdDevTools'
 
-local ns   = select(2, ...)
-local Util = {}
+local ns         = select(2, ...)
+local TypeRender = ns.TypeRender
+local Util       = {}
 
 ns.Util = Util
 
@@ -37,23 +38,43 @@ function Util.GetMousePosition(frame)
     return VALUE_POS[value], value
 end
 
-function Util.ShortPath(path)
+local function ShortPath(path)
     return (path:gsub('^[^\\]*%\\AddOns%\\', ''):gsub('^.+[\r\n]', ''))
 end
 
-function Util.FindPath(text)
+local function FindPath(text)
     local path = text:match('([^:]+:%d+): ')
-    return path and Util.ShortPath(path)
+    return path and ShortPath(path)
 end
 
-function Util.FormatPath(path)
+local function ColoredPath(path)
     return path and path:gsub('^(.+):(%d+)$', '|cff00ffff%1|r|cffffffff:|r|cffff00ff%2|r') or ''
 end
 
-function Util.FormatLogPrefix(path)
-    return format('|cff00ff00%s.%03d|r %s|cffffffff:|r ', date('%H:%M:%S'), floor(GetTime() * 1000) % 1000, Util.FormatPath(path))
+local function GetCallColoredPath(depth)
+    return ColoredPath(FindPath(debugstack(depth)))
 end
 
-function Util.GetLogPrefix(depth)
-    return Util.FormatLogPrefix(Util.FindPath(debugstack(depth, 1, 1)))
+local function Render(...)
+    local sb = {}
+    for i = 1, select('#', ...) do
+        table.insert(sb, TypeRender((select(i, ...))))
+    end
+    return table.concat(sb, ', ')
+end
+
+local function GetColoredTime()
+    return format('|cff00ff00%s.%03d|r', date('%H:%M:%S'), floor(GetTime() * 1000) % 1000)
+end
+
+Util.ShortPath          = ShortPath
+Util.FindPath           = FindPath
+Util.ColoredPath        = ColoredPath
+Util.GetCallColoredPath = GetCallColoredPath
+Util.Render             = Render
+Util.GetColoredTime     = GetColoredTime
+
+
+function Util.NoRender(...)
+    return ...
 end

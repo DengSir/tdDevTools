@@ -4,9 +4,12 @@
 -- @Date   : 10/17/2018, 12:42:22 PM
 
 local ns      = select(2, ...)
-local Util    = ns.Util
 local Error   = ns.Frame.Error
 local Console = ns.Frame.Console
+
+local FindPath    = ns.Util.FindPath
+local ShortPath   = ns.Util.ShortPath
+local ColoredPath = ns.Util.ColoredPath
 
 function Error:OnLoad()
     self.index   = 0
@@ -115,7 +118,8 @@ function Error:UpdateList()
         if info then
             button.owner = self
             button:SetID(id)
-            button:SetText(info.formatted)
+            button.Count:SetFormattedText('(%d)', info.count)
+            button.Text:SetText(info.formatted)
             button:Show()
             button:SetWidth(self.ErrorList:GetWidth() - 16)
             button.Selected:SetShown(self.selectedErr and info.err == self.selectedErr.err)
@@ -143,21 +147,21 @@ function Error:AddError(err)
     self:Refresh()
     self:UpdateCount()
 
-    Console:Print(Util.FormatLogPrefix(info.path) .. format('|Herror:%d|h%s|h ', info.index, info.formatted), 1, 0, 0)
+    Console:Log('ERROR', info.path, format('|Herror:%d|h%s|h ', info.index, info.formatted))
 end
 
 function Error:ParseErr(err)
     local formatted
     local stack = debugstack(5)
-    local path  = Util.FindPath(err)
+    local path  = FindPath(err)
 
     if not path then
-        path = Util.FindPath(stack)
+        path = FindPath(stack)
         if path then
             formatted = path .. ': ' .. err
         end
     else
-        formatted = Util.ShortPath(err)
+        formatted = ShortPath(err)
     end
 
     self.index = self.index + 1
@@ -166,7 +170,7 @@ function Error:ParseErr(err)
         err       = err,
         formatted = formatted,
         count     = 0,
-        path      = path,
+        path      = ColoredPath(path),
         stack     = stack,
         index     = self.index
     }

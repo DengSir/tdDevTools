@@ -4,10 +4,12 @@
 -- @Date   : 10/16/2018, 3:59:57 PM
 
 local ns         = select(2, ...)
-local Util       = ns.Util
 local TypeRender = ns.TypeRender
 local Console    = ns.Frame.Console
 local Thread     = ns.Thread
+
+local GetColoredTime = ns.Util.GetColoredTime
+local Render         = ns.Util.Render
 
 function Console:OnLoad()
     self.filterText = ''
@@ -17,6 +19,7 @@ function Console:OnLoad()
     local MessageFrame = self.MessageFrame
     MessageFrame:SetMaxLines(9000)
     MessageFrame:SetFontObject('tdDevToolsConsoleFont')
+    -- MessageFrame:SetFont(tdDevToolsConsoleFont:GetFont(), 16)
     MessageFrame:SetIndentedWordWrap(true)
     MessageFrame:SetJustifyH('LEFT')
     MessageFrame:SetFading(false)
@@ -102,7 +105,7 @@ function Console:FilteringProcess()
     wipe(self.waitingMessages)
 end
 
-function Console:Print(text, r, g, b)
+function Console:AddMessage(text, r, g, b)
     local message = {
         text = text,
         match = text:lower():gsub('|c%x%x%x%x%x%x%x%x', ''):gsub('|r', ''),
@@ -119,6 +122,17 @@ function Console:Print(text, r, g, b)
     end
 end
 
+local levelColors = {
+    DEBUG = {  1,  1,  1 },
+    INFO  = {  1,  1,  1 },
+    WARN  = {  1, .5,  0 },
+    ERROR = {  1,  0,  0 },
+}
+
+function Console:Log(level, path, text)
+    return self:AddMessage(format('%s %s %s|cffffffff:|r %s', level, GetColoredTime(), path, text), unpack(assert(levelColors[level])))
+end
+
 function Console:MatchLog(text)
     if self.filterText == '' then
         return true
@@ -127,11 +141,7 @@ function Console:MatchLog(text)
 end
 
 function Console:RenderAll(...)
-    local sb = {}
-    for i = 1, select('#', ...) do
-        table.insert(sb, TypeRender((select(i, ...))))
-    end
-    return unpack(sb)
+    return Render(...)
 end
 
 Console:OnLoad()

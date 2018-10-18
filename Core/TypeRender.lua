@@ -4,7 +4,6 @@
 -- @Date   : 10/16/2018, 4:39:54 PM
 
 local ns           = select(2, ...)
-local WidgetRender = ns.WidgetRender
 local TypeRender   = setmetatable({}, {
     __index = function(t)
         return t.other
@@ -14,6 +13,7 @@ local TypeRender   = setmetatable({}, {
         return self[t](value)
     end
 })
+
 local widgets = setmetatable({}, {__mode = 'v'})
 local tables = setmetatable({}, {__mode = 'v'})
 
@@ -38,6 +38,8 @@ TypeRender.widget = function(widget)
     local name = widget:GetDebugName()
     if not name then
         error('not found debug name')
+    elseif name == '' then
+        name = tostring(widget)
     end
     widgets[name] = widget
     return format('|Hwidget:%s|h|cff00ff00[%s]|r|h', name, name)

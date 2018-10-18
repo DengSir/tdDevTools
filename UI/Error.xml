@@ -2,13 +2,6 @@
 ..\FrameXML\UI.xsd">
     <Button name="tdDevToolsErrorItemTemplate" virtual="true">
         <Size x="80" y="24" />
-        <Layers>
-            <Layer level="BACKGROUND">
-                <Texture parentKey="Selected">
-                    <Color r="1" g="1" b="1" a="0.2" />
-                </Texture>
-            </Layer>
-        </Layers>
         <Frames>
             <Button parentKey="RemoveButton" inherits="tdDevToolsClearButtonTemplate">
                 <Anchors>
@@ -27,15 +20,26 @@
                 </Scripts>
             </Button>
         </Frames>
-        <ButtonText parentKey="Text" justifyH="LEFT">
-            <Anchors>
-                <Anchor point="LEFT" x="5" y="0" />
-                <Anchor point="RIGHT" relativeKey="$parent.RemoveButton" relativePoint="LEFT" x="-5" y="0" />
-            </Anchors>
-        </ButtonText>
-        <NormalFont style="tdDevToolsFontNormal" />
-        <HighlightFont style="tdDevToolsFontHighlight"/>
-        <DisabledFont style="tdDevToolsFontDisabled"/>
+        <Layers>
+            <Layer level="BACKGROUND">
+                <Texture parentKey="Selected">
+                    <Color r="1" g="1" b="1" a="0.2" />
+                </Texture>
+            </Layer>
+            <Layer level="ARTWORK">
+                <FontString parentKey="Count" inherits="tdDevToolsFontImportant">
+                    <Anchors>
+                        <Anchor point="RIGHT" relativeKey="$parent.RemoveButton" relativePoint="LEFT" x="-5" y="0" />
+                    </Anchors>
+                </FontString>
+                <FontString parentKey="Text" inherits="tdDevToolsFontHighlight" justifyH="LEFT" wordWrap="false">
+                    <Anchors>
+                        <Anchor point="LEFT" x="5" y="0" />
+                        <Anchor point="RIGHT" relativeKey="$parent.Count" relativePoint="LEFT" x="-5" y="0" />
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
         <HighlightTexture>
             <Color r="1" g="1" b="1" a="0.2" />
         </HighlightTexture>

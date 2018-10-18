@@ -40,7 +40,7 @@
                 </Anchors>
             </Button>
             <Button parentKey="Resize" inherits="tdDevToolsBaseButtonTemplate">
-                <Size x="200" y="7" />
+                <Size x="200" y="10" />
                 <Anchors>
                     <Anchor point="TOP" relativePoint="BOTTOM" y="1" />
                 </Anchors>
