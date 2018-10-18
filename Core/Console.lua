@@ -144,4 +144,13 @@ function Console:RenderAll(...)
     return Render(...)
 end
 
+function Console:Clear()
+    if self.filteringThread then
+        self.filteringThread:Kill()
+    end
+    self.MessageFrame:Clear()
+    wipe(self.savedMessages)
+    wipe(self.waitingMessages)
+end
+
 Console:OnLoad()

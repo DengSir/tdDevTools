@@ -57,7 +57,7 @@
         </Anchors>
         <Frames>
             <Frame parentKey="Header">
-                <Size y="20" />
+                <Size y="22" />
                 <Anchors>
                     <Anchor point="TOPLEFT" />
                     <Anchor point="TOPRIGHT" />
@@ -72,7 +72,7 @@
                         </Texture>
                     </Layer>
                     <Layer level="ARTWORK">
-                        <FontString inherits="tdDevToolsFontImportant" text="Error list">
+                        <FontString inherits="tdDevToolsFontImportant" text="Errors">
                             <Anchors>
                                 <Anchor point="LEFT" x="5" y="0"/>
                             </Anchors>
@@ -84,6 +84,19 @@
                         </FontString>
                     </Layer>
                 </Layers>
+                <Frames>
+                    <Button parentKey="ClearButton" inherits="tdDevToolsButtonTemplate" text="Clear">
+                        <Size x="80" y="24" />
+                        <Anchors>
+                            <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOM" x="0" y="-1" />
+                        </Anchors>
+                        <Scripts>
+                            <OnClick>
+                                self:GetParent():GetParent():Clear()
+                            </OnClick>
+                        </Scripts>
+                    </Button>
+                </Frames>
             </Frame>
             <ScrollFrame parentKey="ErrorList" inherits="tdDevToolsHybridScrollFrameTemplate">
                 <Anchors>

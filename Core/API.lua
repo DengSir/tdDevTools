@@ -16,7 +16,7 @@ end)
 local function BuildRunDumpContext(orig)
     local path = GetCallColoredPath(4)
     local function Write(_, text)
-        return Console:Log('DEBUG', path, text)
+        return Console:Log('DEBUG', path, 'Dump: ' .. text)
     end
 
     return function(value, context)

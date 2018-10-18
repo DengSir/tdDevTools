@@ -98,7 +98,7 @@ function Error:UpdateError()
     end
 
     self.EditBox:SetText(not self.selectedErr and '' or MESSAGE_FORMAT:format(
-        self.selectedErr.formatted,
+        self.selectedErr.err,
         date('%Y:%m:%d %H:%M:%S', self.selectedErr.time),
         self.selectedErr.count,
         self.selectedErr.stack
@@ -152,16 +152,16 @@ end
 
 function Error:ParseErr(err)
     local formatted
-    local stack = debugstack(5)
-    local path  = FindPath(err)
+    local stack
 
+    local path = FindPath(err)
     if not path then
-        path = FindPath(stack)
-        if path then
-            formatted = path .. ': ' .. err
-        end
+        stack     = debugstack(4)
+        path      = FindPath(stack)
+        formatted = err
     else
-        formatted = ShortPath(err)
+        formatted = ShortPath(err):sub(#path+3)
+        stack     = debugstack(7)
     end
 
     self.index = self.index + 1
@@ -200,6 +200,13 @@ function Error:Toggle(index)
     self.selectedErr = info
     self:Refresh()
     ns.Frame:SetTab(2)
+end
+
+function Error:Clear()
+    self.index = 0
+    wipe(self.errors)
+    self:Refresh()
+    self:UpdateCount()
 end
 
 Error:OnLoad()

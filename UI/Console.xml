@@ -7,7 +7,7 @@
         </Anchors>
         <Frames>
             <Frame parentKey="Header">
-                <Size y="20" />
+                <Size y="22" />
                 <Anchors>
                     <Anchor point="TOPLEFT" />
                     <Anchor point="TOPRIGHT" />
@@ -20,6 +20,13 @@
                                 <Anchor point="TOPRIGHT" relativePoint="BOTTOMRIGHT" />
                             </Anchors>
                         </Texture>
+                    </Layer>
+                    <Layer level="ARTWORK">
+                        <FontString inherits="tdDevToolsFontImportant" text="Console">
+                            <Anchors>
+                                <Anchor point="LEFT" x="5" y="0"/>
+                            </Anchors>
+                        </FontString>
                     </Layer>
                 </Layers>
                 <Frames>
@@ -89,6 +96,17 @@
                             </StatusBar>
                         </Frames>
                     </Frame>
+                    <Button parentKey="ClearButton" inherits="tdDevToolsButtonTemplate" text="Clear">
+                        <Size x="80" y="24" />
+                        <Anchors>
+                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent.Filter" relativePoint="BOTTOMLEFT" x="1" y="-1" />
+                        </Anchors>
+                        <Scripts>
+                            <OnClick>
+                                self:GetParent():GetParent():Clear()
+                            </OnClick>
+                        </Scripts>
+                    </Button>
                 </Frames>
             </Frame>
             <ScrollingMessageFrame parentKey="MessageFrame" enableMouseWheel="true">
