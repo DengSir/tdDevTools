@@ -21,7 +21,7 @@ local function update(self)
     local itemList        = self.itemList
     local containerHeight = self:GetHeight()
     local buttonHeight    = self.buttonHeight
-    local itemCount       = #itemList
+    local itemCount       = itemList.count or #itemList
     local maxCount        = ceil(containerHeight / buttonHeight)
     local buttonCount     = min(maxCount, itemCount)
 
@@ -68,6 +68,7 @@ function ns.ListViewSetup(scrollFrame, opts)
         end
         return button
     end})
+
 
     scrollFrame.itemList       = opts.itemList
     scrollFrame.itemFormatting = opts.OnItemFormatting

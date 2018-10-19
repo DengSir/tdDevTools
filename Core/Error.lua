@@ -77,7 +77,7 @@ end
 
 function Error:OnItemFormatting(button, info)
     button.Count:SetFormattedText('(%d)', info.count)
-    button.Text:SetText(info.formatted)
+    button.Text:SetText(info.full)
     button.Selected:SetShown(self.selectedErr and info.err == self.selectedErr.err)
 end
 
@@ -131,15 +131,18 @@ end
 function Error:ParseErr(err)
     local formatted
     local stack
+    local full
 
     local path = FindPath(err)
     if not path then
         stack     = debugstack(4)
         path      = FindPath(stack)
         formatted = err
+        full      = path .. ': ' .. err
     else
         formatted = ShortPath(err):sub(#path+3)
         stack     = debugstack(7)
+        full      = err
     end
 
     self.index = self.index + 1
@@ -147,6 +150,7 @@ function Error:ParseErr(err)
     return {
         err       = err,
         formatted = formatted,
+        full      = full,
         count     = 0,
         path      = ColoredPath(path),
         stack     = stack,
