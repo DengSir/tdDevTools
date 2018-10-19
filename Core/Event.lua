@@ -7,41 +7,33 @@ local ns    = select(2, ...)
 local Event = ns.Frame.Event
 
 function Event:OnLoad()
-    self.EventList = self.EventContainer.EventList
-    self.EventList.buttonHeight = 24
-    self.EventList.buttons = setmetatable({}, {__index = function(t, i)
-        print(i)
-        local button = CreateFrame('Button', nil, self.EventList:GetScrollChild(), 'tdDevToolsEventItemTemplate')
-        if i == 1 then
-            button:SetPoint('TOPLEFT')
-        else
-            button:SetPoint('TOPLEFT', t[i-1], 'BOTTOMLEFT')
-        end
-        t[i] = button
-        return button
-    end})
-
     self.isRunning = false
-    self.events = {}
-    self.ignores = {}
+    self.events    = {}
+    self.ignores   = {}
+    self.EventList = self.EventContainer.EventList
 
-    self.EventList.update = function() return self:Refresh() end
+    ns.ListViewSetup(self.EventList, {
+        itemList         = self.events,
+        buttonTemplate   = 'tdDevToolsEventItemTemplate',
+        OnItemFormatting = function(button, item)
+            return self:OnEventItemFormatting(button, item)
+        end
+    })
 
     self.Updater = CreateFrame('Frame')
     self.Updater:Hide()
     self.Updater:SetScript('OnUpdate', function() return self:OnFrame() end)
 
-    self:OnSizeChanged()
     self:SetScript('OnShow', self.Refresh)
     self:SetScript('OnEvent', self.OnEvent)
-    self:SetScript('OnSizeChanged', self.OnSizeChanged)
 end
 
 function Event:Start()
-    self.isRunning = true
+    self.isRunning     = true
     self.ignores       = {}
     self.lastEventTime = nil
     self.lastFrames    = 0
+
     self:RegisterAllEvents()
     self.Updater:Show()
 end
@@ -59,18 +51,12 @@ end
 
 function Event:Toggle()
     if self.isRunning then
-        self.EventContainer.Header.ToggleButton:SetText('Start')
+        self.EventContainer.ToggleButton:SetText('Start')
         self:Stop()
     else
-        self.EventContainer.Header.ToggleButton:SetText('Stop')
+        self.EventContainer.ToggleButton:SetText('Stop')
         self:Start()
     end
-end
-
-function Event:OnSizeChanged()
-    self.EventList:GetScrollChild():SetSize(self:GetSize())
-    -- HybridScrollFrame_CreateButtons(self.EventList, 'tdDevToolsEventItemTemplate')
-    self:Refresh()
 end
 
 function Event:OnFrame()
@@ -105,7 +91,25 @@ function Event:OnEvent(event, ...)
     self:Refresh()
 end
 
-function Event:OnItemIgnoreClick(button)
+function Event:OnEventItemFormatting(button, info)
+    local right, left = self:GetEventText(info)
+    button.Time:SetText(info.time)
+    button.Text:SetText(info.text)
+    button.Time:SetText(left)
+    button.Text:SetText(right)
+
+    if info.event == 'ELAPSED' then
+        button.IgnoreButton:Hide()
+        button.Time:SetTextColor(GRAY_FONT_COLOR:GetRGB())
+        button.Text:SetTextColor(GRAY_FONT_COLOR:GetRGB())
+    else
+        button.IgnoreButton:Show()
+        button.Time:SetTextColor(NORMAL_FONT_COLOR:GetRGB())
+        button.Text:SetTextColor(HIGHLIGHT_FONT_COLOR:GetRGB())
+    end
+end
+
+function Event:OnEventItemIgnoreClick(button)
     local info = self.events[button:GetID()]
     if not info then
         return
@@ -144,9 +148,11 @@ function Event:OnItemIgnoreClick(button)
     self:Refresh()
 end
 
-function Event:OnItemClick(button)
+function Event:OnEventItemClick(button)
     local info = self.events[button:GetID()]
-    inspect(info.args)
+    if info.args then
+        inspect(info.args)
+    end
 end
 
 function Event:FormatTime(time)
@@ -166,66 +172,7 @@ function Event:GetEventText(info)
 end
 
 function Event:Refresh()
-    self:SetScript('OnUpdate', self.OnUpdate)
-end
-
-function Event:OnUpdate()
-    self:SetScript('OnUpdate', nil)
-    self:UpdateList()
-end
-
-function Event:UpdateList()
-    local offset = HybridScrollFrame_GetOffset(self.EventList)
-    local buttons = self.EventList.buttons
-    local events = self.events
-    local containerHeight = self.EventList:GetHeight()
-    local buttonHeight = self.EventList.buttonHeight
-    local itemCount = #self.events
-    local maxCount = ceil(containerHeight / buttonHeight)
-    local buttonCount = min(maxCount, itemCount)
-
-    print(containerHeight, buttonHeight, itemCount, maxCount, buttonCount)
-
-    -- if buttonCount <= 0 then
-    --     return
-    -- end
-
-    for i = 1, buttonCount do
-        local button = buttons[i]
-        local id     = i + offset
-        local info   = events[id]
-
-        if info then
-            local right, left = self:GetEventText(info)
-            button.owner = self
-            button:SetID(id)
-            button.Time:SetText(info.time)
-            button.Text:SetText(info.text)
-            button.Time:SetText(left)
-            button.Text:SetText(right)
-
-            if info.event == 'ELAPSED' then
-                button.IgnoreButton:Hide()
-                button.Time:SetTextColor(GRAY_FONT_COLOR:GetRGB())
-                button.Text:SetTextColor(GRAY_FONT_COLOR:GetRGB())
-            else
-                button.IgnoreButton:Show()
-                button.Time:SetTextColor(NORMAL_FONT_COLOR:GetRGB())
-                button.Text:SetTextColor(HIGHLIGHT_FONT_COLOR:GetRGB())
-            end
-
-            button:Show()
-            button:SetWidth(self.EventList:GetWidth() - 16)
-        else
-            button:Hide()
-        end
-    end
-
-    for i = buttonCount + 1, #buttons do
-        buttons[i]:Hide()
-    end
-
-    HybridScrollFrame_Update(self.EventList, itemCount * buttonHeight, containerHeight)
+    return self.EventList:Refresh(self.events)
 end
 
 Event:OnLoad()

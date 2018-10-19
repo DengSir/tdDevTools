@@ -73,8 +73,3 @@ Util.ColoredPath        = ColoredPath
 Util.GetCallColoredPath = GetCallColoredPath
 Util.Render             = Render
 Util.GetColoredTime     = GetColoredTime
-
-
-function Util.NoRender(...)
-    return ...
-end

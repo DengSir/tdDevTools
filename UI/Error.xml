@@ -15,7 +15,7 @@
                         self:GetParent():UnlockHighlight()
                     </OnLeave>
                     <OnClick>
-                        self:GetParent().owner:OnItemDeleteClick(self:GetParent())
+                        self:GetParent().scrollFrame:GetParent():OnItemDeleteClick(self:GetParent())
                     </OnClick>
                 </Scripts>
             </Button>
@@ -45,7 +45,7 @@
         </HighlightTexture>
         <Scripts>
             <OnClick>
-                self.owner:OnItemClick(self)
+                self.scrollFrame:GetParent():OnItemClick(self)
             </OnClick>
         </Scripts>
     </Button>

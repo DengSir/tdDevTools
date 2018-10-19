@@ -15,17 +15,22 @@ function Error:OnLoad()
     self.index   = 0
     self.EditBox = self.RightSide.EditBoxScroll.EditBox
     self.Tab     = ns.Frame.Tab2
-
     self.errors = {}
-    self.ErrorList.update = function() return self:Refresh() end
+
+    ns.ListViewSetup(self.ErrorList, {
+        itemList         = self.errors,
+        buttonTemplate   = 'tdDevToolsErrorItemTemplate',
+        OnItemFormatting = function(button, item)
+            return self:OnItemFormatting(button, item)
+        end
+    })
 
     local old = geterrorhandler()
     seterrorhandler(function(err) old(err) return self:AddError(err) end)
 
-    self:OnSizeChanged()
     self:SetScript('OnShow', self.Refresh)
     self:SetScript('OnEvent', self.OnEvent)
-    self:SetScript('OnSizeChanged', self.OnSizeChanged)
+
     self:RegisterEvent('ADDON_ACTION_BLOCKED')
     self:RegisterEvent('ADDON_ACTION_FORBIDDEN')
     self:RegisterEvent('MACRO_ACTION_BLOCKED')
@@ -52,12 +57,6 @@ function Error:OnEvent(event, ...)
     self[event](self, event, ...)
 end
 
-function Error:OnSizeChanged()
-    HybridScrollFrame_CreateButtons(self.ErrorList, 'tdDevToolsErrorItemTemplate')
-    self.ErrorList:GetScrollChild():SetSize(self:GetSize())
-    self:Refresh()
-end
-
 function Error:OnItemClick(button)
     local id   = button:GetID()
     local info = self.errors[id]
@@ -76,14 +75,19 @@ function Error:OnItemDeleteClick(button)
     self:UpdateCount()
 end
 
-function Error:Refresh()
-    self:SetScript('OnUpdate', self.OnUpdate)
+function Error:OnItemFormatting(button, info)
+    button.Count:SetFormattedText('(%d)', info.count)
+    button.Text:SetText(info.formatted)
+    button.Selected:SetShown(self.selectedErr and info.err == self.selectedErr.err)
 end
 
-function Error:OnUpdate()
-    self:SetScript('OnUpdate', nil)
+function Error:Refresh()
     self:UpdateList()
     self:UpdateError()
+end
+
+function Error:UpdateList()
+    self.ErrorList:Refresh()
 end
 
 local MESSAGE_FORMAT = [[
@@ -104,33 +108,6 @@ function Error:UpdateError()
         self.selectedErr.count,
         self.selectedErr.stack
     ))
-end
-
-function Error:UpdateList()
-    local offset = HybridScrollFrame_GetOffset(self.ErrorList)
-    local buttons = self.ErrorList.buttons
-    local errors = self.errors
-
-    for i = 1, #buttons do
-        local button = buttons[i]
-        local id     = i + offset
-        local info   = errors[id]
-
-        if info then
-            button.owner = self
-            button:SetID(id)
-            button.Count:SetFormattedText('(%d)', info.count)
-            button.Text:SetText(info.formatted)
-            button:Show()
-            button:SetWidth(self.ErrorList:GetWidth() - 16)
-            button.Selected:SetShown(self.selectedErr and info.err == self.selectedErr.err)
-        else
-            button:Hide()
-        end
-    end
-
-    local totalHeight = #errors * 24
-    HybridScrollFrame_Update(self.ErrorList, totalHeight, self.ErrorList:GetHeight())
 end
 
 function Error:UpdateCount()

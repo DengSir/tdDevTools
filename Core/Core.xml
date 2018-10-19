@@ -3,6 +3,7 @@
     <Script file="TypeRender.lua" />
     <Script file="Util.lua" />
     <Script file="Thread.lua" />
+    <Script file="ListView.lua" />
     <Script file="Frame.lua" />
     <Script file="Console.lua" />
     <Script file="API.lua" />

@@ -15,7 +15,7 @@
                         self:GetParent():UnlockHighlight()
                     </OnLeave>
                     <OnClick>
-                        self:GetParent().owner:OnItemIgnoreClick(self:GetParent())
+                        self:GetParent().scrollFrame:GetParent():GetParent():OnEventItemIgnoreClick(self:GetParent())
                     </OnClick>
                 </Scripts>
             </Button>
@@ -46,7 +46,7 @@
         </HighlightTexture>
         <Scripts>
             <OnClick>
-                self.owner:OnItemClick(self)
+                self.scrollFrame:GetParent():GetParent():OnEventItemClick(self)
             </OnClick>
         </Scripts>
     </Button>
@@ -87,30 +87,6 @@
                                 </FontString>
                             </Layer>
                         </Layers>
-                        <Frames>
-                            <Button parentKey="ClearButton" inherits="tdDevToolsButtonTemplate" text="Clear">
-                                <Size x="80" y="24" />
-                                <Anchors>
-                                    <Anchor point="BOTTOMRIGHT" x="0" y="-1" />
-                                </Anchors>
-                                <Scripts>
-                                    <OnClick>
-                                        self:GetParent():GetParent():GetParent():Clear()
-                                    </OnClick>
-                                </Scripts>
-                            </Button>
-                            <Button parentKey="ToggleButton" inherits="tdDevToolsButtonTemplate" text="Start">
-                                <Size x="80" y="24" />
-                                <Anchors>
-                                    <Anchor point="RIGHT" relativeKey="$parent.ClearButton" relativePoint="LEFT" x="1" y="0" />
-                                </Anchors>
-                                <Scripts>
-                                    <OnClick>
-                                        self:GetParent():GetParent():GetParent():Toggle()
-                                    </OnClick>
-                                </Scripts>
-                            </Button>
-                        </Frames>
                     </Frame>
                     <ScrollFrame parentKey="EventList" inherits="tdDevToolsHybridScrollFrameTemplate">
                         <Anchors>
@@ -123,6 +99,28 @@
                             </Layer>
                         </Layers>
                     </ScrollFrame>
+                    <Button parentKey="ClearButton" inherits="tdDevToolsButtonTemplate" text="Clear">
+                        <Size x="80" y="24" />
+                        <Anchors>
+                            <Anchor point="TOPRIGHT" x="0" y="1" />
+                        </Anchors>
+                        <Scripts>
+                            <OnClick>
+                                self:GetParent():GetParent():Clear()
+                            </OnClick>
+                        </Scripts>
+                    </Button>
+                    <Button parentKey="ToggleButton" inherits="tdDevToolsButtonTemplate" text="Start">
+                        <Size x="80" y="24" />
+                        <Anchors>
+                            <Anchor point="RIGHT" relativeKey="$parent.ClearButton" relativePoint="LEFT" x="1" y="0" />
+                        </Anchors>
+                        <Scripts>
+                            <OnClick>
+                                self:GetParent():GetParent():Toggle()
+                            </OnClick>
+                        </Scripts>
+                    </Button>
                 </Frames>
             </Frame>
         </Frames>
