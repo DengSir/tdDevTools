@@ -7,6 +7,18 @@ local function Tests(args)
     LibStub('AceLocale-3.0'):NewLocale('Tests', 'enUS')
     LibStub('AceLocale-3.0'):NewLocale('Tests', 'zhCN', nil, true)
 
+    local Logger = LibStub('LibLog-1.0'):GetLogger()
+    Logger:Debug('hello', 'world')
+    Logger:Info('hello', 'world')
+    Logger:Warn('hello', 'world')
+    Logger:Error('hello', 'world')
+
+    local TestAddon = LibStub('LibLog-1.0'):Embed({})
+    TestAddon:LogDebug('Hello World')
+    TestAddon:LogInfo('Hello World')
+    TestAddon:LogWarn('Hello World')
+    TestAddon:LogError('Hello World')
+
     print('number', 1, -5, 3.14)
     print('string', 'hello', 'world')
     print('boolean', true, false)
