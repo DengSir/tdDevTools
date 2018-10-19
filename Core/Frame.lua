@@ -27,10 +27,20 @@ function Frame:DISPLAY_SIZE_CHANGED()
 end
 
 function Frame:SetTab(id)
+    self.selectedTab = id
+
     for i = 1, self.numTabs do
         self.tabFrames[i]:SetShown(i == id)
         self.tabs[i]:SetEnabled(i ~= id)
         self.tabs[i]:SetHeight(i == id and 25 or 22)
+    end
+end
+
+function Frame:Toggle(tab)
+    if tab and self.selectedTab ~= tab then
+        self:SetTab(tab)
+    else
+        self:SetShown(not self:IsShown())
     end
 end
 

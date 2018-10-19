@@ -19,12 +19,13 @@ function Error:OnLoad()
     self.errors = {}
     self.ErrorList.update = function() return self:Refresh() end
 
-    seterrorhandler(function(err) return self:AddError(err) end)
+    local old = geterrorhandler()
+    seterrorhandler(function(err) old(err) return self:AddError(err) end)
 
     self:OnSizeChanged()
     self:SetScript('OnShow', self.Refresh)
-    self:SetScript('OnSizeChanged', self.OnSizeChanged)
     self:SetScript('OnEvent', self.OnEvent)
+    self:SetScript('OnSizeChanged', self.OnSizeChanged)
     self:RegisterEvent('ADDON_ACTION_BLOCKED')
     self:RegisterEvent('ADDON_ACTION_FORBIDDEN')
     self:RegisterEvent('MACRO_ACTION_BLOCKED')
@@ -147,7 +148,7 @@ function Error:AddError(err)
     self:Refresh()
     self:UpdateCount()
 
-    Console:Log('ERROR', info.path, format('|Herror:%d|h%s|h ', info.index, info.formatted))
+    Console:RawLog('ERROR', info.path, format('|Herror:%d|h%s|h ', info.index, info.formatted))
 end
 
 function Error:ParseErr(err)
@@ -192,18 +193,16 @@ function Error:FindErr(index)
     end
 end
 
-function Error:Toggle(index)
+function Error:SelectErr(index)
     local info = self:FindErr(index)
     if not info then
         return
     end
     self.selectedErr = info
     self:Refresh()
-    ns.Frame:SetTab(2)
 end
 
 function Error:Clear()
-    self.index = 0
     wipe(self.errors)
     self:Refresh()
     self:UpdateCount()

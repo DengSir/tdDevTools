@@ -22,7 +22,7 @@
         </Frames>
         <Layers>
             <Layer level="BACKGROUND">
-                <Texture parentKey="Selected">
+                <Texture parentKey="Selected" hidden="true">
                     <Color r="1" g="1" b="1" a="0.2" />
                 </Texture>
             </Layer>

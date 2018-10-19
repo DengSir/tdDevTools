@@ -8,8 +8,9 @@ local TypeRender = ns.TypeRender
 local Console    = ns.Frame.Console
 local Thread     = ns.Thread
 
-local GetColoredTime = ns.Util.GetColoredTime
-local Render         = ns.Util.Render
+local GetColoredTime     = ns.Util.GetColoredTime
+local GetCallColoredPath = ns.Util.GetCallColoredPath
+local Render             = ns.Util.Render
 
 function Console:OnLoad()
     self.filterText = ''
@@ -129,8 +130,12 @@ local levelColors = {
     ERROR = {  1,  0,  0 },
 }
 
-function Console:Log(level, path, text)
+function Console:RawLog(level, path, text)
     return self:AddMessage(format('%s %s %s|cffffffff:|r %s', level, GetColoredTime(), path, text), unpack(assert(levelColors[level])))
+end
+
+function Console:Log(level, depth, ...)
+    return self:RawLog(level, GetCallColoredPath(depth+1), Render(...))
 end
 
 function Console:MatchLog(text)

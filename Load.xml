@@ -1,17 +1,7 @@
 <Ui xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\FrameXML\UI.xsd">
-    <Script file="Libs\LibStub\LibStub.lua" />
-    <Script file="Libs\LibLog\LibLog-1.0.lua" />
-    <Include file="UI\Template.xml" />
-    <Include file="UI\Frame.xml" />
-    <Include file="UI\Console.xml" />
-    <Include file="UI\Error.xml" />
-    <Script file="Core\TypeRender.lua" />
-    <Script file="Core\Util.lua" />
-    <Script file="Core\Thread.lua" />
-    <Script file="Core\Frame.lua" />
-    <Script file="Core\Console.lua" />
-    <Script file="Core\API.lua" />
-    <Script file="Core\Error.lua" />
+    <Include file="Libs\Embeds.xml" />
+    <Include file="UI\UI.xml" />
+    <Include file="Core\Core.xml" />
     <Script file="Tests.lua" />
 </Ui>
