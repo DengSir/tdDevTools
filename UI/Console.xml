@@ -30,11 +30,21 @@
                     </Layer>
                 </Layers>
                 <Frames>
-                    <Frame parentKey="Filter">
-                        <Size x="400" />
+                    <Button parentKey="ClearButton" inherits="tdDevToolsButtonTemplate" text="Clear">
+                        <Size x="80" y="24" />
                         <Anchors>
-                            <Anchor point="TOPRIGHT" />
-                            <Anchor point="BOTTOMRIGHT" />
+                            <Anchor point="TOPRIGHT" x="0" y="1" />
+                        </Anchors>
+                        <Scripts>
+                            <OnClick>
+                                self:GetParent():GetParent():Clear()
+                            </OnClick>
+                        </Scripts>
+                    </Button>
+                    <Frame parentKey="Filter">
+                        <Size x="400" y="24" />
+                        <Anchors>
+                            <Anchor point="RIGHT" relativeKey="$parent.ClearButton" relativePoint="LEFT" />
                         </Anchors>
                         <Layers>
                             <Layer level="BORDER">
@@ -96,17 +106,6 @@
                             </StatusBar>
                         </Frames>
                     </Frame>
-                    <Button parentKey="ClearButton" inherits="tdDevToolsButtonTemplate" text="Clear">
-                        <Size x="80" y="24" />
-                        <Anchors>
-                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent.Filter" relativePoint="BOTTOMLEFT" x="1" y="-1" />
-                        </Anchors>
-                        <Scripts>
-                            <OnClick>
-                                self:GetParent():GetParent():Clear()
-                            </OnClick>
-                        </Scripts>
-                    </Button>
                 </Frames>
             </Frame>
             <ScrollingMessageFrame parentKey="MessageFrame" enableMouseWheel="true">

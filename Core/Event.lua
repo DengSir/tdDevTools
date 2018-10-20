@@ -7,17 +7,45 @@ local ns    = select(2, ...)
 local Event = ns.Frame.Event
 
 function Event:OnLoad()
-    self.isRunning = false
-    self.events    = {}
-    self.ignores   = {}
-    self.EventList = self.EventContainer.EventList
+    self.isRunning     = false
+    self.timelines     = {}
+    self.ignores       = {}
 
-    ns.ListViewSetup(self.EventList, {
-        itemList         = self.events,
-        buttonTemplate   = 'tdDevToolsEventItemTemplate',
+    self.eventsHash = {}
+    self.eventsTree = {}
+
+    self.TimelineList  = self.Timeline.ScrollFrame
+    self.ArgumentsList = self.Arguments.ScrollFrame
+    self.EventsList    = self.Events.ScrollFrame
+
+    ns.ListViewSetup(self.TimelineList, {
+        itemList         = self.timelines,
+        buttonTemplate   = 'tdDevToolsTimelineItemTemplate',
         OnItemFormatting = function(button, item)
-            return self:OnEventItemFormatting(button, item)
+            return self:OnTimelineItemFormatting(button, item)
         end
+    })
+
+    ns.ListViewSetup(self.ArgumentsList, {
+        itemList = {},
+        buttonTemplate = 'tdDevToolsArgumentItemTemplate',
+        OnItemFormatting = function(button, item)
+            return self:OnArgumentItemFormatting(button, item)
+        end
+    })
+
+    ns.TreeViewSetup(self.EventsList, {
+        depth            = 2,
+        itemTree         = self.eventsTree,
+        buttonTemplate   = 'tdDevToolsEventsItemTemplate',
+        OnItemFormatting = {
+            function(button, item)
+                return self:OnEventsItemFormatting1(button, item)
+            end,
+            function(button, item)
+                return self:OnEventsItemFormatting2(button, item)
+            end
+        }
     })
 
     self.Updater = CreateFrame('Frame')
@@ -26,6 +54,13 @@ function Event:OnLoad()
 
     self:SetScript('OnShow', self.Refresh)
     self:SetScript('OnEvent', self.OnEvent)
+    self:SetScript('OnSizeChanged', self.OnSizeChanged)
+end
+
+function Event:OnSizeChanged()
+    local width = self:GetWidth() / 3
+    self.Events:SetWidth(width)
+    self.Timeline:SetWidth(width)
 end
 
 function Event:Start()
@@ -45,16 +80,17 @@ function Event:Stop()
 end
 
 function Event:Clear()
-    wipe(self.events)
+    wipe(self.timelines)
+    wipe(self.eventsTree)
     self:Refresh()
 end
 
 function Event:Toggle()
     if self.isRunning then
-        self.EventContainer.ToggleButton:SetText('Start')
+        self.Timeline.ToggleButton:SetText('Start')
         self:Stop()
     else
-        self.EventContainer.ToggleButton:SetText('Stop')
+        self.Timeline.ToggleButton:SetText('Stop')
         self:Start()
     end
 end
@@ -68,30 +104,47 @@ function Event:OnEvent(event, ...)
         return
     end
 
-    local currentTime = GetTime()
-    local events = self.events
+    local currentTime = self:GetTime()
+    local timelines   = self.timelines
+    local eventsHash  = self.eventsHash
+    local eventsTree  = self.eventsTree
 
     if self.lastEventTime and currentTime ~= self.lastEventTime then
-        events[#events+1] = {
+        timelines[#timelines+1] = {
             event  = 'ELAPSED',
             frames = self.lastFrames,
             long   = currentTime - self.lastEventTime,
         }
     end
 
-    events[#events+1] = {
+    local info = {
         event     = event,
         time      = currentTime,
-        args      = {...},
+        args      = {count = select('#', ...), ...},
         argsCount = select('#', ...)
     }
+
+    timelines[#timelines+1] = info
+
+    if not eventsHash[event] then
+        local treeInfo = {
+            event = event,
+            count = 1,
+        }
+        eventsHash[event] = treeInfo
+        table.insert(eventsTree, treeInfo)
+        table.sort(eventsTree, function(lhs, rhs)
+            return lhs.event < rhs.event
+        end)
+    end
+    table.insert(eventsHash[event], info)
 
     self.lastEventTime = currentTime
     self.lastFrames = 0
     self:Refresh()
 end
 
-function Event:OnEventItemFormatting(button, info)
+function Event:OnTimelineItemFormatting(button, info)
     local right, left = self:GetEventText(info)
     button.Time:SetText(info.time)
     button.Text:SetText(info.text)
@@ -109,17 +162,18 @@ function Event:OnEventItemFormatting(button, info)
     end
 end
 
-function Event:OnEventItemIgnoreClick(button)
-    local info = self.events[button:GetID()]
-    if not info then
-        return
-    end
-
-    local event  = info.event
-    local events = {}
+function Event:OnTimelineItemIgnoreClick(button)
+    local info      = button.item
+    local event     = info.event
+    local timelines = {}
     local lastElapsed
 
-    for i, info in ipairs(self.events) do
+    local events = self.eventsHash[event]
+
+    tDeleteItem(self.eventsTree, events)
+    self.eventsHash[event] = nil
+
+    for i, info in ipairs(self.timelines) do
         if info.event == 'ELAPSED' then
             if lastElapsed then
                 lastElapsed.frames = lastElapsed.frames + info.frames
@@ -130,37 +184,82 @@ function Event:OnEventItemIgnoreClick(button)
         else
             if info.event ~= event then
                 if lastElapsed then
-                    events[#events+1] = lastElapsed
+                    timelines[#timelines+1] = lastElapsed
                     lastElapsed = nil
                 end
 
-                events[#events+1] = info
+                timelines[#timelines+1] = info
             end
         end
     end
 
     if lastElapsed then
-        events[#events+1] = lastElapsed
+        timelines[#timelines+1] = lastElapsed
     end
 
     self.ignores[event] = true
-    self.events = events
+    self.timelines = timelines
     self:Refresh()
 end
 
-function Event:OnEventItemClick(button)
-    local info = self.events[button:GetID()]
-    if info.args then
-        inspect(info.args)
+function Event:OnTimelineItemClick(button)
+    if button.item.args then
+        self.ArgumentsList:SetItemList(button.item.args)
     end
+end
+
+local Render = ns.Util.Render
+
+function Event:OnArgumentItemFormatting(button, item)
+    button.Text:SetText(Render(item))
+    button.Index:SetText(format('[%d] =', button:GetID()))
+end
+
+function Event:OnArgumentItemClick(button)
+    if type(button.item) == 'table' then
+        inspect(button.item)
+    end
+end
+
+function Event:OnEventsItemFormatting1(button, item)
+    local expend = self.EventsList:IsItemExpend(item)
+    button.Text:SetText(item.event)
+    button.Count:SetText(#item)
+    button.Count:SetFontObject('tdDevToolsFontImportant')
+    button.Expend:SetShown(not expend)
+    button.Fold:SetShown(expend)
+    button.depth = 1
+end
+
+function Event:OnEventsItemFormatting2(button, item)
+    button.Text:SetText('')
+    button.Count:SetText(self:FormatFullTime(item.time))
+    button.Count:SetFontObject('tdDevToolsFontDisabled')
+    button.Expend:Hide()
+    button.Fold:Hide()
+    button.depth = 2
+end
+
+function Event:OnEventsItemClick(button)
+    if button.depth == 1 then
+        self.EventsList:ToggleItem(button.item)
+    elseif button.depth == 2 then
+        self.ArgumentsList:SetItemList(button.item.args)
+    end
+end
+
+function Event:GetTime()
+    return GetTime() % 1 + time()
 end
 
 function Event:FormatTime(time)
     local mseconds = time * 1000 % 1000
-    local seconds  = floor(time % 60)
-    local minutes  = floor(time / 60 % 60)
-    local hours    = floor(time / 3600)
-    return format('%d:%02d:%02d.%03d', hours, minutes, seconds, mseconds)
+    return format('%s.%03d', date('%H:%M:%S', time), mseconds)
+end
+
+function Event:FormatFullTime(time)
+    local mseconds = time * 1000 % 1000
+    return format('%s.%03d', date('%Y/%m/%d %H:%M:%S', time), mseconds)
 end
 
 function Event:GetEventText(info)
@@ -172,7 +271,8 @@ function Event:GetEventText(info)
 end
 
 function Event:Refresh()
-    return self.EventList:Refresh(self.events)
+    self.TimelineList:SetItemList(self.timelines)
+    self.EventsList:Refresh()
 end
 
 Event:OnLoad()

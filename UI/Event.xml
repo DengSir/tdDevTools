@@ -1,6 +1,6 @@
 <Ui xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\FrameXML\UI.xsd">
-    <Button name="tdDevToolsEventItemTemplate" virtual="true">
+    <Button name="tdDevToolsTimelineItemTemplate" virtual="true">
         <Size x="80" y="24" />
         <Frames>
             <Button parentKey="IgnoreButton" inherits="tdDevToolsClearButtonTemplate">
@@ -15,7 +15,7 @@
                         self:GetParent():UnlockHighlight()
                     </OnLeave>
                     <OnClick>
-                        self:GetParent().scrollFrame:GetParent():GetParent():OnEventItemIgnoreClick(self:GetParent())
+                        self:GetParent().scrollFrame:GetParent():GetParent():OnTimelineItemIgnoreClick(self:GetParent())
                     </OnClick>
                 </Scripts>
             </Button>
@@ -46,7 +46,114 @@
         </HighlightTexture>
         <Scripts>
             <OnClick>
-                self.scrollFrame:GetParent():GetParent():OnEventItemClick(self)
+                self.scrollFrame:GetParent():GetParent():OnTimelineItemClick(self)
+            </OnClick>
+        </Scripts>
+    </Button>
+
+    <Button name="tdDevToolsEventsItemTemplate" virtual="true">
+        <Size x="80" y="24" />
+        <Frames>
+            <Frame parentKey="Expend" hidden="true" enableMouse="false">
+                <Size x="16" y="16" />
+                <Anchors>
+                    <Anchor point="RIGHT" x="-5" y="0" />
+                </Anchors>
+                <Layers>
+                    <Layer level="ARTWORK">
+                        <Line thickness="1">
+                            <StartAnchor relativePoint="TOPLEFT" x="3" y="-5" />
+                            <EndAnchor relativePoint="CENTER" x="0" y="-2" />
+                            <Color r="0.8" g="0.8" b="0.8" />
+                        </Line>
+                        <Line thickness="1">
+                            <StartAnchor relativePoint="TOPRIGHT" x="-3" y="-5" />
+                            <EndAnchor relativePoint="CENTER" x="0" y="-2" />
+                            <Color r="0.8" g="0.8" b="0.8" />
+                        </Line>
+                    </Layer>
+                </Layers>
+            </Frame>
+            <Frame parentKey="Fold" hidden="true" enableMouse="false">
+                <Size x="16" y="16" />
+                <Anchors>
+                    <Anchor point="RIGHT" x="-5" y="0" />
+                </Anchors>
+                <Layers>
+                    <Layer level="ARTWORK">
+                        <Line thickness="1">
+                            <StartAnchor relativePoint="BOTTOMLEFT" x="3" y="5" />
+                            <EndAnchor relativePoint="CENTER" x="0" y="2" />
+                            <Color r="0.8" g="0.8" b="0.8" />
+                        </Line>
+                        <Line thickness="1">
+                            <StartAnchor relativePoint="BOTTOMRIGHT" x="-3" y="5" />
+                            <EndAnchor relativePoint="CENTER" x="0" y="2" />
+                            <Color r="0.8" g="0.8" b="0.8" />
+                        </Line>
+                    </Layer>
+                </Layers>
+            </Frame>
+        </Frames>
+        <Layers>
+            <Layer level="BACKGROUND">
+                <Texture parentKey="Selected" hidden="true">
+                    <Color r="1" g="1" b="1" a="0.2" />
+                </Texture>
+            </Layer>
+            <Layer level="ARTWORK">
+                <FontString parentKey="Count" inherits="tdDevToolsFontImportant" justifyH="RIGHT" wordWrap="false">
+                    <Anchors>
+                        <Anchor point="RIGHT" relativeKey="$parent.Expend" relativePoint="LEFT" x="-5" y="0" />
+                    </Anchors>
+                </FontString>
+                <FontString parentKey="Text" inherits="tdDevToolsFontHighlight" justifyH="LEFT" wordWrap="false">
+                    <Anchors>
+                        <Anchor point="LEFT" x="5" y="0" />
+                        <Anchor point="RIGHT" relativeKey="$parent.Count" relativePoint="LEFT" x="-5" y="0" />
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+        <HighlightTexture>
+            <Color r="1" g="1" b="1" a="0.2" />
+        </HighlightTexture>
+        <Scripts>
+            <OnClick>
+                self.scrollFrame:GetParent():GetParent():OnEventsItemClick(self)
+            </OnClick>
+        </Scripts>
+    </Button>
+
+    <Button name="tdDevToolsArgumentItemTemplate" virtual="true">
+        <Size x="80" y="24" />
+        <Layers>
+            <Layer level="BACKGROUND">
+                <Texture parentKey="Selected" hidden="true">
+                    <Color r="1" g="1" b="1" a="0.2" />
+                </Texture>
+            </Layer>
+            <Layer level="ARTWORK">
+                <FontString parentKey="Index" inherits="tdDevToolsFontHighlight" justifyH="LEFT" wordWrap="false">
+                    <Size x="60" />
+                    <Anchors>
+                        <Anchor point="LEFT" x="5" y="0" />
+                    </Anchors>
+                </FontString>
+                <FontString parentKey="Text" inherits="tdDevToolsFontImportant" justifyH="LEFT" wordWrap="false">
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.Index" relativePoint="RIGHT" x="5" y="0" />
+                        <Anchor point="RIGHT" x="-5" y="0" />
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+        <HighlightTexture>
+            <Color r="1" g="1" b="1" a="0.2" />
+        </HighlightTexture>
+        <Scripts>
+            <OnClick>
+                self.scrollFrame:GetParent():GetParent():OnArgumentItemClick(self)
             </OnClick>
         </Scripts>
     </Button>
@@ -57,7 +164,7 @@
             <Anchor point="BOTTOMRIGHT" relativeKey="$parent.Inset" relativePoint="BOTTOMRIGHT" />
         </Anchors>
         <Frames>
-            <Frame parentKey="EventContainer">
+            <Frame parentKey="Events">
                 <Size x="500" />
                 <Anchors>
                     <Anchor point="TOPLEFT" />
@@ -88,16 +195,50 @@
                             </Layer>
                         </Layers>
                     </Frame>
-                    <ScrollFrame parentKey="EventList" inherits="tdDevToolsHybridScrollFrameTemplate">
+                    <ScrollFrame parentKey="ScrollFrame" inherits="tdDevToolsHybridScrollFrameTemplate">
                         <Anchors>
                             <Anchor point="TOPLEFT" relativeKey="$parent.Header" relativePoint="BOTTOMLEFT" />
                             <Anchor point="BOTTOMRIGHT" />
                         </Anchors>
+                    </ScrollFrame>
+                </Frames>
+            </Frame>
+            <Frame parentKey="Timeline">
+                <Size x="500" />
+                <Anchors>
+                    <Anchor point="TOPRIGHT" />
+                    <Anchor point="BOTTOMRIGHT" />
+                </Anchors>
+                <Frames>
+                    <Frame parentKey="Header">
+                        <Size y="22" />
+                        <Anchors>
+                            <Anchor point="TOPLEFT" />
+                            <Anchor point="TOPRIGHT" />
+                        </Anchors>
                         <Layers>
                             <Layer level="BORDER">
-                                <Texture inherits="tdDevToolsLineRightTemplate" />
+                                <Texture inherits="_tdDevToolsLineTemplate">
+                                    <Anchors>
+                                        <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" />
+                                        <Anchor point="TOPRIGHT" relativePoint="BOTTOMRIGHT" />
+                                    </Anchors>
+                                </Texture>
+                            </Layer>
+                            <Layer level="ARTWORK">
+                                <FontString inherits="tdDevToolsFontImportant" text="Time line">
+                                    <Anchors>
+                                        <Anchor point="LEFT" x="5" y="0"/>
+                                    </Anchors>
+                                </FontString>
                             </Layer>
                         </Layers>
+                    </Frame>
+                    <ScrollFrame parentKey="ScrollFrame" inherits="tdDevToolsHybridScrollFrameTemplate">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.Header" relativePoint="BOTTOMLEFT" />
+                            <Anchor point="BOTTOMRIGHT" />
+                        </Anchors>
                     </ScrollFrame>
                     <Button parentKey="ClearButton" inherits="tdDevToolsButtonTemplate" text="Clear">
                         <Size x="80" y="24" />
@@ -121,6 +262,44 @@
                             </OnClick>
                         </Scripts>
                     </Button>
+                </Frames>
+            </Frame>
+            <Frame parentKey="Arguments">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.Events" relativePoint="TOPRIGHT" />
+                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent.Timeline" relativePoint="BOTTOMLEFT" />
+                </Anchors>
+                <Frames>
+                    <Frame parentKey="Header">
+                        <Size y="22" />
+                        <Anchors>
+                            <Anchor point="TOPLEFT" />
+                            <Anchor point="TOPRIGHT" />
+                        </Anchors>
+                        <Layers>
+                            <Layer level="BORDER">
+                                <Texture inherits="_tdDevToolsLineTemplate">
+                                    <Anchors>
+                                        <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" />
+                                        <Anchor point="TOPRIGHT" relativePoint="BOTTOMRIGHT" />
+                                    </Anchors>
+                                </Texture>
+                            </Layer>
+                            <Layer level="ARTWORK">
+                                <FontString inherits="tdDevToolsFontImportant" text="Arguments">
+                                    <Anchors>
+                                        <Anchor point="LEFT" x="5" y="0"/>
+                                    </Anchors>
+                                </FontString>
+                            </Layer>
+                        </Layers>
+                    </Frame>
+                    <ScrollFrame parentKey="ScrollFrame" inherits="tdDevToolsHybridScrollFrameTemplate">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.Header" relativePoint="BOTTOMLEFT" />
+                            <Anchor point="BOTTOMRIGHT" />
+                        </Anchors>
+                    </ScrollFrame>
                 </Frames>
             </Frame>
         </Frames>
