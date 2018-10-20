@@ -5,22 +5,12 @@
 
 local ns = select(2, ...)
 
-local function OnUpdate(self)
-    self:SetScript('OnUpdate', nil)
-    self:update()
-end
-
-local function OnSizeChanged(self, width, height)
-    self:GetScrollChild():SetSize(width - 16, height)
-    self:Refresh()
-end
-
 local function update(self)
     local offset          = HybridScrollFrame_GetOffset(self)
     local buttons         = self.buttons
     local itemList        = self.itemList
     local containerHeight = self:GetHeight()
-    local buttonHeight    = self.buttonHeight
+    local buttonHeight    = self.buttonHeight or buttons[1]:GetHeight()
     local itemCount       = itemList.count or #itemList
     local maxCount        = ceil(containerHeight / buttonHeight)
     local buttonCount     = min(maxCount, itemCount)
@@ -28,15 +18,15 @@ local function update(self)
     for i = 1, buttonCount do
         local index  = i + offset
         local button = buttons[i]
-        local item   = itemList[index]
-
-        if item then
+        if index > itemCount then
+            button:Hide()
+        else
+            local item   = itemList[index]
+            button.item = item
             button.scrollFrame = self
             button:SetID(index)
             button:Show()
-            self.itemFormatting(button, item)
-        else
-            button:Hide()
+            self.OnItemFormatting(button, item)
         end
     end
 
@@ -46,35 +36,16 @@ local function update(self)
     HybridScrollFrame_Update(self, itemCount * buttonHeight, containerHeight)
 end
 
-local function Refresh(self, itemList)
-    if itemList then
-        self.itemList = itemList
-    end
-    return self:SetScript('OnUpdate', OnUpdate)
+local function SetItemList(self, itemList)
+    self.itemList = itemList
+    self:Refresh()
 end
 
 function ns.ListViewSetup(scrollFrame, opts)
-    local buttonTemplate = opts.buttonTemplate
-
-    scrollFrame.buttons = setmetatable({}, {__index = function(t, i)
-        local button = CreateFrame('Button', nil, scrollFrame:GetScrollChild(), buttonTemplate)
-        t[i] = button
-        if i == 1 then
-            button:SetPoint('TOPLEFT')
-            button:SetPoint('TOPRIGHT')
-        else
-            button:SetPoint('TOPLEFT', t[i - 1], 'BOTTOMLEFT')
-            button:SetPoint('TOPRIGHT', t[i - 1], 'BOTTOMRIGHT')
-        end
-        return button
-    end})
-
-
-    scrollFrame.itemList       = opts.itemList
-    scrollFrame.itemFormatting = opts.OnItemFormatting
-    scrollFrame.buttonHeight   = scrollFrame.buttons[1]:GetHeight()
-    scrollFrame:SetScript('OnSizeChanged', OnSizeChanged)
-
     scrollFrame.update      = update
-    scrollFrame.Refresh     = Refresh
+    scrollFrame.SetItemList = SetItemList
+
+    scrollFrame.itemList         = opts.itemList
+    scrollFrame.OnItemFormatting = opts.OnItemFormatting
+    return ns.ScrollFrameSetup(scrollFrame, opts)
 end
