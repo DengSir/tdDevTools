@@ -4,8 +4,8 @@
 -- @Date   : 10/17/2018, 11:06:29 AM
 
 local function Tests(args)
-    LibStub('AceLocale-3.0'):NewLocale('Tests', 'enUS')
-    LibStub('AceLocale-3.0'):NewLocale('Tests', 'zhCN', nil, true)
+    -- LibStub('AceLocale-3.0'):NewLocale('Tests', 'enUS')
+    -- LibStub('AceLocale-3.0'):NewLocale('Tests', 'zhCN', nil, true)
 
     local Logger = LibStub('LibLog-1.0'):GetLogger()
     Logger:Debug('hello', 'world')

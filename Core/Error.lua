@@ -141,7 +141,7 @@ function Error:ParseErr(err)
         full      = path .. ': ' .. err
     else
         formatted = ShortPath(err):sub(#path+3)
-        stack     = debugstack(7)
+        stack     = debugstack(5)
         full      = err
     end
 

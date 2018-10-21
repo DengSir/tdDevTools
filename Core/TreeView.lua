@@ -110,26 +110,3 @@ function ns.TreeViewSetup(scrollFrame, opts)
 
     return ns.ScrollFrameSetup(scrollFrame, opts)
 end
-
-local itemTree = {
-    {
-        {
-            {
-                1, 2, 3, 4
-            }
-        }
-    },
-    {
-    }
-}
-
-s = TreeStatus:New(itemTree, 5)
-s.extends[itemTree[1]] = true
-s.extends[itemTree[1][1]] = true
-s.extends[itemTree[1][1][1]] = true
-
-print(s:GetCount())
-
-for d, i in s:Iterate(2) do
-    print(d, i)
-end

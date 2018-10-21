@@ -27,8 +27,8 @@ function Event:OnLoad()
     })
 
     ns.ListViewSetup(self.ArgumentsList, {
-        itemList = {},
-        buttonTemplate = 'tdDevToolsArgumentItemTemplate',
+        itemList         = {},
+        buttonTemplate   = 'tdDevToolsArgumentItemTemplate',
         OnItemFormatting = function(button, item)
             return self:OnArgumentItemFormatting(button, item)
         end
@@ -82,6 +82,8 @@ end
 function Event:Clear()
     wipe(self.timelines)
     wipe(self.eventsTree)
+    wipe(self.eventsHash)
+    self.args = {}
     self:Refresh()
 end
 
@@ -117,14 +119,14 @@ function Event:OnEvent(event, ...)
         }
     end
 
-    local info = {
+    local item = {
         event     = event,
         time      = currentTime,
         args      = {count = select('#', ...), ...},
         argsCount = select('#', ...)
     }
 
-    timelines[#timelines+1] = info
+    timelines[#timelines+1] = item
 
     if not eventsHash[event] then
         local treeInfo = {
@@ -137,21 +139,22 @@ function Event:OnEvent(event, ...)
             return lhs.event < rhs.event
         end)
     end
-    table.insert(eventsHash[event], info)
+    table.insert(eventsHash[event], item)
 
     self.lastEventTime = currentTime
     self.lastFrames = 0
     self:Refresh()
 end
 
-function Event:OnTimelineItemFormatting(button, info)
-    local right, left = self:GetEventText(info)
-    button.Time:SetText(info.time)
-    button.Text:SetText(info.text)
+function Event:OnTimelineItemFormatting(button, item)
+    local right, left = self:GetEventText(item)
+    button.Time:SetText(item.time)
+    button.Text:SetText(item.text)
     button.Time:SetText(left)
     button.Text:SetText(right)
+    button.Selected:SetShown(item.args and item.args == self.args)
 
-    if info.event == 'ELAPSED' then
+    if item.event == 'ELAPSED' then
         button.IgnoreButton:Hide()
         button.Time:SetTextColor(GRAY_FONT_COLOR:GetRGB())
         button.Text:SetTextColor(GRAY_FONT_COLOR:GetRGB())
@@ -163,8 +166,8 @@ function Event:OnTimelineItemFormatting(button, info)
 end
 
 function Event:OnTimelineItemIgnoreClick(button)
-    local info      = button.item
-    local event     = info.event
+    local item      = button.item
+    local event     = item.event
     local timelines = {}
     local lastElapsed
 
@@ -173,22 +176,22 @@ function Event:OnTimelineItemIgnoreClick(button)
     tDeleteItem(self.eventsTree, events)
     self.eventsHash[event] = nil
 
-    for i, info in ipairs(self.timelines) do
-        if info.event == 'ELAPSED' then
+    for i, item in ipairs(self.timelines) do
+        if item.event == 'ELAPSED' then
             if lastElapsed then
-                lastElapsed.frames = lastElapsed.frames + info.frames
-                lastElapsed.long   = lastElapsed.long + info.long
+                lastElapsed.frames = lastElapsed.frames + item.frames
+                lastElapsed.long   = lastElapsed.long + item.long
             else
-                lastElapsed = info
+                lastElapsed = item
             end
         else
-            if info.event ~= event then
+            if item.event ~= event then
                 if lastElapsed then
                     timelines[#timelines+1] = lastElapsed
                     lastElapsed = nil
                 end
 
-                timelines[#timelines+1] = info
+                timelines[#timelines+1] = item
             end
         end
     end
@@ -204,7 +207,8 @@ end
 
 function Event:OnTimelineItemClick(button)
     if button.item.args then
-        self.ArgumentsList:SetItemList(button.item.args)
+        self.args = button.item.args
+        self:Refresh()
     end
 end
 
@@ -228,6 +232,7 @@ function Event:OnEventsItemFormatting1(button, item)
     button.Count:SetFontObject('tdDevToolsFontImportant')
     button.Expend:SetShown(not expend)
     button.Fold:SetShown(expend)
+    button.Selected:Hide()
     button.depth = 1
 end
 
@@ -237,6 +242,7 @@ function Event:OnEventsItemFormatting2(button, item)
     button.Count:SetFontObject('tdDevToolsFontDisabled')
     button.Expend:Hide()
     button.Fold:Hide()
+    button.Selected:SetShown(item.args == self.args)
     button.depth = 2
 end
 
@@ -244,7 +250,9 @@ function Event:OnEventsItemClick(button)
     if button.depth == 1 then
         self.EventsList:ToggleItem(button.item)
     elseif button.depth == 2 then
-        self.ArgumentsList:SetItemList(button.item.args)
+        self.args = button.item.args
+        self.TimelineList:JumpToItem(button.item)
+        self:Refresh()
     end
 end
 
@@ -262,16 +270,17 @@ function Event:FormatFullTime(time)
     return format('%s.%03d', date('%Y/%m/%d %H:%M:%S', time), mseconds)
 end
 
-function Event:GetEventText(info)
-    if info.event == 'ELAPSED' then
-        return format('%.03f sec - %d frame(s)', info.long, info.frames), 'ELAPSED'
+function Event:GetEventText(item)
+    if item.event == 'ELAPSED' then
+        return format('%.03f sec - %d frame(s)', item.long, item.frames), 'ELAPSED'
     else
-        return info.event, self:FormatTime(info.time)
+        return item.event, self:FormatTime(item.time)
     end
 end
 
 function Event:Refresh()
     self.TimelineList:SetItemList(self.timelines)
+    self.ArgumentsList:SetItemList(self.args)
     self.EventsList:Refresh()
 end
 
