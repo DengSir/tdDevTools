@@ -25,7 +25,7 @@ local function Tests(args)
     print('nil', nil)
     print('table', {}, '!! Click to view more')
     print('widget', UIParent, '!! Click to view more')
-    geterrorhandler()('An geterrorhandler() call, Click to view more')
+    geterrorhandler()('A geterrorhandler() call, Click to view more')
     error('A real error, Click to view more', 2)
 
 end

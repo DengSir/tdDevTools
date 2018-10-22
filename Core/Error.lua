@@ -108,6 +108,7 @@ function Error:UpdateError()
         self.selectedErr.count,
         self.selectedErr.stack
     ))
+    self.EditBox:SetCursorPosition(0)
 end
 
 function Error:UpdateCount()
