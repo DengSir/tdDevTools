@@ -98,12 +98,12 @@ function Console:FilteringProcess()
         ProgressBar:SetSmoothedValue(numMessages - i + 1)
     end
 
-    ProgressBar.FadeAnim:Play(true)
-
     for i, v in ipairs(self.waitingMessages) do
         self.MessageFrame:AddMessage(v.text, v.r, v.g, v.b)
     end
     wipe(self.waitingMessages)
+
+    ProgressBar.FadeAnim:Play(true)
 end
 
 function Console:AddMessage(text, r, g, b)
@@ -142,11 +142,7 @@ function Console:MatchLog(text)
     if self.filterText == '' then
         return true
     end
-    return text:find(self.filterText, nil, true)
-end
-
-function Console:RenderAll(...)
-    return Render(...)
+    return text:lower():find(self.filterText, nil, true)
 end
 
 function Console:Clear()
