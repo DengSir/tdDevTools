@@ -241,9 +241,9 @@
                         </Anchors>
                     </ScrollFrame>
                     <Button parentKey="ClearButton" inherits="tdDevToolsButtonTemplate" text="Clear">
-                        <Size x="80" y="24" />
+                        <Size x="80" y="23" />
                         <Anchors>
-                            <Anchor point="TOPRIGHT" x="0" y="1" />
+                            <Anchor point="TOPRIGHT" />
                         </Anchors>
                         <Scripts>
                             <OnClick>
@@ -252,7 +252,7 @@
                         </Scripts>
                     </Button>
                     <Button parentKey="ToggleButton" inherits="tdDevToolsButtonTemplate" text="Start">
-                        <Size x="80" y="24" />
+                        <Size x="80" y="23" />
                         <Anchors>
                             <Anchor point="RIGHT" relativeKey="$parent.ClearButton" relativePoint="LEFT" x="1" y="0" />
                         </Anchors>

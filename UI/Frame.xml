@@ -9,7 +9,7 @@
         <DisabledFont style="tdDevToolsFontImportant"/>
     </Button>
 
-    <Frame name="tdDevToolsFrame" parent="UIParent" userPlaced="false" frameLevel="9000" resizable="true" enableMouse="true" frameStrata="FULLSCREEN_DIALOG">
+    <Frame name="tdDevToolsFrame" inherits="tdDevToolsBackdropFrameTemplate" parent="UIParent" userPlaced="false" frameLevel="9000" resizable="true" enableMouse="true" frameStrata="FULLSCREEN_DIALOG">
         <Size y="300" />
         <Anchors>
             <Anchor point="TOPLEFT" />
@@ -20,14 +20,14 @@
                 <AbsDimension y="60"/>
             </minResize>
         </ResizeBounds>
-        <Layers>
+        <!-- <Layers>
             <Layer level="BORDER">
                 <Texture inherits="tdDevToolsLineBottomTemplate" />
             </Layer>
             <Layer level="BACKGROUND">
                 <Texture inherits="tdDevToolsBackgroundTemplate" />
             </Layer>
-        </Layers>
+        </Layers> -->
         <Frames>
             <Button parentKey="Tab1" parentArray="tabs" inherits="tdDevToolsTabButtonTemplate" text="Console" id="1">
                 <Anchors>
@@ -74,6 +74,11 @@
                     <Anchor point="TOPLEFT" />
                     <Anchor point="BOTTOMRIGHT" />
                 </Anchors>
+                <Layers>
+                    <Layer level="BORDER">
+                        <Texture inherits="tdDevToolsLineTopTemplate" />
+                    </Layer>
+                </Layers>
             </Frame>
         </Frames>
     </Frame>
