@@ -1,0 +1,4 @@
+package-as: "!!!tdDevTools"
+enable-nolib-creation: no
+ignore:
+    - Tests.lua
