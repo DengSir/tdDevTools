@@ -25,8 +25,15 @@ function Error:OnLoad()
         end
     })
 
+    --@debug@
     local old = geterrorhandler()
-    seterrorhandler(function(err) old(err) return self:AddError(err) end)
+    --@end-debug@
+    seterrorhandler(function(err)
+        --@debug@
+        old(err)
+        --@end-debug@
+        return self:AddError(err)
+    end)
 
     self:SetScript('OnShow', self.Refresh)
     self:SetScript('OnEvent', self.OnEvent)
