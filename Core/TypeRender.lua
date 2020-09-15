@@ -62,7 +62,7 @@ TypeRender.table = function(value)
     end
 end
 
-TypeRender.ClickValue = function(link)
+TypeRender.ClickValue = function(link, button)
     if not link then
         return
     end
@@ -84,5 +84,13 @@ TypeRender.ClickValue = function(link)
     elseif linkType == 'error' then
         ns.Frame.Error:SelectErr(tonumber(linkContent))
         ns.Frame:SetTab(2)
+    elseif linkType == 'api' then
+        local command = APIDocumentation.Commands.Default
+        if button == 'RightButton' then
+            command = APIDocumentation.Commands.CopyAPI
+        elseif IsModifiedClick('CHATLINK') then
+            command = APIDocumentation.Commands.OpenDump
+        end
+        APIDocumentation:HandleAPILink(link, command)
     end
 end
