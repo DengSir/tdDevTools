@@ -25,8 +25,8 @@ function Console:OnLoad()
     MessageFrame:SetJustifyH('LEFT')
     MessageFrame:SetFading(false)
     MessageFrame:SetHyperlinksEnabled(true)
-    MessageFrame:SetScript('OnHyperlinkClick', function(_, link)
-        TypeRender.ClickValue(link)
+    MessageFrame:SetScript('OnHyperlinkClick', function(_, link, text, button)
+        TypeRender.ClickValue(link, button)
     end)
     MessageFrame:SetOnDisplayRefreshedCallback(function(self)
         local maxValue = self:GetMaxScrollRange()
@@ -36,6 +36,19 @@ function Console:OnLoad()
             self.scrollBar:SetValue(maxValue)
         end
     end)
+    MessageFrame:RegisterEvent('ADDON_LOADED')
+    MessageFrame:SetScript('OnEvent', function(_, ev, addon)
+        if ev ~= 'ADDON_LOADED' or addon ~= 'Blizzard_APIDocumentation' then
+            return
+        end
+
+        function APIDocumentation.WriteLine(obj, msg)
+            local info = ChatTypeInfo['SYSTEM']
+            self:AddMessage(msg, info.r, info.g, info.b)
+        end
+        MessageFrame:UnregisterEvent('ADDON_LOADED')
+    end)
+
 
     self.MessageFrame.scrollBar:SetScript('OnValueChanged', function(self, value)
         local minValue, maxValue = self:GetMinMaxValues()
