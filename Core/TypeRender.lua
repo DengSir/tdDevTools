@@ -2,16 +2,15 @@
 -- @Author : DengSir (tdaddon@163.com)
 -- @Link   : https://dengsir.github.io
 -- @Date   : 10/16/2018, 4:39:54 PM
-
-local ns           = select(2, ...)
-local TypeRender   = setmetatable({}, {
+local ns = select(2, ...)
+local TypeRender = setmetatable({}, {
     __index = function(t)
         return t.other
     end,
     __call = function(self, value)
         local t = type(value)
         return self[t](value)
-    end
+    end,
 })
 
 local widgets = setmetatable({}, {__mode = 'v'})
@@ -27,11 +26,13 @@ local function colorFactory(r, g, b, formatter)
     end
 end
 
-TypeRender['nil']  = colorFactory(.5, .5, .5)
+TypeRender['nil'] = colorFactory(.5, .5, .5)
 
-TypeRender.other   = colorFactory(1, 1, 1)
-TypeRender.string  = colorFactory(0, 1, .5, function(value) return format('%q', value) end)
-TypeRender.number  = colorFactory(1, 1, 0)
+TypeRender.other = colorFactory(1, 1, 1)
+TypeRender.string = colorFactory(0, 1, .5, function(value)
+    return format('%q', value)
+end)
+TypeRender.number = colorFactory(1, 1, 0)
 TypeRender.boolean = colorFactory(1, 0, 0)
 
 TypeRender.widget = function(widget)
@@ -82,7 +83,8 @@ TypeRender.ClickValue = function(link)
             inspect(tbl)
         end
     elseif linkType == 'error' then
-        ns.Frame.Error:SelectErr(tonumber(linkContent))
-        ns.Frame:SetTab(2)
+        if ns.Frame.Error:SelectErr(linkContent) then
+            ns.Frame:SetTab(2)
+        end
     end
 end

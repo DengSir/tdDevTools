@@ -2,15 +2,16 @@
 -- @Author : DengSir (tdaddon@163.com)
 -- @Link   : https://dengsir.github.io
 -- @Date   : 10/16/2018, 3:59:57 PM
+--
+local ns = select(2, ...)
 
-local ns         = select(2, ...)
 local TypeRender = ns.TypeRender
-local Console    = ns.Frame.Console
-local Thread     = ns.Thread
+local Console = ns.Frame.Console
+local Thread = ns.Thread
 
-local GetColoredTime     = ns.Util.GetColoredTime
+local GetColoredTime = ns.Util.GetColoredTime
 local GetCallColoredPath = ns.Util.GetCallColoredPath
-local Render             = ns.Util.Render
+local Render = ns.Util.Render
 
 function Console:OnLoad()
     self.filterText = ''
@@ -110,7 +111,9 @@ function Console:AddMessage(text, r, g, b)
     local message = {
         text = text,
         match = text:lower():gsub('|c%x%x%x%x%x%x%x%x', ''):gsub('|r', ''),
-        r = r, g = g, b = b
+        r = r,
+        g = g,
+        b = b,
     }
     table.insert(self.savedMessages, message)
 
@@ -123,19 +126,15 @@ function Console:AddMessage(text, r, g, b)
     end
 end
 
-local levelColors = {
-    DEBUG = {  1,  1,  1 },
-    INFO  = {  1,  1,  1 },
-    WARN  = {  1, .5,  0 },
-    ERROR = {  1,  0,  0 },
-}
+local levelColors = {DEBUG = {1, 1, 1}, INFO = {1, 1, 1}, WARN = {1, .5, 0}, ERROR = {1, 0, 0}}
 
 function Console:RawLog(level, path, text)
-    return self:AddMessage(format('%s %s %s|cffffffff:|r %s', level, GetColoredTime(), path, text), unpack(assert(levelColors[level])))
+    return self:AddMessage(format('%s %s %s|cffffffff:|r %s', level, GetColoredTime(), path, text),
+                           unpack(assert(levelColors[level])))
 end
 
 function Console:Log(level, depth, ...)
-    return self:RawLog(level, GetCallColoredPath(depth+1), Render(...))
+    return self:RawLog(level, GetCallColoredPath(depth + 1), Render(...))
 end
 
 function Console:MatchLog(text)

@@ -3,5 +3,4 @@
     <Include file="Libs\Embeds.xml" />
     <Include file="UI\UI.xml" />
     <Include file="Core\Core.xml" />
-    <!-- <Script file="Tests.lua" /> -->
 </Ui>

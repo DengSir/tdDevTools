@@ -54,6 +54,23 @@
     <Button name="tdDevToolsEventsItemTemplate" virtual="true">
         <Size x="80" y="24" />
         <Frames>
+            <Button parentKey="IgnoreButton" inherits="tdDevToolsClearButtonTemplate">
+                <Size x="16" y="16" />
+                <Anchors>
+                    <Anchor point="LEFT" x="5" y="0" />
+                </Anchors>
+                <Scripts>
+                    <OnEnter>
+                        self:GetParent():LockHighlight()
+                    </OnEnter>
+                    <OnLeave>
+                        self:GetParent():UnlockHighlight()
+                    </OnLeave>
+                    <OnClick>
+                        self:GetParent().scrollFrame:GetParent():GetParent():OnTimelineItemIgnoreClick(self:GetParent())
+                    </OnClick>
+                </Scripts>
+            </Button>
             <Frame parentKey="Expend" hidden="true" enableMouse="false">
                 <Size x="16" y="16" />
                 <Anchors>
@@ -109,7 +126,7 @@
                 </FontString>
                 <FontString parentKey="Text" inherits="tdDevToolsFontHighlight" justifyH="LEFT" wordWrap="false">
                     <Anchors>
-                        <Anchor point="LEFT" x="5" y="0" />
+                        <Anchor point="LEFT" relativeKey="$parent.IgnoreButton" relativePoint="RIGHT" x="5" y="0" />
                         <Anchor point="RIGHT" relativeKey="$parent.Count" relativePoint="LEFT" x="-5" y="0" />
                     </Anchors>
                 </FontString>

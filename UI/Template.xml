@@ -221,9 +221,6 @@
 
     <Button name="tdDevToolsClearButtonTemplate" virtual="true">
         <Size x="16" y="16" />
-        <Anchors>
-            <Anchor point="RIGHT" x="-5" y="0" />
-        </Anchors>
         <Layers>
             <Layer level="ARTWORK">
                 <Line thickness="1">

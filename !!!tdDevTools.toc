@@ -1,6 +1,10 @@
+#@debug@
 ## Interface: 80000
+#@end-debug@
+#@project-interface@
 ## Title: tdDevTools
 ## Author: DengSir
 ## Version: @project-version@
+## SavedVariables: TDDB_DEVTOOLS
 
 Load.xml

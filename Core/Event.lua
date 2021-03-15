@@ -2,55 +2,56 @@
 -- @Author : DengSir (tdaddon@163.com)
 -- @Link   : https://dengsir.github.io
 -- @Date   : 10/19/2018, 2:06:08 PM
-
-local ns    = select(2, ...)
+--
+local ns = select(2, ...)
 local Event = ns.Frame.Event
 
 function Event:OnLoad()
-    self.isRunning     = false
-    self.timelines     = {}
-    self.ignores       = {}
+    self.isRunning = false
+    self.timelines = {}
+    self.ignores = {}
 
     self.eventsHash = {}
     self.eventsTree = {}
 
-    self.TimelineList  = self.Timeline.ScrollFrame
+    self.TimelineList = self.Timeline.ScrollFrame
     self.ArgumentsList = self.Arguments.ScrollFrame
-    self.EventsList    = self.Events.ScrollFrame
+    self.EventsList = self.Events.ScrollFrame
 
     ns.ListViewSetup(self.TimelineList, {
-        itemList         = self.timelines,
-        buttonTemplate   = 'tdDevToolsTimelineItemTemplate',
+        itemList = self.timelines,
+        buttonTemplate = 'tdDevToolsTimelineItemTemplate',
         OnItemFormatting = function(button, item)
             return self:OnTimelineItemFormatting(button, item)
-        end
+        end,
     })
 
     ns.ListViewSetup(self.ArgumentsList, {
-        itemList         = {},
-        buttonTemplate   = 'tdDevToolsArgumentItemTemplate',
+        itemList = {},
+        buttonTemplate = 'tdDevToolsArgumentItemTemplate',
         OnItemFormatting = function(button, item)
             return self:OnArgumentItemFormatting(button, item)
-        end
+        end,
     })
 
     ns.TreeViewSetup(self.EventsList, {
-        depth            = 2,
-        itemTree         = self.eventsTree,
-        buttonTemplate   = 'tdDevToolsEventsItemTemplate',
+        depth = 2,
+        itemTree = self.eventsTree,
+        buttonTemplate = 'tdDevToolsEventsItemTemplate',
         OnItemFormatting = {
             function(button, item)
                 return self:OnEventsItemFormatting1(button, item)
-            end,
-            function(button, item)
+            end, function(button, item)
                 return self:OnEventsItemFormatting2(button, item)
-            end
-        }
+            end,
+        },
     })
 
     self.Updater = CreateFrame('Frame')
     self.Updater:Hide()
-    self.Updater:SetScript('OnUpdate', function() return self:OnFrame() end)
+    self.Updater:SetScript('OnUpdate', function()
+        return self:OnFrame()
+    end)
 
     self:SetScript('OnShow', self.Refresh)
     self:SetScript('OnEvent', self.OnEvent)
@@ -64,10 +65,10 @@ function Event:OnSizeChanged()
 end
 
 function Event:Start()
-    self.isRunning     = true
-    self.ignores       = {}
+    self.isRunning = true
+    self.ignores = {}
     self.lastEventTime = nil
-    self.lastFrames    = 0
+    self.lastFrames = 0
 
     self:RegisterAllEvents()
     self.Updater:Show()
@@ -107,32 +108,29 @@ function Event:OnEvent(event, ...)
     end
 
     local currentTime = self:GetTime()
-    local timelines   = self.timelines
-    local eventsHash  = self.eventsHash
-    local eventsTree  = self.eventsTree
+    local timelines = self.timelines
+    local eventsHash = self.eventsHash
+    local eventsTree = self.eventsTree
 
     if self.lastEventTime and currentTime ~= self.lastEventTime then
-        timelines[#timelines+1] = {
-            event  = 'ELAPSED',
+        timelines[#timelines + 1] = {
+            event = 'ELAPSED',
             frames = self.lastFrames,
-            long   = currentTime - self.lastEventTime,
+            long = currentTime - self.lastEventTime,
         }
     end
 
-    local item = {
-        event     = event,
-        time      = currentTime,
-        args      = {count = select('#', ...), ...},
-        argsCount = select('#', ...)
-    }
+    local item
+    if event == 'COMBAT_LOG_EVENT' or event == 'COMBAT_LOG_EVENT_UNFILTERED' then
+        item = self:PackItem(event, currentTime, CombatLogGetCurrentEventInfo())
+    else
+        item = self:PackItem(event, currentTime, ...)
+    end
 
-    timelines[#timelines+1] = item
+    timelines[#timelines + 1] = item
 
     if not eventsHash[event] then
-        local treeInfo = {
-            event = event,
-            count = 1,
-        }
+        local treeInfo = {event = event, count = 1}
         eventsHash[event] = treeInfo
         table.insert(eventsTree, treeInfo)
         table.sort(eventsTree, function(lhs, rhs)
@@ -144,6 +142,15 @@ function Event:OnEvent(event, ...)
     self.lastEventTime = currentTime
     self.lastFrames = 0
     self:Refresh()
+end
+
+function Event:PackItem(event, currentTime, ...)
+    return { --
+        event = event,
+        time = currentTime,
+        args = {count = select('#', ...), ...},
+        argsCount = select('#', ...),
+    }
 end
 
 function Event:OnTimelineItemFormatting(button, item)
@@ -166,8 +173,8 @@ function Event:OnTimelineItemFormatting(button, item)
 end
 
 function Event:OnTimelineItemIgnoreClick(button)
-    local item      = button.item
-    local event     = item.event
+    local item = button.item
+    local event = item.event
     local timelines = {}
     local lastElapsed
 
@@ -180,24 +187,24 @@ function Event:OnTimelineItemIgnoreClick(button)
         if item.event == 'ELAPSED' then
             if lastElapsed then
                 lastElapsed.frames = lastElapsed.frames + item.frames
-                lastElapsed.long   = lastElapsed.long + item.long
+                lastElapsed.long = lastElapsed.long + item.long
             else
                 lastElapsed = item
             end
         else
             if item.event ~= event then
                 if lastElapsed then
-                    timelines[#timelines+1] = lastElapsed
+                    timelines[#timelines + 1] = lastElapsed
                     lastElapsed = nil
                 end
 
-                timelines[#timelines+1] = item
+                timelines[#timelines + 1] = item
             end
         end
     end
 
     if lastElapsed then
-        timelines[#timelines+1] = lastElapsed
+        timelines[#timelines + 1] = lastElapsed
     end
 
     self.ignores[event] = true
@@ -233,6 +240,7 @@ function Event:OnEventsItemFormatting1(button, item)
     button.Expend:SetShown(not expend)
     button.Fold:SetShown(expend)
     button.Selected:Hide()
+    button.IgnoreButton:Show()
     button.depth = 1
 end
 
@@ -243,6 +251,7 @@ function Event:OnEventsItemFormatting2(button, item)
     button.Expend:Hide()
     button.Fold:Hide()
     button.Selected:SetShown(item.args == self.args)
+    button.IgnoreButton:Hide()
     button.depth = 2
 end
 
