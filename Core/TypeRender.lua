@@ -86,5 +86,16 @@ TypeRender.ClickValue = function(link)
         if ns.Frame.Error:SelectErr(linkContent) then
             ns.Frame:SetTab(2)
         end
+    else
+        return
     end
+    return true
+end
+
+local orig_ItemRefTooltip_SetHyperlink = ItemRefTooltip.SetHyperlink
+function ItemRefTooltip:SetHyperlink(link)
+    if TypeRender.ClickValue(link) then
+        return
+    end
+    return orig_ItemRefTooltip_SetHyperlink(self, link)
 end

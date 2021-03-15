@@ -108,7 +108,7 @@
                     </Frame>
                 </Frames>
             </Frame>
-            <ScrollingMessageFrame parentKey="MessageFrame" enableMouseWheel="true">
+            <ScrollingMessageFrame parentKey="MessageFrame" enableMouseWheel="true" hidden="false" toplevel="false" frameStrata="FULLSCREEN_DIALOG" inherits="ChatFrameTemplate">
                 <KeyValues>
                     <KeyValue key="stepSize" value="50" type="number"/>
                 </KeyValues>
@@ -125,6 +125,12 @@
                     </Slider>
                 </Frames>
                 <Scripts>
+                    <OnLoad>
+                    </OnLoad>
+                    <OnEvent>
+                    </OnEvent>
+                    <OnUpdate>
+                    </OnUpdate>
                     <OnMouseWheel>
                         if delta > 0 then
                             self:ScrollUp()
