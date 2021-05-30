@@ -20,7 +20,8 @@
     "name": "!!!tdDevTools",
     "curse_id": 305394,
     "builds": {
-      "classic": "11306",
+      "classic": "11307",
+      "bcc": "20501",
       "retail": "90005"
     }
   }

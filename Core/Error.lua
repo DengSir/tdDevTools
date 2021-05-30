@@ -62,7 +62,7 @@ function Error:PLAYER_LOGIN()
             local info = self:TakeError(v.err)
             if info then
                 info.count = info.count + v.count
-                info.time = max(info.time, v.time)
+                info.time = max(info.time or 0, v.time or 0)
             else
                 info = v
             end
