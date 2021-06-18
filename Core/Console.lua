@@ -118,6 +118,7 @@ function Console:FilteringProcess()
     wipe(self.waitingMessages)
 
     ProgressBar.FadeAnim:Play(true)
+    self.filteringThread = nil
 end
 
 function Console:AddMessage(text, r, g, b)

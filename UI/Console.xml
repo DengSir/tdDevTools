@@ -7,7 +7,7 @@
         </Anchors>
         <Frames>
             <Frame parentKey="Header">
-                <Size y="22" />
+                <Size y="18" />
                 <Anchors>
                     <Anchor point="TOPLEFT" />
                     <Anchor point="TOPRIGHT" />
@@ -31,7 +31,7 @@
                 </Layers>
                 <Frames>
                     <Button parentKey="ClearButton" inherits="tdDevToolsButtonTemplate" text="Clear">
-                        <Size x="80" y="23" />
+                        <Size x="60" y="19" />
                         <Anchors>
                             <Anchor point="TOPRIGHT" x="0" y="0" />
                         </Anchors>
@@ -42,7 +42,7 @@
                         </Scripts>
                     </Button>
                     <Frame parentKey="Filter">
-                        <Size x="400" y="24" />
+                        <Size x="200" y="18" />
                         <Anchors>
                             <Anchor point="RIGHT" relativeKey="$parent.ClearButton" relativePoint="LEFT" />
                         </Anchors>
@@ -73,7 +73,7 @@
                                 </HighlightTexture>
                             </Button>
                             <EditBox parentKey="FilterBox" autoFocus="false" letters="31">
-                                <Size y="20" />
+                                <Size y="18" />
                                 <Anchors>
                                     <Anchor point="LEFT" relativeKey="$parent.FilterLabel" relativePoint="RIGHT" />
                                     <Anchor point="RIGHT" relativeKey="$parent.ClearButton" relativePoint="LEFT" />
@@ -119,8 +119,8 @@
                 <Frames>
                     <Slider parentKey="scrollBar" inherits="tdDevToolsHybridScrollBarTemplate">
                         <Anchors>
-                            <Anchor point="TOPRIGHT" x="0" y="-14" />
-                            <Anchor point="BOTTOMRIGHT" x="0" y="13" />
+                            <Anchor point="TOPRIGHT" x="0" y="-12" />
+                            <Anchor point="BOTTOMRIGHT" x="0" y="11" />
                         </Anchors>
                     </Slider>
                 </Frames>

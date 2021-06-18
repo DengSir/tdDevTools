@@ -21,6 +21,7 @@ function Event:OnLoad()
     ns.ListViewSetup(self.TimelineList, {
         itemList = self.timelines,
         buttonTemplate = 'tdDevToolsTimelineItemTemplate',
+        pinBottom = true,
         OnItemFormatting = function(button, item)
             return self:OnTimelineItemFormatting(button, item)
         end,

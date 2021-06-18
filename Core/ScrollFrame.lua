@@ -43,4 +43,9 @@ function ns.ScrollFrameSetup(scrollFrame, opts)
 
     scrollFrame.update  = opts.update or scrollFrame.update
     scrollFrame.Refresh = Refresh
+
+    if scrollFrame.scrollBar and not opts.pinBottom then
+        scrollFrame.scrollBar:SetMinMaxValues(0, 1)
+        scrollFrame.scrollBar:SetValue(1)
+    end
 end
