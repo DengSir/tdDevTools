@@ -2,19 +2,18 @@
 -- @Author : DengSir (tdaddon@163.com)
 -- @Link   : https://dengsir.github.io
 -- @Date   : 10/18/2018, 1:35:37 PM
+--
+---@type ns
+local ns = select(2, ...)
 
-local ns     = select(2, ...)
-local Thread = {}
-local mt     = {__index = Thread}
-
+---@class Thread: Object
+local Thread = ns.class()
 ns.Thread = Thread
 
-function Thread:New(func, frame, extend)
-    local obj = setmetatable({}, mt)
-    obj.co = coroutine.create(func)
-    obj.frame = frame
-    obj.extend = extend and frame * 10 or frame
-    return obj
+function Thread:Constructor(func, frame, extend)
+    self.co = coroutine.create(func)
+    self.frame = frame
+    self.extend = extend and frame * 10 or frame
 end
 
 function Thread:Start(...)
@@ -42,10 +41,7 @@ function Thread:YieldPoint()
 end
 
 local function packResult(...)
-    return {
-        args = {...},
-        argsCount = select('#', ...)
-    }
+    return {args = {...}, argsCount = select('#', ...)}
 end
 
 local function unpackResult(pack)

@@ -85,7 +85,7 @@
                     </Layer>
                 </Layers>
                 <Frames>
-                    <Button parentKey="ClearButton" inherits="tdDevToolsButtonTemplate" text="Clear">
+                    <Button parentKey="ClearButton" inherits="tdDevToolsInsideButtonTemplate" text="Clear">
                         <Size x="60" y="19" />
                         <Anchors>
                             <Anchor point="TOPRIGHT" />
@@ -100,8 +100,8 @@
             </Frame>
             <ScrollFrame parentKey="ErrorList" inherits="tdDevToolsHybridScrollFrameTemplate">
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.Header" relativePoint="BOTTOMLEFT" />
-                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOM" />
+                    <Anchor point="TOPLEFT" relativeKey="$parent.Header" relativePoint="BOTTOMLEFT" x="0" y="-1" />
+                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOM" x="0" y="1" />
                 </Anchors>
                 <Layers>
                     <Layer level="BORDER">

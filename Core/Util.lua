@@ -2,12 +2,12 @@
 -- @Author : DengSir (tdaddon@163.com)
 -- @Link   : https://dengsir.github.io
 -- @Date   : 10/16/2018, 3:59:45 PM
-
+--
 BINDING_HEADER_TDDEVTOOLS = 'tdDevTools'
 
-local ns         = select(2, ...)
+local ns = select(2, ...)
 local TypeRender = ns.TypeRender
-local Util       = {}
+local Util = {}
 
 ns.Util = Util
 
@@ -30,10 +30,10 @@ function Util.GetMousePosition(frame)
     local scale = frame:GetEffectiveScale()
     x, y = x / scale, y / scale
 
-    local value =   (x <= frame:GetLeft() + 10     and 1 or 0) +    -- left
-                    (x >= frame:GetRight() - 10    and 2 or 0) +    -- right
-                    (y >= frame:GetTop() - 10      and 4 or 0) +    -- top
-                    (y <= frame:GetBottom() + 10   and 8 or 0)      -- bottom
+    local value = (x <= frame:GetLeft() + 10 and 1 or 0) + -- left
+    (x >= frame:GetRight() - 10 and 2 or 0) + -- right
+    (y >= frame:GetTop() - 10 and 4 or 0) + -- top
+    (y <= frame:GetBottom() + 10 and 8 or 0) -- bottom
 
     return VALUE_POS[value], value
 end
@@ -55,21 +55,12 @@ local function GetCallColoredPath(depth)
     return ColoredPath(FindPath(debugstack(depth)))
 end
 
-local function Render(...)
-    local sb = {}
-    for i = 1, select('#', ...) do
-        table.insert(sb, TypeRender((select(i, ...))))
-    end
-    return table.concat(sb, ', ')
-end
-
 local function GetColoredTime()
     return format('|cff00ff00%s.%03d|r', date('%H:%M:%S'), floor(GetTime() * 1000) % 1000)
 end
 
-Util.ShortPath          = ShortPath
-Util.FindPath           = FindPath
-Util.ColoredPath        = ColoredPath
+Util.ShortPath = ShortPath
+Util.FindPath = FindPath
+Util.ColoredPath = ColoredPath
 Util.GetCallColoredPath = GetCallColoredPath
-Util.Render             = Render
-Util.GetColoredTime     = GetColoredTime
+Util.GetColoredTime = GetColoredTime

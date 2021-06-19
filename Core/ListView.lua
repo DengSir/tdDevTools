@@ -6,9 +6,12 @@
 local ns = select(2, ...)
 
 local function update(self)
+    if not self.itemList then
+        return
+    end
     local offset = HybridScrollFrame_GetOffset(self)
     local buttons = self.buttons
-    local itemList = self.itemList or {}
+    local itemList = self.itemList
     local containerHeight = self:GetHeight()
     local buttonHeight = self.buttonHeight or buttons[1]:GetHeight()
     local itemCount = itemList.count or #itemList
@@ -41,6 +44,11 @@ local function SetItemList(self, itemList)
     self:Refresh()
 end
 
+local function SetOffset(self, height)
+    HybridScrollFrame_SetOffset(self, height)
+    self.scrollBar:SetValue(height)
+end
+
 local function JumpToItem(self, item)
     local index = tIndexOf(self.itemList, item)
     if index then
@@ -56,6 +64,7 @@ function ns.ListViewSetup(scrollFrame, opts)
     scrollFrame.update = update
     scrollFrame.SetItemList = SetItemList
     scrollFrame.JumpToItem = JumpToItem
+    scrollFrame.SetOffset = SetOffset
 
     scrollFrame.itemList = opts.itemList
     scrollFrame.OnItemFormatting = opts.OnItemFormatting

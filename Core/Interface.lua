@@ -2,9 +2,10 @@
 -- @Author : DengSir (tdaddon@163.com)
 -- @Link   : https://dengsir.github.io
 -- @Date   : 10/17/2018, 11:02:38 AM
-
-local ns       = select(2, ...)
-local Console  = ns.Frame.Console
+--
+---@type ns
+local ns = select(2, ...)
+local Console = ns.Frame.Console
 
 local GetCallColoredPath = ns.Util.GetCallColoredPath
 
@@ -32,15 +33,12 @@ local function dump(...)
 end
 
 function _G.dump(...)
-    if UIParentLoadAddOn('Blizzard_DebugTools') then
+    if ns.CheckBlizzardDebugTools() then
         _G.dump = dump
         return dump(...)
     end
 end
 
 function _G.inspect(value)
-    if UIParentLoadAddOn('Blizzard_DebugTools') then
-        _G.inspect = DisplayTableInspectorWindow
-        return DisplayTableInspectorWindow(value)
-    end
+    return ns.Inspect:InspectTable(value)
 end

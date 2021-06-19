@@ -6,9 +6,12 @@
     <Script file="ScrollFrame.lua" />
     <Script file="ListView.lua" />
     <Script file="TreeView.lua" />
+    <Script file="Parent.lua" />
     <Script file="Frame.lua" />
     <Script file="Console.lua" />
-    <Script file="API.lua" />
     <Script file="Error.lua" />
     <Script file="Event.lua" />
+    <Script file="Provider.lua" />
+    <Script file="Inspect.lua" />
+    <Script file="Interface.lua" />
 </Ui>

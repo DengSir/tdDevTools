@@ -11,7 +11,7 @@ local function OnUpdate(self)
 end
 
 local function OnSizeChanged(self, width, height)
-    self:GetScrollChild():SetSize(width - 16, height)
+    self:GetScrollChild():SetSize(width - 14, height)
     self:Refresh()
 end
 
@@ -46,6 +46,8 @@ function ns.ScrollFrameSetup(scrollFrame, opts)
 
     if scrollFrame.scrollBar and not opts.pinBottom then
         scrollFrame.scrollBar:SetMinMaxValues(0, 1)
-        scrollFrame.scrollBar:SetValue(1)
+        scrollFrame.scrollBar:SetValue(0)
     end
+
+    OnSizeChanged(scrollFrame, scrollFrame:GetSize())
 end

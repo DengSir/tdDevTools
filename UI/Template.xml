@@ -1,6 +1,6 @@
 <Ui xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\FrameXML\UI.xsd">
-    <Font name="tdDevToolsConsoleFont" inherits="ConsoleFontSmall" virtual="true">
+    <Font name="tdDevToolsConsoleFont" inherits="ConsoleFontSmall" height="9" virtual="true">
         <Color r="1.0" g="1.0" b="1.0"/>
     </Font>
 
@@ -67,7 +67,7 @@
         <Color r="0" g="0" b="0" a="0.8" />
     </Texture>
 
-    <Frame name="tdDevToolsBackdropFrameTemplate" virtual="true">
+    <Frame name="tdDevToolsBorderFrameTemplate" virtual="true">
         <Layers>
             <Layer level="BORDER">
                 <Texture inherits="tdDevToolsLineLeftTemplate" />
@@ -75,27 +75,49 @@
                 <Texture inherits="tdDevToolsLineTopTemplate" />
                 <Texture inherits="tdDevToolsLineBottomTemplate" />
             </Layer>
+        </Layers>
+    </Frame>
+
+    <Frame name="tdDevToolsBackgroundFrameTemplate" virtual="true">
+        <Layers>
             <Layer level="BACKGROUND">
                 <Texture inherits="tdDevToolsBackgroundTemplate" />
             </Layer>
         </Layers>
     </Frame>
 
-    <Button name="tdDevToolsBaseButtonTemplate" inherits="tdDevToolsBackdropFrameTemplate" virtual="true">
+    <Frame name="tdDevToolsBackdropFrameTemplate" inherits="tdDevToolsBorderFrameTemplate,tdDevToolsBackgroundFrameTemplate" virtual="true"/>
+
+    <Button name="tdDevToolsOriginButtonTemplate" virtual="true">
+        <Scripts>
+            <OnEnable>
+                if self.textures then
+                    for _, v in ipairs(self.textures) do
+                        v:SetVertexColor(1, 1, 1)
+                    end
+                end
+            </OnEnable>
+            <OnDisable>
+                if self.textures then
+                    for _, v in ipairs(self.textures) do
+                        v:SetVertexColor(0.4, 0.4, 0.4)
+                    end
+                end
+            </OnDisable>
+        </Scripts>
         <HighlightTexture>
             <Color r="1" g="1" b="1" a="0.2" />
         </HighlightTexture>
-    </Button>
-
-    <Button name="tdDevToolsButtonTemplate" inherits="tdDevToolsBaseButtonTemplate" virtual="true">
-        <Size x="60" y="14" />
         <ButtonText parentKey="Text"/>
         <NormalFont style="tdDevToolsFontNormal"/>
         <HighlightFont style="tdDevToolsFontHighlight"/>
         <DisabledFont style="tdDevToolsFontDisabled"/>
     </Button>
 
-    <Button name="tdDevToolsBaseScrollUpTemplate" inherits="tdDevToolsBaseButtonTemplate" virtual="true">
+    <Button name="tdDevToolsInsideButtonTemplate" inherits="tdDevToolsOriginButtonTemplate,tdDevToolsBorderFrameTemplate" virtual="true"/>
+    <Button name="tdDevToolsOutsideButtonTemplate" inherits="tdDevToolsOriginButtonTemplate,tdDevToolsBackdropFrameTemplate" virtual="true"/>
+
+    <Button name="tdDevToolsBaseScrollUpTemplate" inherits="tdDevToolsInsideButtonTemplate" virtual="true">
         <Size x="14" y="14" />
         <Anchors>
             <Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT" x="0" y="-1" />
@@ -103,16 +125,12 @@
         </Anchors>
         <Layers>
             <Layer level="ARTWORK">
-                <Line thickness="1">
-                    <StartAnchor relativePoint="BOTTOMLEFT" x="3" y="5" />
-                    <EndAnchor relativePoint="CENTER" x="0" y="2" />
-                    <Color r="0.8" g="0.8" b="0.8" />
-                </Line>
-                <Line thickness="1">
-                    <StartAnchor relativePoint="BOTTOMRIGHT" x="-3" y="5" />
-                    <EndAnchor relativePoint="CENTER" x="0" y="2" />
-                    <Color r="0.8" g="0.8" b="0.8" />
-                </Line>
+                <Texture parentArray="textures" file="Interface\AddOns\!!!tdDevTools\Media\ArrowUp">
+                    <Size x="8" y="8" />
+                    <Anchors>
+                        <Anchor point="CENTER" />
+                    </Anchors>
+                </Texture>
             </Layer>
         </Layers>
         <Scripts>
@@ -121,7 +139,7 @@
         </Scripts>
     </Button>
 
-    <Button name="tdDevToolsBaseScrollDownTemplate" inherits="tdDevToolsBaseButtonTemplate" virtual="true">
+    <Button name="tdDevToolsBaseScrollDownTemplate" inherits="tdDevToolsInsideButtonTemplate" virtual="true">
         <Size x="14" y="14" />
         <Anchors>
             <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" x="0" y="1" />
@@ -129,16 +147,12 @@
         </Anchors>
         <Layers>
             <Layer level="ARTWORK">
-                <Line thickness="1">
-                    <StartAnchor relativePoint="TOPLEFT" x="3" y="-5" />
-                    <EndAnchor relativePoint="CENTER" x="0" y="-2" />
-                    <Color r="0.8" g="0.8" b="0.8" />
-                </Line>
-                <Line thickness="1">
-                    <StartAnchor relativePoint="TOPRIGHT" x="-3" y="-5" />
-                    <EndAnchor relativePoint="CENTER" x="0" y="-2" />
-                    <Color r="0.8" g="0.8" b="0.8" />
-                </Line>
+                <Texture parentArray="textures" file="Interface\AddOns\!!!tdDevTools\Media\ArrowDown">
+                    <Size x="8" y="8" />
+                    <Anchors>
+                        <Anchor point="CENTER" />
+                    </Anchors>
+                </Texture>
             </Layer>
         </Layers>
         <Scripts>
@@ -147,14 +161,31 @@
         </Scripts>
     </Button>
 
-    <Slider name="tdDevToolsHybridScrollBarTemplate" inherits="tdDevToolsBackdropFrameTemplate" virtual="true">
+    <CheckButton name="tdDevToolsCheckButtonTemplate" inherits="tdDevToolsBorderFrameTemplate" virtual="true">
+        <Size x="12" y="12" />
+        <CheckedTexture file="Interface\AddOns\!!!tdDevTools\Media\Checked">
+            <Size x="8" y="8" />
+            <Anchors>
+                <Anchor point="CENTER" />
+            </Anchors>
+        </CheckedTexture>
+        <ButtonText parentKey="Text">
+            <Anchors>
+                <Anchor point="LEFT" relativePoint="RIGHT" x="2" y="0" />
+            </Anchors>
+        </ButtonText>
+        <NormalFont style="tdDevToolsFontNormal" />
+        <DisabledFont style="tdDevToolsFontDisabled" />
+    </CheckButton>
+
+    <Slider name="tdDevToolsHybridScrollBarTemplate" inherits="tdDevToolsBorderFrameTemplate" virtual="true">
         <KeyValues>
             <KeyValue key="doNotHide" value="true" type="boolean" />
         </KeyValues>
         <Size x="14" />
         <Anchors>
-            <Anchor point="TOPRIGHT" x="0" y="-13" />
-            <Anchor point="BOTTOMRIGHT" x="0" y="13" />
+            <Anchor point="TOPRIGHT" x="0" y="-12" />
+            <Anchor point="BOTTOMRIGHT" x="0" y="12" />
         </Anchors>
         <Frames>
             <Button parentKey="scrollUp" inherits="tdDevToolsBaseScrollUpTemplate">
@@ -185,11 +216,11 @@
         </Frames>
     </ScrollFrame>
 
-    <Slider name="tdDevToolsPanelScrollBarTemplate" inherits="tdDevToolsBackdropFrameTemplate" virtual="true">
+    <Slider name="tdDevToolsPanelScrollBarTemplate" inherits="tdDevToolsBorderFrameTemplate" virtual="true">
         <Size x="14" />
         <Anchors>
-            <Anchor point="TOPRIGHT" x="0" y="-13" />
-            <Anchor point="BOTTOMRIGHT" x="0" y="13" />
+            <Anchor point="TOPRIGHT" x="0" y="-12" />
+            <Anchor point="BOTTOMRIGHT" x="0" y="12" />
         </Anchors>
         <Frames>
             <Button parentKey="ScrollUpButton" inherits="tdDevToolsBaseScrollUpTemplate">
@@ -223,16 +254,12 @@
         <Size x="14" y="14" />
         <Layers>
             <Layer level="ARTWORK">
-                <Line thickness="1">
-                    <StartAnchor relativePoint="TOPLEFT" x="3" y="-3" />
-                    <EndAnchor relativePoint="BOTTOMRIGHT" x="-3" y="3" />
-                    <Color r="0.8" g="0.8" b="0.8" />
-                </Line>
-                <Line thickness="1">
-                    <StartAnchor relativePoint="TOPRIGHT" x="-3" y="-3" />
-                    <EndAnchor relativePoint="BOTTOMLEFT" x="3" y="3" />
-                    <Color r="0.8" g="0.8" b="0.8" />
-                </Line>
+                <Texture file="Interface\AddOns\!!!tdDevTools\Media\Close">
+                    <Size x="8" y="8" />
+                    <Anchors>
+                        <Anchor point="CENTER" />
+                    </Anchors>
+                </Texture>
             </Layer>
         </Layers>
     </Button>

@@ -21,3 +21,9 @@ function printsecure(tbl)
         print(k, v, issecurevariable(tbl, k))
     end
 end
+
+-- APIDocumentation_LoadUI()
+
+-- for i, system in ipairs(APIDocumentation.systems) do
+--     print(system:GetFullName(), system:GetName())
+-- end

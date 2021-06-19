@@ -220,10 +220,8 @@ function Event:OnTimelineItemClick(button)
     end
 end
 
-local Render = ns.Util.Render
-
 function Event:OnArgumentItemFormatting(button, item)
-    button.Text:SetText(Render(item))
+    button.Text:SetText(ns.Render(item))
     button.Index:SetText(format('[%d] =', button:GetID()))
 end
 

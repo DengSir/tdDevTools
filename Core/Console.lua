@@ -5,13 +5,11 @@
 --
 local ns = select(2, ...)
 
-local TypeRender = ns.TypeRender
 local Console = ns.Frame.Console
 local Thread = ns.Thread
 
 local GetColoredTime = ns.Util.GetColoredTime
 local GetCallColoredPath = ns.Util.GetCallColoredPath
-local Render = ns.Util.Render
 
 function Console:OnLoad()
     self.filterText = ''
@@ -21,14 +19,10 @@ function Console:OnLoad()
     local MessageFrame = self.MessageFrame
     MessageFrame:SetMaxLines(9000)
     MessageFrame:SetFontObject('tdDevToolsConsoleFont')
-    -- MessageFrame:SetFont(tdDevToolsConsoleFont:GetFont(), 16)
     MessageFrame:SetIndentedWordWrap(true)
     MessageFrame:SetJustifyH('LEFT')
     MessageFrame:SetFading(false)
     MessageFrame:SetHyperlinksEnabled(true)
-    -- MessageFrame:SetScript('OnHyperlinkClick', function(_, link, text, button)
-    --     TypeRender.ClickValue(link, button)
-    -- end)
     MessageFrame:SetOnDisplayRefreshedCallback(function(self)
         local maxValue = self:GetMaxScrollRange()
         local atBottom = self:AtBottom()
@@ -49,7 +43,6 @@ function Console:OnLoad()
         end
         MessageFrame:UnregisterEvent('ADDON_LOADED')
     end)
-
 
     self.MessageFrame.scrollBar:SetScript('OnValueChanged', function(self, value)
         local minValue, maxValue = self:GetMinMaxValues()
@@ -148,7 +141,7 @@ function Console:RawLog(level, path, text)
 end
 
 function Console:Log(level, depth, ...)
-    return self:RawLog(level, GetCallColoredPath(depth + 1), Render(...))
+    return self:RawLog(level, GetCallColoredPath(depth + 1), ns.Render(...))
 end
 
 function Console:MatchLog(text)

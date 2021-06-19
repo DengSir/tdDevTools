@@ -1,6 +1,7 @@
 <Ui xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\FrameXML\UI.xsd">
-    <Button name="tdDevToolsTabButtonTemplate" inherits="tdDevToolsButtonTemplate" virtual="true">
+    <Button name="tdDevToolsTabButtonTemplate" inherits="tdDevToolsOutsideButtonTemplate" virtual="true">
+        <Size x="60" y="14" />
         <Scripts>
             <OnClick>
                 self:GetParent():SetTab(self:GetID())
@@ -9,16 +10,21 @@
         <DisabledFont style="tdDevToolsFontImportant"/>
     </Button>
 
-    <Frame name="tdDevToolsFrame" inherits="tdDevToolsBackdropFrameTemplate" parent="UIParent" userPlaced="false" frameLevel="9000" resizable="true" enableMouse="true" frameStrata="FULLSCREEN_DIALOG">
+    <Frame name="tdDevToolsParent" parent="UIParent" userPlaced="false" frameLevel="9000" frameStrata="FULLSCREEN_DIALOG">
+        <Anchors>
+            <Anchor point="TOPLEFT" />
+            <Anchor point="BOTTOMRIGHT" />
+        </Anchors>
+    </Frame>
+
+    <Frame name="tdDevToolsFrame" inherits="tdDevToolsBackdropFrameTemplate" toplevel="ture" resizable="true" enableMouse="true" hidden="true" parent="tdDevToolsParent">
         <Size y="300" />
         <Anchors>
             <Anchor point="TOPLEFT" />
             <Anchor point="TOPRIGHT" />
         </Anchors>
         <ResizeBounds>
-            <minResize>
-                <AbsDimension y="60"/>
-            </minResize>
+            <minResize y="60"/>
         </ResizeBounds>
         <!-- <Layers>
             <Layer level="BORDER">
@@ -44,7 +50,7 @@
                     <Anchor point="TOPLEFT" relativeKey="$parent.Tab2" relativePoint="TOPRIGHT" x="5" y="0" />
                 </Anchors>
             </Button>
-            <Button parentKey="Resize" inherits="tdDevToolsBaseButtonTemplate">
+            <Button parentKey="Resize" inherits="tdDevToolsOutsideButtonTemplate">
                 <Size x="200" y="10" />
                 <Anchors>
                     <Anchor point="TOP" relativePoint="BOTTOM" y="1" />
@@ -80,6 +86,27 @@
                     </Layer>
                 </Layers>
             </Frame>
+            <Button inherits="tdDevToolsOutsideButtonTemplate" registerForClicks="LeftButtonUp,RightButtonUp">
+                <Size x="16" y="16" />
+                <Anchors>
+                    <Anchor point="TOPRIGHT" relativePoint="BOTTOMRIGHT" x="-10" y="1" />
+                </Anchors>
+                <Layers>
+                    <Layer level="ARTWORK">
+                        <Texture parentArray="textures" file="Interface\AddOns\!!!tdDevTools\Media\Target">
+                            <Size x="8" y="8" />
+                            <Anchors>
+                                <Anchor point="CENTER" />
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                </Layers>
+                <Scripts>
+                    <OnClick>
+                        self:GetParent():OnTargetClick(button == 'RightButton')
+                    </OnClick>
+                </Scripts>
+            </Button>
         </Frames>
     </Frame>
 </Ui>

@@ -2,13 +2,16 @@
 -- @Author : DengSir (tdaddon@163.com)
 -- @Link   : https://dengsir.github.io
 -- @Date   : 10/16/2018, 4:39:54 PM
+--
+---@type ns
 local ns = select(2, ...)
+
 local TypeRender = setmetatable({}, {
     __index = function(t)
         return t.other
     end,
     __call = function(self, value)
-        local t = type(value)
+        local t = ns.GetType(value)
         return self[t](value)
     end,
 })
@@ -26,27 +29,18 @@ local function colorFactory(r, g, b, formatter)
     end
 end
 
-TypeRender['nil'] = colorFactory(.5, .5, .5)
+TypeRender['nil'] = colorFactory(0.5, 0.5, 0.5)
+TypeRender['function'] = colorFactory(0, 1, 1)
 
 TypeRender.other = colorFactory(1, 1, 1)
-TypeRender.string = colorFactory(0, 1, .5, function(value)
+TypeRender.string = colorFactory(1, 1, 0, function(value)
     return format('%q', value)
 end)
-TypeRender.number = colorFactory(1, 1, 0)
+TypeRender.number = colorFactory(0, 1, 0.5)
 TypeRender.boolean = colorFactory(1, 0, 0)
+TypeRender.userdata = colorFactory(1, 1, 0.5)
 
-TypeRender.widget = function(widget)
-    local name = widget:GetDebugName()
-    if not name then
-        error('not found debug name')
-    elseif name == '' then
-        name = tostring(widget)
-    end
-    widgets[name] = widget
-    return format('|Hwidget:%s|h|cff00ff00[%s]|r|h', name, name)
-end
-
-TypeRender.tbl = function(tbl)
+TypeRender.table = function(tbl)
     local name = tostring(tbl)
     if not name then
         error('no name')
@@ -55,12 +49,17 @@ TypeRender.tbl = function(tbl)
     return format('|Htable:%s|h|cff00ffff[%s]|r|h', name, name)
 end
 
-TypeRender.table = function(value)
-    if type(rawget(value, 0)) == 'userdata' and value.GetObjectType then
-        return TypeRender.widget(value)
+TypeRender.uiobject = function(obj)
+    local name
+    if obj.GetDebugName then
+        name = obj:GetDebugName()
+    elseif obj.GetName then
+        name = obj:GetName()
     else
-        return TypeRender.tbl(value)
+        name = tostring(obj)
     end
+    widgets[name] = obj
+    return format('|Huiobject:%s|h|cff00ff00[%s]|r|h', name, name)
 end
 
 TypeRender.ClickValue = function(link)
@@ -72,7 +71,7 @@ TypeRender.ClickValue = function(link)
         return
     end
 
-    if linkType == 'widget' then
+    if linkType == 'uiobject' then
         local widget = widgets[linkContent]
         if widget then
             inspect(widget)

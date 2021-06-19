@@ -77,16 +77,12 @@
                 </Anchors>
                 <Layers>
                     <Layer level="ARTWORK">
-                        <Line thickness="1">
-                            <StartAnchor relativePoint="TOPLEFT" x="3" y="-5" />
-                            <EndAnchor relativePoint="CENTER" x="0" y="-2" />
-                            <Color r="0.8" g="0.8" b="0.8" />
-                        </Line>
-                        <Line thickness="1">
-                            <StartAnchor relativePoint="TOPRIGHT" x="-3" y="-5" />
-                            <EndAnchor relativePoint="CENTER" x="0" y="-2" />
-                            <Color r="0.8" g="0.8" b="0.8" />
-                        </Line>
+                        <Texture file="Interface\AddOns\!!!tdDevTools\Media\ArrowDown">
+                            <Size x="8" y="8" />
+                            <Anchors>
+                                <Anchor point="CENTER" />
+                            </Anchors>
+                        </Texture>
                     </Layer>
                 </Layers>
             </Frame>
@@ -97,16 +93,12 @@
                 </Anchors>
                 <Layers>
                     <Layer level="ARTWORK">
-                        <Line thickness="1">
-                            <StartAnchor relativePoint="BOTTOMLEFT" x="3" y="5" />
-                            <EndAnchor relativePoint="CENTER" x="0" y="2" />
-                            <Color r="0.8" g="0.8" b="0.8" />
-                        </Line>
-                        <Line thickness="1">
-                            <StartAnchor relativePoint="BOTTOMRIGHT" x="-3" y="5" />
-                            <EndAnchor relativePoint="CENTER" x="0" y="2" />
-                            <Color r="0.8" g="0.8" b="0.8" />
-                        </Line>
+                        <Texture file="Interface\AddOns\!!!tdDevTools\Media\ArrowUp">
+                            <Size x="8" y="8" />
+                            <Anchors>
+                                <Anchor point="CENTER" />
+                            </Anchors>
+                        </Texture>
                     </Layer>
                 </Layers>
             </Frame>
@@ -213,8 +205,8 @@
                     </Frame>
                     <ScrollFrame parentKey="ScrollFrame" inherits="tdDevToolsHybridScrollFrameTemplate">
                         <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parent.Header" relativePoint="BOTTOMLEFT" />
-                            <Anchor point="BOTTOMRIGHT" />
+                            <Anchor point="TOPLEFT" relativeKey="$parent.Header" relativePoint="BOTTOMLEFT" x="0" y="-1" />
+                            <Anchor point="BOTTOMRIGHT" x="0" y="1" />
                         </Anchors>
                     </ScrollFrame>
                 </Frames>
@@ -252,11 +244,11 @@
                     </Frame>
                     <ScrollFrame parentKey="ScrollFrame" inherits="tdDevToolsHybridScrollFrameTemplate">
                         <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parent.Header" relativePoint="BOTTOMLEFT" />
-                            <Anchor point="BOTTOMRIGHT" />
+                            <Anchor point="TOPLEFT" relativeKey="$parent.Header" relativePoint="BOTTOMLEFT" x="0" y="-1" />
+                            <Anchor point="BOTTOMRIGHT" x="0" y="1" />
                         </Anchors>
                     </ScrollFrame>
-                    <Button parentKey="ClearButton" inherits="tdDevToolsButtonTemplate" text="Clear">
+                    <Button parentKey="ClearButton" inherits="tdDevToolsInsideButtonTemplate" text="Clear">
                         <Size x="60" y="19" />
                         <Anchors>
                             <Anchor point="TOPRIGHT" />
@@ -267,7 +259,7 @@
                             </OnClick>
                         </Scripts>
                     </Button>
-                    <Button parentKey="ToggleButton" inherits="tdDevToolsButtonTemplate" text="Start">
+                    <Button parentKey="ToggleButton" inherits="tdDevToolsInsideButtonTemplate" text="Start">
                         <Size x="60" y="19" />
                         <Anchors>
                             <Anchor point="RIGHT" relativeKey="$parent.ClearButton" relativePoint="LEFT" x="1" y="0" />
@@ -312,8 +304,8 @@
                     </Frame>
                     <ScrollFrame parentKey="ScrollFrame" inherits="tdDevToolsHybridScrollFrameTemplate">
                         <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parent.Header" relativePoint="BOTTOMLEFT" />
-                            <Anchor point="BOTTOMRIGHT" />
+                            <Anchor point="TOPLEFT" relativeKey="$parent.Header" relativePoint="BOTTOMLEFT" x="0" y="-1" />
+                            <Anchor point="BOTTOMRIGHT" x="0" y="1" />
                         </Anchors>
                     </ScrollFrame>
                 </Frames>

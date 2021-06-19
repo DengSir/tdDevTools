@@ -1,0 +1,291 @@
+<Ui xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\FrameXML\UI.xsd">
+    <Button name="tdDevToolsInspectItemTemplate" virtual="true">
+        <Size x="80" y="16" />
+        <Layers>
+            <Layer level="BACKGROUND">
+                <Texture parentKey="HeaderBackground">
+                    <Color r="1" g="1" b="1" a="0.08" />
+                </Texture>
+            </Layer>
+            <Layer level="ARTWORK">
+                <FontString parentKey="Header" inherits="tdDevToolsFontImportant" justifyH="LEFT" wordWrap="false">
+                    <Size x="100" />
+                    <Anchors>
+                        <Anchor point="LEFT" x="5" y="0" />
+                    </Anchors>
+                </FontString>
+                <FontString parentKey="Key" inherits="tdDevToolsFontImportant" justifyH="LEFT" wordWrap="false">
+                    <Size x="100" />
+                    <Anchors>
+                        <Anchor point="LEFT" x="15" y="0" />
+                    </Anchors>
+                </FontString>
+                <FontString parentKey="Value" inherits="tdDevToolsFontHighlight" justifyH="LEFT" wordWrap="false">
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.Key" relativePoint="RIGHT" x="5" y="0" />
+                        <Anchor point="RIGHT" x="-5" y="0" />
+                    </Anchors>
+                </FontString>
+                <FontString parentKey="Star" inherits="tdDevToolsFontHighlight" justifyH="LEFT" wordWrap="false" text="*">
+                    <Anchors>
+                        <Anchor point="RIGHT" relativeKey="$parent.Value" relativePoint="LEFT" x="-1" y="0" />
+                    </Anchors>
+                    <Color r="1" g="0" b="0" />
+                </FontString>
+            </Layer>
+        </Layers>
+        <HighlightTexture>
+            <Color r="1" g="1" b="1" a="0.2" />
+        </HighlightTexture>
+        <Scripts>
+            <OnClick>
+                self.scrollFrame:GetParent():OnItemClick(self.item)
+            </OnClick>
+            <OnSizeChanged>
+                self.Key:SetWidth(self:GetWidth() / 3)
+            </OnSizeChanged>
+        </Scripts>
+    </Button>
+
+    <Frame name="tdDevToolsInspectTemplate" parent="tdDevToolsParent" movable="true" resizable="true" clampedToScreen="true" toplevel="true" enableMouse="true" inherits="tdDevToolsBackdropFrameTemplate" virtual="true">
+        <Size x="300" y="250" />
+        <Anchors>
+            <Anchor point="BOTTOMLEFT" x="100" y="100" />
+        </Anchors>
+        <Frames>
+            <Frame parentKey="Header" enableMouse="true">
+                <Size y="18" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" />
+                    <Anchor point="TOPRIGHT" />
+                </Anchors>
+                <Frames>
+                    <Button parentKey="Close" inherits="tdDevToolsInsideButtonTemplate">
+                        <Size x="13" y="13" />
+                        <Anchors>
+                            <Anchor point="TOPRIGHT" x="-3" y="-3" />
+                        </Anchors>
+                        <Layers>
+                            <Layer level="ARTWORK">
+                                <Texture file="Interface\AddOns\!!!tdDevTools\Media\Close">
+                                    <Size x="8" y="8" />
+                                    <Anchors>
+                                        <Anchor point="CENTER" />
+                                    </Anchors>
+                                </Texture>
+                            </Layer>
+                        </Layers>
+                        <Scripts>
+                            <OnClick>
+                                self:GetParent():GetParent():Hide()
+                            </OnClick>
+                        </Scripts>
+                    </Button>
+                    <Button parentKey="Forward" inherits="tdDevToolsInsideButtonTemplate">
+                        <Size x="13" y="13" />
+                        <Anchors>
+                            <Anchor point="TOPRIGHT" relativeKey="$parent.Close" relativePoint="TOPLEFT" x="1" y="0" />
+                        </Anchors>
+                        <Layers>
+                            <Layer level="ARTWORK">
+                                <Texture parentArray="textures" file="Interface\AddOns\!!!tdDevTools\Media\ArrowRight">
+                                    <Size x="8" y="8" />
+                                    <Anchors>
+                                        <Anchor point="CENTER" />
+                                    </Anchors>
+                                </Texture>
+                            </Layer>
+                        </Layers>
+                        <Scripts>
+                            <OnClick>
+                                self:GetParent():GetParent():GoForward()
+                            </OnClick>
+                        </Scripts>
+                    </Button>
+                    <Button parentKey="Back" inherits="tdDevToolsInsideButtonTemplate">
+                        <Size x="13" y="13" />
+                        <Anchors>
+                            <Anchor point="TOPRIGHT" relativeKey="$parent.Forward" relativePoint="TOPLEFT" x="1" y="0" />
+                        </Anchors>
+                        <Layers>
+                            <Layer level="ARTWORK">
+                                <Texture parentArray="textures" file="Interface\AddOns\!!!tdDevTools\Media\ArrowLeft">
+                                    <Size x="8" y="8" />
+                                    <Anchors>
+                                        <Anchor point="CENTER" />
+                                    </Anchors>
+                                </Texture>
+                            </Layer>
+                        </Layers>
+                        <Scripts>
+                            <OnClick>
+                                self:GetParent():GetParent():GoBack()
+                            </OnClick>
+                        </Scripts>
+                    </Button>
+                    <Button parentKey="Parent" inherits="tdDevToolsInsideButtonTemplate">
+                        <Size x="13" y="13" />
+                        <Anchors>
+                            <Anchor point="TOPRIGHT" relativeKey="$parent.Back" relativePoint="TOPLEFT" x="1" y="0" />
+                        </Anchors>
+                        <Layers>
+                            <Layer level="ARTWORK">
+                                <Texture parentArray="textures" file="Interface\AddOns\!!!tdDevTools\Media\ArrowUp">
+                                    <Size x="8" y="8" />
+                                    <Anchors>
+                                        <Anchor point="CENTER" />
+                                    </Anchors>
+                                </Texture>
+                            </Layer>
+                        </Layers>
+                        <Scripts>
+                            <OnClick>
+                                self:GetParent():GetParent():GoParent()
+                            </OnClick>
+                        </Scripts>
+                    </Button>
+                    <Button parentKey="Duplicate" inherits="tdDevToolsInsideButtonTemplate">
+                        <Size x="13" y="13" />
+                        <Anchors>
+                            <Anchor point="TOPRIGHT" relativeKey="$parent.Parent" relativePoint="TOPLEFT" x="1" y="0" />
+                        </Anchors>
+                        <Layers>
+                            <Layer level="ARTWORK">
+                                <Texture parentArray="textures" file="Interface\AddOns\!!!tdDevTools\Media\Dupe">
+                                    <Size x="8" y="8" />
+                                    <Anchors>
+                                        <Anchor point="CENTER" />
+                                    </Anchors>
+                                </Texture>
+                            </Layer>
+                        </Layers>
+                        <Scripts>
+                            <OnClick>
+                                self:GetParent():GetParent():Duplicate()
+                            </OnClick>
+                        </Scripts>
+                    </Button>
+                </Frames>
+                <Layers>
+                    <Layer level="BORDER">
+                        <Texture inherits="_tdDevToolsLineTemplate">
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" />
+                                <Anchor point="TOPRIGHT" relativePoint="BOTTOMRIGHT" />
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                    <Layer level="ARTWORK">
+                        <FontString parentKey="Title" inherits="tdDevToolsFontImportant" justifyH="LEFT">
+                            <Anchors>
+                                <Anchor point="LEFT" x="5" y="0"/>
+                                <Anchor point="RIGHT" relativeKey="$parent.Duplicate" relativePoint="LEFT" x="-5" y="0"/>
+                            </Anchors>
+                        </FontString>
+                    </Layer>
+                </Layers>
+                <Scripts>
+                    <OnMouseDown>
+                        self:GetParent():StartMoving()
+                    </OnMouseDown>
+                    <OnMouseUp>
+                        self:GetParent():StopMovingOrSizing()
+                    </OnMouseUp>
+                </Scripts>
+            </Frame>
+            <Frame parentKey="Controls">
+                <Size y="18" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.Header" relativePoint="BOTTOMLEFT" />
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.Header" relativePoint="BOTTOMRIGHT" />
+                </Anchors>
+                <!-- <Layers>
+                    <Layer level="BORDER">
+                        <Texture inherits="_tdDevToolsLineTemplate">
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" />
+                                <Anchor point="TOPRIGHT" relativePoint="BOTTOMRIGHT" />
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                </Layers> -->
+                <Frames>
+                    <CheckButton parentKey="DynamicUpdates" inherits="tdDevToolsCheckButtonTemplate" text="Dynamic Updates">
+                        <Anchors>
+                            <Anchor point="LEFT" x="10" y="-5" />
+                        </Anchors>
+                        <Scripts>
+                            <OnClick>
+                                self:GetParent():GetParent():OnDynamicUpdatesClick()
+                            </OnClick>
+                        </Scripts>
+                    </CheckButton>
+                    <CheckButton parentKey="Visible" inherits="tdDevToolsCheckButtonTemplate" text="Show">
+                        <Anchors>
+                            <Anchor point="LEFT" relativeKey="$parent.DynamicUpdates" relativePoint="RIGHT" x="103" y="0" />
+                        </Anchors>
+                        <Scripts>
+                            <OnClick>
+                                self:GetParent():GetParent():OnVisibleClick()
+                            </OnClick>
+                        </Scripts>
+                    </CheckButton>
+                    <CheckButton parentKey="Highlight" inherits="tdDevToolsCheckButtonTemplate" text="Highlight">
+                        <Anchors>
+                            <Anchor point="LEFT" relativeKey="$parent.Visible" relativePoint="RIGHT" x="37" y="0" />
+                        </Anchors>
+                        <Scripts>
+                            <OnClick>
+                                self:GetParent():GetParent():OnHighlightClick()
+                            </OnClick>
+                        </Scripts>
+                    </CheckButton>
+                </Frames>
+            </Frame>
+            <Button mixin="PanelResizeButtonMixin">
+                <Size x="12" y="12"/>
+                <Anchors>
+                    <Anchor point="BOTTOMRIGHT" />
+                </Anchors>
+                <Scripts>
+                    <OnLoad>
+                        self:Init(self:GetParent(), 260, 120)
+                    </OnLoad>
+                    <OnMouseDown method="OnMouseDown"/>
+                    <OnMouseUp method="OnMouseUp"/>
+                </Scripts>
+                <NormalTexture file="Interface\AddOns\!!!tdDevTools\Media\ArrowBR">
+                    <Size x="10" y="10"/>
+                    <Anchors>
+                        <Anchor point="BOTTOMRIGHT" x="-2" y="2" />
+                    </Anchors>
+                </NormalTexture>
+                <HighlightTexture file="Interface\AddOns\!!!tdDevTools\Media\ArrowBR" alphaMode="ADD">
+                    <Size x="10" y="10"/>
+                    <Anchors>
+                        <Anchor point="BOTTOMRIGHT" x="-2" y="2" />
+                    </Anchors>
+                </HighlightTexture>
+                <PushedTexture file="Interface\AddOns\!!!tdDevTools\Media\ArrowBR">
+                    <Size x="10" y="10"/>
+                    <Anchors>
+                        <Anchor point="BOTTOMRIGHT" x="-3" y="1" />
+                    </Anchors>
+                </PushedTexture>
+            </Button>
+            <Frame parentKey="Inset" inherits="tdDevToolsBorderFrameTemplate">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.Controls" relativePoint="BOTTOMLEFT" x="10" y="-10" />
+                    <Anchor point="BOTTOMRIGHT" x="-10" y="10" />
+                </Anchors>
+            </Frame>
+            <ScrollFrame parentKey="Fields" inherits="tdDevToolsHybridScrollFrameTemplate">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.Inset" x="1" y="-1" />
+                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent.Inset" x="0" y="1" />
+                </Anchors>
+            </ScrollFrame>
+        </Frames>
+    </Frame>
+</Ui>

@@ -30,7 +30,7 @@
                     </Layer>
                 </Layers>
                 <Frames>
-                    <Button parentKey="ClearButton" inherits="tdDevToolsButtonTemplate" text="Clear">
+                    <Button parentKey="ClearButton" inherits="tdDevToolsInsideButtonTemplate" text="Clear">
                         <Size x="60" y="19" />
                         <Anchors>
                             <Anchor point="TOPRIGHT" x="0" y="0" />
@@ -108,7 +108,7 @@
                     </Frame>
                 </Frames>
             </Frame>
-            <ScrollingMessageFrame parentKey="MessageFrame" enableMouseWheel="true" hidden="false" toplevel="false" frameStrata="FULLSCREEN_DIALOG" inherits="ChatFrameTemplate">
+            <ScrollingMessageFrame parentKey="MessageFrame" enableMouseWheel="true" inherits="InlineHyperlinkFrameTemplate">
                 <KeyValues>
                     <KeyValue key="stepSize" value="50" type="number"/>
                 </KeyValues>
@@ -125,12 +125,10 @@
                     </Slider>
                 </Frames>
                 <Scripts>
-                    <OnLoad>
-                    </OnLoad>
-                    <OnEvent>
-                    </OnEvent>
-                    <OnUpdate>
-                    </OnUpdate>
+                    <OnHyperlinkEnter>
+                    </OnHyperlinkEnter>
+                    <OnHyperlinkLeave>
+                    </OnHyperlinkLeave>
                     <OnMouseWheel>
                         if delta > 0 then
                             self:ScrollUp()
