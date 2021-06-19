@@ -3,7 +3,22 @@
 -- @Link   : https://dengsir.github.io
 -- @Date   : 10/19/2018, 2:06:08 PM
 --
+---@type ns
 local ns = select(2, ...)
+
+local select, date, time = select, date, time
+local format = string.format
+local tinsert = table.insert
+local wipe, sort = table.wipe or wipe, table.sort or sort
+
+local tDeleteItem = tDeleteItem
+local GetTime = GetTime
+local CombatLogGetCurrentEventInfo = CombatLogGetCurrentEventInfo
+
+local GRAY_FONT_COLOR = GRAY_FONT_COLOR
+local NORMAL_FONT_COLOR = NORMAL_FONT_COLOR
+local HIGHLIGHT_FONT_COLOR = HIGHLIGHT_FONT_COLOR
+
 local Event = ns.Frame.Event
 
 function Event:OnLoad()
@@ -18,7 +33,7 @@ function Event:OnLoad()
     self.ArgumentsList = self.Arguments.ScrollFrame
     self.EventsList = self.Events.ScrollFrame
 
-    ns.ListViewSetup(self.TimelineList, {
+    ns.ListView:Bind(self.TimelineList, {
         itemList = self.timelines,
         buttonTemplate = 'tdDevToolsTimelineItemTemplate',
         pinBottom = true,
@@ -27,7 +42,7 @@ function Event:OnLoad()
         end,
     })
 
-    ns.ListViewSetup(self.ArgumentsList, {
+    ns.ListView:Bind(self.ArgumentsList, {
         itemList = {},
         buttonTemplate = 'tdDevToolsArgumentItemTemplate',
         OnItemFormatting = function(button, item)
@@ -35,7 +50,7 @@ function Event:OnLoad()
         end,
     })
 
-    ns.TreeViewSetup(self.EventsList, {
+    ns.TreeView:Bind(self.EventsList, {
         depth = 2,
         itemTree = self.eventsTree,
         buttonTemplate = 'tdDevToolsEventsItemTemplate',
@@ -133,12 +148,12 @@ function Event:OnEvent(event, ...)
     if not eventsHash[event] then
         local treeInfo = {event = event, count = 1}
         eventsHash[event] = treeInfo
-        table.insert(eventsTree, treeInfo)
-        table.sort(eventsTree, function(lhs, rhs)
+        tinsert(eventsTree, treeInfo)
+        sort(eventsTree, function(lhs, rhs)
             return lhs.event < rhs.event
         end)
     end
-    table.insert(eventsHash[event], item)
+    tinsert(eventsHash[event], item)
 
     self.lastEventTime = currentTime
     self.lastFrames = 0

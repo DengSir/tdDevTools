@@ -3,13 +3,19 @@
 -- @Link   : https://dengsir.github.io
 -- @Date   : 10/17/2018, 12:42:22 PM
 --
+---@type ns
 local ns = select(2, ...)
+
+local ipairs, date, time = ipairs, date, time
+local debugstack = debugstack
+local max = math.max
+local format = string.format
+local tinsert, tremove, wipe = table.insert, table.remove, table.wipe or wipe
+
+local tIndexOf = tIndexOf
+
 local Error = ns.Frame.Error
 local Console = ns.Frame.Console
-
-local FindPath = ns.Util.FindPath
-local ShortPath = ns.Util.ShortPath
-local ColoredPath = ns.Util.ColoredPath
 
 function Error:OnLoad()
     self.index = 0
@@ -17,7 +23,7 @@ function Error:OnLoad()
     self.Tab = ns.Frame.Tab2
     self.errors = {}
 
-    ns.ListViewSetup(self.ErrorList, {
+    ns.ListView:Bind(self.ErrorList, {
         itemList = self.errors,
         buttonTemplate = 'tdDevToolsErrorItemTemplate',
         OnItemFormatting = function(button, item)
@@ -109,7 +115,7 @@ end
 
 function Error:OnItemDeleteClick(button)
     local id = button:GetID()
-    table.remove(self.errors, id)
+    tremove(self.errors, id)
     self:Refresh()
     self:UpdateCount()
 end
@@ -157,7 +163,7 @@ function Error:AddWarning(err)
     local info = self:TakeError(err) or {err = err}
     info.count = (info.count or 0) + 1
 
-    table.insert(self.errors, 1, info)
+    tinsert(self.errors, 1, info)
     self:Refresh()
     self:UpdateCount()
 
@@ -170,7 +176,7 @@ function Error:AddError(err)
     info.count = info.count + 1
     info.time = time()
 
-    table.insert(self.errors, 1, info)
+    tinsert(self.errors, 1, info)
     self:Refresh()
     self:UpdateCount()
 
@@ -182,19 +188,19 @@ function Error:ParseErr(err)
     local stack
     local full
 
-    local path = FindPath(err)
+    local path = ns.FindPath(err)
     if not path then
         stack = debugstack(4)
-        path = FindPath(stack)
+        path = ns.FindPath(stack)
         formatted = err
         full = path .. ': ' .. err
     else
-        formatted = ShortPath(err):sub(#path + 3)
+        formatted = ns.ShortPath(err):sub(#path + 3)
         stack = debugstack(5)
         full = err
     end
 
-    return {err = err, formatted = formatted, full = full, count = 0, path = ColoredPath(path), stack = stack}
+    return {err = err, formatted = formatted, full = full, count = 0, path = ns.ColoredPath(path), stack = stack}
 end
 
 function Error:TakeError(err)

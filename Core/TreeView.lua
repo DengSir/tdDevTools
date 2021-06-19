@@ -3,16 +3,23 @@
 -- @Link   : https://dengsir.github.io
 -- @Date   : 10/20/2018, 4:28:53 PM
 --
-local ns = select(2, ...) or {}
+---@type ns
+local ns = select(2, ...)
 
-local TreeStatus = {}
+local ipairs, type, setmetatable = ipairs, type, setmetatable
+local coroutine = coroutine
+local ceil, min, max = ceil, min, max
 
-function TreeStatus:New(itemTree, depth)
-    local obj = {}
-    obj.itemTree = itemTree
-    obj.depth = depth
-    obj.extends = setmetatable({}, {__mode = 'k'})
-    return setmetatable(obj, {__index = TreeStatus})
+local HybridScrollFrame_GetOffset = HybridScrollFrame_GetOffset
+local HybridScrollFrame_Update = HybridScrollFrame_Update
+
+---@class TreeStatus: Object
+local TreeStatus = ns.class()
+
+function TreeStatus:Constructor(itemTree, depth)
+    self.itemTree = itemTree
+    self.depth = depth
+    self.extends = setmetatable({}, {__mode = 'k'})
 end
 
 function TreeStatus:Iterate(start)
@@ -56,7 +63,16 @@ function TreeStatus:GetCount()
     return GetCount(self.itemTree, 1)
 end
 
-local function update(self)
+---@class TreeView: ScrollFrame
+local TreeView = ns.class(ns.ScrollFrame)
+ns.TreeView = TreeView
+
+function TreeView:Constructor(_, opts)
+    self.treeStatus = TreeStatus:New(opts.itemTree, opts.depth)
+    self.OnItemFormatting = opts.OnItemFormatting
+end
+
+function TreeView:update()
     local offset = HybridScrollFrame_GetOffset(self)
     local buttons = self.buttons
     local treeStatus = self.treeStatus
@@ -91,22 +107,11 @@ local function update(self)
     HybridScrollFrame_Update(self, max(1, itemCount * buttonHeight), containerHeight)
 end
 
-local function ToggleItem(self, item)
+function TreeView:ToggleItem(item)
     self.treeStatus.extends[item] = not self.treeStatus.extends[item] or nil
     self:Refresh()
 end
 
-local function IsItemExpend(self, item)
+function TreeView:IsItemExpend(item)
     return self.treeStatus.extends[item]
-end
-
-function ns.TreeViewSetup(scrollFrame, opts)
-    scrollFrame.treeStatus = TreeStatus:New(opts.itemTree, opts.depth)
-    scrollFrame.update = update
-    scrollFrame.SetItemTree = SetItemTree
-    scrollFrame.ToggleItem = ToggleItem
-    scrollFrame.IsItemExpend = IsItemExpend
-    scrollFrame.OnItemFormatting = opts.OnItemFormatting
-
-    return ns.ScrollFrameSetup(scrollFrame, opts)
 end

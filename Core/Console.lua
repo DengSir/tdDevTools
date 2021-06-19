@@ -3,13 +3,18 @@
 -- @Link   : https://dengsir.github.io
 -- @Date   : 10/16/2018, 3:59:57 PM
 --
+---@type ns
 local ns = select(2, ...)
+
+local assert, ipairs = assert, ipairs
+local format = string.format
+local floor = math.floor
+local tinsert, unpack, wipe = table.insert, table.unpack or unpack, table.wipe or wipe
+
+local PlaySound = PlaySound
 
 local Console = ns.Frame.Console
 local Thread = ns.Thread
-
-local GetColoredTime = ns.Util.GetColoredTime
-local GetCallColoredPath = ns.Util.GetCallColoredPath
 
 function Console:OnLoad()
     self.filterText = ''
@@ -54,14 +59,14 @@ function Console:OnLoad()
     self.MessageFrame.scrollUp:SetScript('OnClick', function(_, _, down)
         if down then
             self.MessageFrame:ScrollUp()
-            PlaySound(SOUNDKIT.U_CHAT_SCROLL_BUTTON)
+            PlaySound(1115) -- SOUNDKIT.U_CHAT_SCROLL_BUTTON
         end
     end)
 
     self.MessageFrame.scrollDown:SetScript('OnClick', function(_, _, down)
         if down then
             self.MessageFrame:ScrollDown()
-            PlaySound(SOUNDKIT.U_CHAT_SCROLL_BUTTON)
+            PlaySound(1115) -- SOUNDKIT.U_CHAT_SCROLL_BUTTON
         end
     end)
 end
@@ -122,11 +127,11 @@ function Console:AddMessage(text, r, g, b)
         g = g,
         b = b,
     }
-    table.insert(self.savedMessages, message)
+    tinsert(self.savedMessages, message)
 
     if self:MatchLog(message.match) then
         if self.filteringThread then
-            table.insert(self.waitingMessages, message)
+            tinsert(self.waitingMessages, message)
         else
             self.MessageFrame:AddMessage(text, r, g, b)
         end
@@ -136,12 +141,12 @@ end
 local levelColors = {DEBUG = {1, 1, 1}, INFO = {1, 1, 1}, WARN = {1, .5, 0}, ERROR = {1, 0, 0}}
 
 function Console:RawLog(level, path, text)
-    return self:AddMessage(format('%s %s %s|cffffffff:|r %s', level, GetColoredTime(), path, text),
+    return self:AddMessage(format('%s %s %s|cffffffff:|r %s', level, ns.GetColoredTime(), path, text),
                            unpack(assert(levelColors[level])))
 end
 
 function Console:Log(level, depth, ...)
-    return self:RawLog(level, GetCallColoredPath(depth + 1), ns.Render(...))
+    return self:RawLog(level, ns.GetCallColoredPath(depth + 1), ns.Render(...))
 end
 
 function Console:MatchLog(text)

@@ -6,6 +6,9 @@
 ---@type ns
 local ns = select(2, ...)
 
+local tostring = tostring
+local format = string.format
+
 local TypeRender = setmetatable({}, {
     __index = function(t)
         return t.other

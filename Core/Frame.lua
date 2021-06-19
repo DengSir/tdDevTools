@@ -5,8 +5,11 @@
 --
 ---@type ns
 local ns = select(2, ...)
-local Frame = tdDevToolsFrame
 
+local GetBindingKey = GetBindingKey
+local GetCurrentKeyBoardFocus = GetCurrentKeyBoardFocus
+
+local Frame = tdDevToolsFrame
 ns.Frame = Frame
 
 function Frame:OnLoad()

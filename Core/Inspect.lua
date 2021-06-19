@@ -6,7 +6,11 @@
 ---@type ns
 local ns = select(2, ...)
 
+local next = next
 local random = fastrandom or math.random
+local tremove, tinsert, wipe = table.remove, table.insert, table.wipe
+
+local CreateFrame = CreateFrame
 
 ---@class Inspect: Object, Frame, tdDevToolsInspectTemplate
 ---@field current Provider
@@ -17,7 +21,7 @@ ns.Inspect = Inspect
 Inspect.pool = {}
 
 function Inspect:Constructor()
-    ns.ListViewSetup(self.Fields, {
+    ns.ListView:Bind(self.Fields, {
         buttonTemplate = 'tdDevToolsInspectItemTemplate',
         OnItemFormatting = function(button, item)
             return self:OnFieldItemFormatting(button, item)
@@ -183,7 +187,7 @@ end
 ---- static
 
 function Inspect:Create()
-    return self:Bind(CreateFrame('Frame', nil, tdDevToolsFrame, 'tdDevToolsInspectTemplate'))
+    return self:Bind(CreateFrame('Frame', nil, ns.Frame, 'tdDevToolsInspectTemplate'))
 end
 
 function Inspect:Acquire()

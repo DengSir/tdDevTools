@@ -3,9 +3,19 @@
 -- @Link   : https://dengsir.github.io
 -- @Date   : 10/19/2018, 8:19:47 PM
 --
+---@type ns
 local ns = select(2, ...)
 
-local function update(self)
+---@class ListView: ScrollFrame
+local ListView = ns.class(ns.ScrollFrame)
+ns.ListView = ListView
+
+function ListView:Constructor(_, opts)
+    self.itemList = opts.itemList
+    self.OnItemFormatting = opts.OnItemFormatting
+end
+
+function ListView:update()
     if not self.itemList then
         return
     end
@@ -39,35 +49,18 @@ local function update(self)
     HybridScrollFrame_Update(self, itemCount * buttonHeight, containerHeight)
 end
 
-local function SetItemList(self, itemList)
+function ListView:SetItemList(itemList)
     self.itemList = itemList
     self:Refresh()
 end
 
-local function SetOffset(self, height)
-    HybridScrollFrame_SetOffset(self, height)
-    self.scrollBar:SetValue(height)
-end
-
-local function JumpToItem(self, item)
+function ListView:JumpToItem(item)
     local index = tIndexOf(self.itemList, item)
     if index then
         local buttonHeight = self.buttonHeight or self.buttons[1]:GetHeight()
         local maxCount = ceil(self:GetHeight() / buttonHeight)
         local height = math.max(0, math.floor(buttonHeight * (index - maxCount / 2)))
-        HybridScrollFrame_SetOffset(self, height)
-        self.scrollBar:SetValue(height)
+
+        self:SetOffset(height)
     end
-end
-
-function ns.ListViewSetup(scrollFrame, opts)
-    scrollFrame.update = update
-    scrollFrame.SetItemList = SetItemList
-    scrollFrame.JumpToItem = JumpToItem
-    scrollFrame.SetOffset = SetOffset
-
-    scrollFrame.itemList = opts.itemList
-    scrollFrame.OnItemFormatting = opts.OnItemFormatting
-
-    return ns.ScrollFrameSetup(scrollFrame, opts)
 end

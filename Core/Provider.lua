@@ -6,6 +6,13 @@
 ---@type ns
 local ns = select(2, ...)
 
+local ipairs, pairs, getmetatable, print, tostring = ipairs, pairs, getmetatable, print, tostring
+local tinsert, sort = table.insert, table.sort or sort
+
+local C_Widget = C_Widget
+
+ns.checkGlobal()
+
 ---@class Provider: Object
 local Provider = ns.class()
 ns.Provider = Provider

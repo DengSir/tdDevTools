@@ -2,7 +2,6 @@
 ..\FrameXML\UI.xsd">
     <Include file="Libs\Embeds.xml" />
     <Script file="Api.lua" />
-    <Script file="Lib.lua" />
     <Include file="UI\UI.xml" />
     <Include file="Core\Core.xml" />
     <Script file="Tests.lua" />

@@ -7,14 +7,12 @@
 local ns = select(2, ...)
 local Console = ns.Frame.Console
 
-local GetCallColoredPath = ns.Util.GetCallColoredPath
-
 setprinthandler(function(...)
     return Console:Log('DEBUG', 8, ...)
 end)
 
 local function BuildRunDumpContext(orig)
-    local path = GetCallColoredPath(4)
+    local path = ns.GetCallColoredPath(4)
     local function Write(_, text)
         return Console:RawLog('DEBUG', path, 'Dump: ' .. text)
     end
