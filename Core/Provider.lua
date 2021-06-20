@@ -11,9 +11,61 @@ local tinsert, sort = table.insert, table.sort or sort
 
 local C_Widget = C_Widget
 
-ns.checkGlobal()
+---@class ProviderItem: Object
+local ProviderItem = ns.class()
+
+function ProviderItem:Match(text)
+    return not self.match or self.match:find(text, nil, true)
+end
+
+---@class ProviderHeader: ProviderItem
+local ProviderHeader = ns.class(ProviderItem)
+
+function ProviderHeader:Constructor(header)
+    self.type = 'header'
+    self.header = header
+end
+
+---@class ProviderValue: ProviderItem
+local ProviderValue = ns.class(ProviderItem)
+
+function ProviderValue:Constructor(object, display)
+    self.type = ns.GetType(object)
+    self.object = object
+    self.value = display or ns.TypeRender(object)
+    -- self.match = ns.stringify(object):lower()
+end
+
+---@class ProviderKeyValue: ProviderItem
+local ProviderKeyValue = ns.class(ProviderItem)
+
+function ProviderKeyValue:Constructor(object, key, type, star)
+    self.object = object
+    self.value = ns.TypeRender(object)
+    self.type = type or ns.GetType(object)
+    self.star = star
+    self:SetKey(key)
+end
+
+local searchables = {uioject = true, string = true, boolean = true, number = true}
+
+function ProviderKeyValue:SetKey(key)
+    if key then
+        if key == '' then
+            self.key = ''
+        else
+            self.key = ns.KeyRender(key)
+        end
+    end
+
+    if searchables[self.type] then
+        self.match = ns.stringify(self.object):lower()
+    end
+end
 
 ---@class Provider: Object
+---@field items ProviderItem[]
+---@field list ProviderItem[]
 local Provider = ns.class()
 ns.Provider = Provider
 
@@ -24,23 +76,23 @@ local function compare(a, b)
     return a.value < b.value
 end
 
-local function ProcessObjects(objects, map)
-    for _, obj in ipairs(objects) do
-        local t = ns.GetType(obj)
-        if t ~= 'uiobject' then
-        else
-            local st = ns.GetUIObjectType(obj)
-            map[st] = map[st] or {}
-            map[st][obj] = {type = t, key = '', value = ns.TypeRender(obj), object = obj}
-        end
-    end
+function Provider:Constructor(target)
+    self.target = target
+    self.type = ns.GetType(self.target)
 end
 
-local function GenType(t, list, map, out)
+function Provider:SetFilter(text)
+    text = text:trim():lower()
+
+    self.filter = text ~= '' and text or nil
+end
+
+function Provider:PackType(t, list, map, out)
     local res = list[t] or {}
     if map[t] then
         for _, v in pairs(map[t]) do
             tinsert(res, v)
+            self.processThread:YieldPoint()
         end
     end
 
@@ -48,60 +100,73 @@ local function GenType(t, list, map, out)
         return
     end
 
-    tinsert(out, {type = 'header', header = t})
+    tinsert(out, ProviderHeader:New(t))
 
-    sort(res, compare)
+    if #res < 2000 then
+        sort(res, compare)
+    else
+        -- ns.qsort(res, compare, function()
+        --     return self.processThread:YieldPoint()
+        -- end)
+    end
 
     for _, v in ipairs(res) do
         tinsert(out, v)
+        self.processThread:YieldPoint()
     end
 end
 
-function Provider:Constructor(target)
-    self.target = target
-    self:Refresh()
+function Provider:ProcessObjects(objects, map)
+    for _, obj in ipairs(objects) do
+        local t = ns.GetType(obj)
+        if t ~= 'uiobject' then
+        else
+            local st = ns.GetUIObjectType(obj)
+            map[st] = map[st] or {}
+            map[st][obj] = ProviderKeyValue:New(obj, '')
+        end
+        self.processThread:YieldPoint()
+    end
 end
 
-function Provider:Refresh()
-    self.list = {}
-    self.touched = {}
-    self.type = ns.GetType(self.target)
+function Provider:ProcessData()
+    local thread = self.processThread
 
+    local out = {}
     local map = {}
-    local list = {}
+    local more = {}
 
     local mt = getmetatable(self.target)
     if mt then
-        tinsert(self.list, {type = 'header', header = 'metatable'})
-        tinsert(self.list, {type = 'table', value = ns.TypeRender(mt), object = mt})
+        tinsert(out, ProviderHeader:New('metatable'))
+        tinsert(out, ProviderValue:New(mt))
     end
 
     if self.type == 'uiobject' then
         if self.target.GetNumPoints then
             local n = self.target:GetNumPoints()
             if n and n > 0 then
-                tinsert(self.list, {type = 'header', header = 'anchor'})
+                tinsert(out, ProviderHeader:New('anchor'))
 
                 for i = 1, n do
                     local point, relative, relativePoint, x, y = self.target:GetPoint(i)
-                    local t = ns.GetType(relative)
-                    tinsert(self.list,
-                            {type = t, value = ns.Render(point, relative, relativePoint, x, y), object = relative})
+
+                    tinsert(out, ProviderValue:New(relative, ns.Render(point, relative, relativePoint, x, y)))
                 end
             end
         end
 
         if self.target.GetChildren then
-            ProcessObjects({self.target:GetChildren()}, map)
+            self:ProcessObjects({self.target:GetChildren()}, map)
         end
         if self.target.GetRegions then
-            ProcessObjects({self.target:GetRegions()}, map)
+            self:ProcessObjects({self.target:GetRegions()}, map)
         end
         if self.target.GetAnimationGroups then
-            ProcessObjects({self.target:GetAnimationGroups()}, map)
+            self:ProcessObjects({self.target:GetAnimationGroups()}, map)
         end
         if self.target.GetAnimations then
-            ProcessObjects({self.target:GetAnimations()}, map)
+            self:ProcessObjects({self.target:GetAnimations()}, map)
         end
     end
 
@@ -112,35 +177,84 @@ function Provider:Refresh()
             map[st] = map[st] or {}
             if map[st][v] then
                 if map[st][v].key == '' then
-                    map[st][v].key = ns.KeyRender(k)
+                    map[st][v]:SetKey(k)
                 else
-                    list[t] = list[t] or {}
-                    tinsert(list[t], {type = t, key = ns.KeyRender(k), value = ns.TypeRender(v), object = v})
+                    more[t] = more[t] or {}
+                    tinsert(more[t], ProviderKeyValue:New(v, k, t))
                 end
             else
                 local isChild = v.GetParent and v:GetParent() == self.target
-                map[st][v] = {type = t, star = not isChild, key = ns.KeyRender(k), value = ns.TypeRender(v), object = v}
+                map[st][v] = ProviderKeyValue:New(v, k, t, not isChild)
             end
         else
-            list[t] = list[t] or {}
-            tinsert(list[t], {type = t, key = ns.KeyRender(k), value = ns.TypeRender(v), object = v})
+            more[t] = more[t] or {}
+            tinsert(more[t], ProviderKeyValue:New(v, k, t))
         end
+
+        thread:YieldPoint()
     end
 
-    GenType('Frame', list, map, self.list)
-    GenType('Region', list, map, self.list)
-    GenType('AnimationGroup', list, map, self.list)
-    GenType('Animation', list, map, self.list)
-    GenType('Font', list, map, self.list)
+    self:PackType('Frame', more, map, out)
+    self:PackType('Region', more, map, out)
+    self:PackType('AnimationGroup', more, map, out)
+    self:PackType('Animation', more, map, out)
+    self:PackType('Font', more, map, out)
+    self:PackType('userdata', more, map, out)
+    self:PackType('string', more, map, out)
+    self:PackType('number', more, map, out)
+    self:PackType('boolean', more, map, out)
+    self:PackType('table', more, map, out)
+    self:PackType('function', more, map, out)
+    self:PackType('thread', more, map, out)
 
-    GenType('userdata', list, map, self.list)
-    GenType('string', list, map, self.list)
-    GenType('number', list, map, self.list)
-    GenType('boolean', list, map, self.list)
-    GenType('table', list, map, self.list)
-    GenType('function', list, map, self.list)
-    GenType('thread', list, map, self.list)
+    self.items = out
+    self.list = out
+    self:Fire('OnRefresh')
 end
+
+-- function Provider:ProcessFilter()
+--     if self.items and self.filter then
+--         local out = {}
+--         for _, v in ipairs(self.items) do
+--             if v:Match(self.filter) then
+--                 tinsert(out, v)
+--             end
+--         end
+--         self.list = out
+
+--         print(#out)
+--     else
+--         self.list = self.items
+--     end
+
+--     self:Fire('OnRefresh')
+-- end
+
+function Provider:Refresh()
+    if self.processThread then
+        return
+    end
+    self.processThread = ns.Thread:New()
+    self.processThread:Start(function()
+        self:ProcessData()
+        -- self:ProcessFilter()
+        self.processThread = nil
+    end)
+    return not self.processThread
+end
+
+-- function Provider:RefreshFilter()
+--     if self.filterThread or self.processThread then
+--         return
+--     end
+
+--     self.filterThread = ns.Thread:New()
+--     self.filterThread:Start(function()
+--         self:ProcessFilter()
+--         self.filterThread = nil
+--     end)
+--     return not self.filterThread
+-- end
 
 function Provider:GetParent()
     if self.type == 'uiobject' then

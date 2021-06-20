@@ -21,6 +21,38 @@ function ns.class(...)
     return LibClass:New(...)
 end
 
+local function partition(list, low, high, comp, yield)
+    local current = list[low];
+    while low < high do
+        while low < high and comp(current, list[high]) do
+            high = high - 1
+        end
+        list[low], list[high] = list[high], list[low]
+
+        while low < high and not comp(current, list[low]) do
+            low = low + 1
+        end
+        list[low], list[high] = list[high], list[low]
+
+        if yield then
+            yield()
+        end
+    end
+    return low
+end
+
+local function qsort(list, low, high, comp, yield)
+    if low < high then
+        local pivot = partition(list, low, high, comp, yield)
+        qsort(list, low, pivot - 1, comp, yield)
+        qsort(list, pivot + 1, high, comp, yield)
+    end
+end
+
+function ns.qsort(list, comp, yield)
+    return qsort(list, 1, #list, comp, yield)
+end
+
 function ns.GetType(obj)
     local t = type(obj)
     if t == 'table' and type(rawget(obj, 0)) == 'userdata' and obj.GetObjectType then

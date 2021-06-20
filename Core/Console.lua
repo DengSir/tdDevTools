@@ -82,10 +82,10 @@ function Console:OnFilterBoxTextChanged(text)
         self.filteringThread:Kill()
     end
 
-    self.filteringThread = Thread:New(function()
+    self.filteringThread = Thread:New()
+    self.filteringThread:Start(function()
         return self:FilteringProcess()
-    end, 0.0015, true)
-    self.filteringThread:Start()
+    end)
 end
 
 function Console:FilteringProcess()

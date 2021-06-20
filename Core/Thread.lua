@@ -6,55 +6,83 @@
 ---@type ns
 local ns = select(2, ...)
 
+local coroutine = coroutine
+local profilestart, profilestop
+do
+    local tick = 0
+    function profilestart()
+        tick = debugprofilestop()
+    end
+
+    function profilestop()
+        local t = debugprofilestop()
+        return t - tick
+    end
+end
+
 ---@class Thread: Object
 local Thread = ns.class()
 ns.Thread = Thread
 
-function Thread:Constructor(func, frame, extend)
+local KILLED = newproxy()
+
+function Thread:Start(func, ...)
     self.co = coroutine.create(func)
-    self.frame = frame
-    self.extend = extend and frame * 10 or frame
-end
-
-function Thread:Start(...)
-    self.endTime = GetTimePreciseSec() + self.extend
-    return coroutine.resume(self.co, ...)
-end
-
-function Thread:Resume(...)
-    self.endTime = GetTimePreciseSec() + self.frame
-    return coroutine.resume(self.co, ...)
+    profilestart()
+    coroutine.resume(self.co, ...)
 end
 
 function Thread:Kill()
-    self.killed = true
+    local co = self.co
+    self.co = nil
+    coroutine.resume(co, KILLED)
+end
+
+function Thread:Threshold()
+    if not self.co or self.co ~= coroutine.running() then
+        return true
+    end
+
+    if profilestop() > 16 then
+        profilestart()
+
+        local killed = coroutine.yield()
+        if killed == KILLED then
+            return true
+        end
+    end
 end
 
 function Thread:YieldPoint()
-    if GetTimePreciseSec() > self.endTime then
-        self.timer = C_Timer.NewTimer(0, function()
-            self.timer = nil
-            return self:Resume()
+    if not self.co or self.co ~= coroutine.running() then
+        return true
+    end
+
+    if profilestop() > 16 then
+        profilestart()
+
+        C_Timer.After(0, function()
+            self:Resume()
         end)
-        return self:Yield()
-    end
-end
 
-local function packResult(...)
-    return {args = {...}, argsCount = select('#', ...)}
-end
-
-local function unpackResult(pack)
-    return unpack(pack.args, 1, pack.argsCount)
-end
-
-function Thread:Yield()
-    local pack = packResult(coroutine.yield())
-    if self.killed then
-        if self.timer then
-            self.timer:Cancel()
+        local killed = coroutine.yield()
+        if killed == KILLED then
+            return true
         end
-        error('killed')
     end
-    return unpackResult(pack)
+end
+
+function Thread:Resume()
+    local ok, err = coroutine.resume(self.co)
+    if not ok then
+        print(err)
+    end
+end
+
+function Thread:IsFinished()
+    return self.co and coroutine.status(self.co) == 'dead'
+end
+
+function Thread:IsDead()
+    return not self.co
 end

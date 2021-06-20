@@ -24,8 +24,23 @@ local tables = setmetatable({}, {__mode = 'v'})
 
 ns.TypeRender = TypeRender
 
+function ns.stringify(value)
+    local t = ns.GetType(value)
+    local name
+    if t == 'uiobject' then
+        if value.GetDebugName then
+            name = value:GetDebugName()
+        elseif value.GetName then
+            name = value:GetName()
+        end
+    elseif t == 'table' then
+        name = tostring(value)
+    end
+    return name or tostring(value) or ''
+end
+
 local function colorFactory(r, g, b, formatter)
-    local formatter = formatter or tostring
+    local formatter = formatter or ns.stringify
     local template = format('|cff%02x%02x%02x', r * 255, g * 255, b * 255) .. '%s|r'
     return function(value)
         return format(template, formatter(value))
@@ -33,7 +48,7 @@ local function colorFactory(r, g, b, formatter)
 end
 
 TypeRender['nil'] = colorFactory(0.5, 0.5, 0.5)
-TypeRender['function'] = colorFactory(0, 1, 1)
+TypeRender['function'] = colorFactory(0, 0.5, 1)
 
 TypeRender.other = colorFactory(1, 1, 1)
 TypeRender.string = colorFactory(1, 1, 0, function(value)
@@ -42,25 +57,16 @@ end)
 TypeRender.number = colorFactory(0, 1, 0.5)
 TypeRender.boolean = colorFactory(1, 0, 0)
 TypeRender.userdata = colorFactory(1, 1, 0.5)
+TypeRender.thread = colorFactory(1, 0.5, 1)
 
 TypeRender.table = function(tbl)
     local name = tostring(tbl)
-    if not name then
-        error('no name')
-    end
     tables[name] = tbl
     return format('|Htable:%s|h|cff00ffff[%s]|r|h', name, name)
 end
 
 TypeRender.uiobject = function(obj)
-    local name
-    if obj.GetDebugName then
-        name = obj:GetDebugName()
-    elseif obj.GetName then
-        name = obj:GetName()
-    else
-        name = tostring(obj)
-    end
+    local name = ns.stringify(obj)
     widgets[name] = obj
     return format('|Huiobject:%s|h|cff00ff00[%s]|r|h', name, name)
 end

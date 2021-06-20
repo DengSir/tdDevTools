@@ -195,7 +195,7 @@
                 </Scripts>
             </Frame>
             <Frame parentKey="Controls">
-                <Size y="18" />
+                <Size y="46" />
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent.Header" relativePoint="BOTTOMLEFT" />
                     <Anchor point="TOPRIGHT" relativeKey="$parent.Header" relativePoint="BOTTOMRIGHT" />
@@ -213,7 +213,7 @@
                 <Frames>
                     <CheckButton parentKey="DynamicUpdates" inherits="tdDevToolsCheckButtonTemplate" text="Dynamic Updates">
                         <Anchors>
-                            <Anchor point="LEFT" x="10" y="-5" />
+                            <Anchor point="TOPLEFT" x="10" y="-10" />
                         </Anchors>
                         <Scripts>
                             <OnClick>
@@ -241,6 +241,23 @@
                             </OnClick>
                         </Scripts>
                     </CheckButton>
+                    <EditBox parentKey="FilterBox" autoFocus="false" letters="31" inherits="tdDevToolsBorderFrameTemplate">
+                        <Size y="18" />
+                        <Anchors>
+                            <Anchor point="BOTTOMLEFT" x="10" y="0" />
+                            <Anchor point="BOTTOMRIGHT" x="-10" y="0" />
+                        </Anchors>
+                        <TextInsets left="8" right="8" />
+                        <FontString inherits="tdDevToolsFontHighlight" />
+                        <Scripts>
+                            <OnEscapePressed function="EditBox_ClearFocus" />
+                            <OnEnterPressed function="EditBox_ClearFocus" />
+                            <OnTextChanged>
+                                local text = self:GetText()
+                                -- self:GetParent():GetParent():SetFilter(text)
+                            </OnTextChanged>
+                        </Scripts>
+                    </EditBox>
                 </Frames>
             </Frame>
             <Button mixin="PanelResizeButtonMixin">
@@ -276,7 +293,7 @@
             </Button>
             <Frame parentKey="Inset" inherits="tdDevToolsBorderFrameTemplate">
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.Controls" relativePoint="BOTTOMLEFT" x="10" y="-10" />
+                    <Anchor point="TOPLEFT" relativeKey="$parent.Controls" relativePoint="BOTTOMLEFT" x="10" y="-8" />
                     <Anchor point="BOTTOMRIGHT" x="-10" y="10" />
                 </Anchors>
             </Frame>
@@ -286,6 +303,35 @@
                     <Anchor point="BOTTOMRIGHT" relativeKey="$parent.Inset" x="0" y="1" />
                 </Anchors>
             </ScrollFrame>
+            <Frame parentKey="Loading" hidden="true">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.Inset" />
+                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent.Inset" />
+                </Anchors>
+                <Layers>
+                    <Layer level="BACKGROUND">
+                        <Texture parentKey="Circle" file="Interface\AddOns\!!!tdDevTools\Media\Loading">
+                            <Size x="32" y="32"/>
+                            <Anchors>
+                                <Anchor point="CENTER" />
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                </Layers>
+                <Animations>
+                    <AnimationGroup parentKey="Anim" looping="REPEAT">
+                        <Rotation childKey="Circle" order="1" duration="2" degrees="-360"/>
+                    </AnimationGroup>
+                </Animations>
+                <Scripts>
+                    <OnShow>
+                        self.Anim:Play()
+                    </OnShow>
+                    <OnHide>
+                        self.Anim:Stop()
+                    </OnHide>
+                </Scripts>
+            </Frame>
         </Frames>
     </Frame>
 </Ui>
