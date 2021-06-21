@@ -1,47 +1,27 @@
 <Ui xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\FrameXML\UI.xsd">
-    <Frame name="tdDevToolsInspectTextTemplate" virtual="true">
+    <Button name="tdDevToolsInspectValueTemplate" virtual="true">
+        <Layers>
+            <Layer level="ARTWORK">
+                <FontString parentKey="Text" inherits="tdDevToolsFontHighlight" justifyH="LEFT" wordWrap="false" setAllPoints="true" />
+            </Layer>
+        </Layers>
+        <HighlightTexture>
+            <Color r="1" g="1" b="1" a="0.2" />
+        </HighlightTexture>
         <Scripts>
-            <OnLoad>
-                self:SetMouseClickEnabled(false)
-            </OnLoad>
             <OnEnter>
                 if self.Text:GetStringWidth() > self:GetWidth() then
                     GameTooltip:SetOwner(self, 'ANCHOR_TOPRIGHT')
                     GameTooltip:SetText(self.Text:GetText(), nil, nil, nil, nil, true)
                     GameTooltip:Show()
                 end
-                self:GetParent():LockHighlight()
             </OnEnter>
             <OnLeave>
                 GameTooltip:Hide()
-                self:GetParent():UnlockHighlight()
             </OnLeave>
         </Scripts>
-    </Frame>
-    <Frame name="tdDevToolsInspectTextImportantTemplate" inherits="tdDevToolsInspectTextTemplate" virtual="true">
-        <Layers>
-            <Layer level="ARTWORK">
-                <FontString parentKey="Text" inherits="tdDevToolsFontImportant" justifyH="LEFT" wordWrap="false" setAllPoints="true" />
-            </Layer>
-        </Layers>
-    </Frame>
-    <Frame name="tdDevToolsInspectTextHighlightTemplate" inherits="tdDevToolsInspectTextTemplate" virtual="true">
-        <Layers>
-            <Layer level="ARTWORK">
-                <FontString parentKey="Text" inherits="tdDevToolsFontHighlight" justifyH="LEFT" wordWrap="false" setAllPoints="true" />
-            </Layer>
-        </Layers>
-    </Frame>
-    <Frame name="tdDevToolsInspectItemValueTemplate" virtual="true">
-        <Frames>
-        </Frames>
-        <Layers>
-            <Layer level="ARTWORK">
-                <FontString parentKey="Text" inherits="tdDevToolsFontHighlight" justifyH="LEFT" wordWrap="false" setAllPoints="true" />
-            </Layer>
-        </Layers>
-    </Frame>
+    </Button>
     <Button name="tdDevToolsInspectItemTemplate" virtual="true">
         <Size x="80" y="16" />
         <Layers>
@@ -60,14 +40,14 @@
             </Layer>
         </Layers>
         <Frames>
-            <Frame parentKey="Key" inherits="tdDevToolsInspectItemValueTemplate">
+            <Button parentKey="Key" inherits="tdDevToolsInspectValueTemplate">
                 <Size x="100" />
                 <Anchors>
                     <Anchor point="TOPLEFT" x="15" y="0" />
                     <Anchor point="BOTTOMLEFT" x="15" y="0" />
                 </Anchors>
-            </Frame>
-            <Frame parentKey="Value" inherits="tdDevToolsInspectItemValueTemplate">
+            </Button>
+            <Button parentKey="Value" inherits="tdDevToolsInspectValueTemplate">
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent.Key" relativePoint="TOPRIGHT" x="5" y="0" />
                     <Anchor point="BOTTOMRIGHT" x="-5" y="0" />
@@ -82,15 +62,9 @@
                         </FontString>
                     </Layer>
                 </Layers>
-            </Frame>
+            </Button>
         </Frames>
-        <HighlightTexture>
-            <Color r="1" g="1" b="1" a="0.2" />
-        </HighlightTexture>
         <Scripts>
-            <OnClick>
-                self.scrollFrame:GetParent():OnItemClick(self.item)
-            </OnClick>
             <OnSizeChanged>
                 self.Key:SetWidth(self:GetWidth() / 3)
             </OnSizeChanged>
@@ -367,6 +341,30 @@
                     </OnHide>
                 </Scripts>
             </Frame>
+            <EditBox parentKey="CopyBox" hidden="true">
+                <Layers>
+                    <Layer level="BACKGROUND">
+                        <Texture setAllPoints="true">
+                            <Color r="0" g="0" b="0" />
+                        </Texture>
+                    </Layer>
+                </Layers>
+                <FontString inherits="tdDevToolsFontHighlight" />
+                <Scripts>
+                    <OnLoad>
+                        self.owner = self:GetParent()
+                    </OnLoad>
+                    <OnEscapePressed>
+                        self.owner:CloseCopy()
+                    </OnEscapePressed>
+                    <OnEnterPressed>
+                        self.owner:CloseCopy()
+                    </OnEnterPressed>
+                    <OnHide>
+                        self:Hide()
+                    </OnHide>
+                </Scripts>
+            </EditBox>
         </Frames>
     </Frame>
 </Ui>

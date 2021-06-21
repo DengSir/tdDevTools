@@ -22,25 +22,36 @@ Inspect.pool = {}
 
 --
 --
----@class InspectItemValue: Frame, Object
-local InspectItemValue = ns.class('Frame')
+---@class InspectItemValue: Button, Object
+---@field owner Inspect
+local InspectValueFrame = ns.class('Button')
 
-function InspectItemValue:Constructor()
-
+function InspectValueFrame:Constructor(_, owner)
+    self.owner = owner
+    self:SetScript('OnClick', self.OnClick)
 end
 
 ---@param object KeyValue
-function InspectItemValue:SetObject(object)
+function InspectValueFrame:SetObject(object)
     self.object = object
 
     if object then
-        if object == '' then
-            self.Text:SetText('|cff808080n/a|r')
-        else
-            self.Text:SetText(object.display)
-        end
+        self.Text:SetText(object.display)
+        self.owner:OnObjectRender(object, self)
     else
         self.Text:SetText('')
+    end
+end
+
+function InspectValueFrame:OnClick()
+    if self.object:IsInspectable() then
+        if IsShiftKeyDown() then
+            Inspect:InspectTable(self.object.object)
+        else
+            self.owner:SetProvider(ns.Provider:New(self.object.object))
+        end
+    elseif self.object:IsCopiable() then
+        self.owner:OpenCopy(self.object, self)
     end
 end
 
@@ -51,9 +62,9 @@ end
 ---@field Value InspectItemValue
 local InspectItem = ns.class('Button')
 
-function InspectItem:Constructor()
-    InspectItemValue:Bind(self.Key)
-    InspectItemValue:Bind(self.Value)
+function InspectItem:Constructor(_, owner)
+    InspectValueFrame:Bind(self.Key, owner)
+    InspectValueFrame:Bind(self.Value, owner)
 end
 
 ---@param item ProviderItem
@@ -64,18 +75,27 @@ function InspectItem:SetProviderItem(item)
 
     self.Header:SetText(item.header)
     self.Key:SetObject(item.key)
+    self.Key:SetShown(item.key)
     self.Value:SetObject(item.value)
+    self.Value:SetShown(item.value)
+
+    if not item.key then
+        self.Value:SetPoint('TOPLEFT', self.Key, 'TOPLEFT')
+    else
+        self.Value:SetPoint('TOPLEFT', self.Key, 'TOPRIGHT', 5, 0)
+    end
 end
 
 function Inspect:Constructor()
     ns.ListView:Bind(self.Fields, {
         itemCreate = function(parent)
-            return InspectItem:Bind(CreateFrame('Button', nil, parent, 'tdDevToolsInspectItemTemplate'))
-        end,
-        OnItemFormatting = function(button, item)
-            return button:SetProviderItem(item)
+            return InspectItem:Bind(CreateFrame('Button', nil, parent, 'tdDevToolsInspectItemTemplate'), self)
         end,
     })
+
+    self.Fields:SetCallback('OnItemFormatting', function(_, button, item)
+        button:SetProviderItem(item)
+    end)
 
     self.back = {}
     self.forward = {}
@@ -94,28 +114,6 @@ function Inspect:OnHide()
 
     if not self.noRelease then
         self.pool[self] = true
-    end
-end
-
-function Inspect:OnFieldItemFormatting(button, item)
-    button.HeaderBackground:SetShown(item.type == 'header')
-    button.Header:SetText('')
-
-    button.Key.Text:SetText('')
-    button.Value.Text:SetText('')
-    button.Value.Star:SetShown(item.star)
-
-    if item.header then
-        button.Header:SetText(item.header:upper())
-    end
-    if item.value then
-        button.Value.Text:SetText(item.value)
-    end
-    if item.key then
-        button.Key.Text:SetText(item.key == '' and '|cff808080n/a|r' or item.key)
-        button.Value:SetPoint('TOPLEFT', button.Key, 'TOPRIGHT', 5, 0)
-    else
-        button.Value:SetPoint('TOPLEFT', button.Key, 'TOPLEFT')
     end
 end
 
@@ -260,9 +258,30 @@ function Inspect:OnDynamicUpdatesClick()
     self:Refresh()
 end
 
+function Inspect:OnObjectRender(object, frame)
+    if object and object == self.focus then
+        self:OpenCopy(object, frame)
+    end
+end
+
 function Inspect:CreateHighlightFrame()
     ns.CheckBlizzardDebugTools()
     return CreateFrame('Frame', nil, self, 'FrameHighlightTemplate')
+end
+
+function Inspect:OpenCopy(object, frame)
+    self.focus = object
+    self.CopyBox:ClearAllPoints()
+    self.CopyBox:SetParent(frame)
+    self.CopyBox:SetAllPoints(frame)
+    self.CopyBox:SetText(object.display)
+    self.CopyBox:Show()
+    self.CopyBox:HighlightText()
+end
+
+function Inspect:CloseCopy()
+    self.focus = nil
+    self.CopyBox:Hide()
 end
 
 ---- static
@@ -302,7 +321,6 @@ function Inspect:InspectTable(obj, default)
         ins:ClearAllPoints()
         local x = random(64)
         local y = random(64)
-        print(x, y)
         ins:SetPoint('BOTTOMLEFT', 64 + x, 64 + y)
         ins:SetSize(300, 250)
     end
@@ -314,4 +332,3 @@ end
 C_Timer.After(1, function()
     Inspect:InspectTable(PlayerFrame)
 end)
-

@@ -125,12 +125,12 @@ function ns.GenMatch(...)
     local noMatch = false
     for i = 1, select('#', ...) do
         local v = select(i, ...)
-        if v ~= '' then
-            local t = ns.GetType(v)
+        if v and v.object then
+            local t = ns.GetType(v.object)
             if searchables[t] then
-                local s = ns.stringify(v)
+                local s = ns.stringify(v.object)
                 if not s:find('\0') then
-                    tinsert(sb, s)
+                    tinsert(sb, s:lower())
                 else
                     noMatch = true
                 end

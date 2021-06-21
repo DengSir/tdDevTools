@@ -1,18 +1,11 @@
 <Ui xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\FrameXML\UI.xsd">
+    <Script file="Api.lua" />
     <Script file="TypeRender.lua" />
     <Script file="Thread.lua" />
-    <Script file="ScrollFrame.lua" />
-    <Script file="ListView.lua" />
-    <Script file="TreeView.lua" />
-    <Script file="Parent.lua" />
-    <Script file="Frame.lua" />
-    <Script file="Console.lua" />
-    <Script file="Error.lua" />
-    <Script file="Event.lua" />
-    <Script file="KeyValue.lua" />
-    <Script file="ProviderItem.lua" />
-    <Script file="Provider.lua" />
-    <Script file="Inspect.lua" />
-    <Script file="Interface.lua" />
+
+    <Script file="Provider\KeyValue.lua" />
+    <Script file="Provider\ProviderItem.lua" />
+    <Script file="Provider\Builder.lua" />
+    <Script file="Provider\Provider.lua" />
 </Ui>

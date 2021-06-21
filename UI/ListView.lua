@@ -12,13 +12,13 @@ ns.ListView = ListView
 
 function ListView:Constructor(_, opts)
     self.itemList = opts.itemList
-    self.OnItemFormatting = opts.OnItemFormatting
 end
 
 function ListView:update()
     if not self.itemList then
         return
     end
+
     local offset = HybridScrollFrame_GetOffset(self)
     local buttons = self.buttons
     local itemList = self.itemList
@@ -31,15 +31,15 @@ function ListView:update()
     for i = 1, buttonCount do
         local index = i + offset
         local button = buttons[i]
+        button:Hide()
         if index > itemCount then
-            button:Hide()
         else
             local item = itemList[index]
             button.item = item
             button.scrollFrame = self
             button:SetID(index)
             button:Show()
-            self.OnItemFormatting(button, item)
+            self:Fire('OnItemFormatting', button, item)
         end
     end
 

@@ -16,7 +16,15 @@ local ns = select(2, ...)
 local ProviderItem = ns.class()
 
 function ProviderItem:Match(text)
-    return not self.match or self.match:find(text, nil, true)
+    local match = self.match or self:GenMatch()
+    return not match or match:find(text, nil, true)
+end
+
+function ProviderItem:GenMatch()
+    if self.key or self.value then
+        self.match = ns.GenMatch(self.key, self.value)
+    end
+    return self.match
 end
 
 --
@@ -26,8 +34,9 @@ local ProviderHeader = ns.class(ProviderItem)
 
 function ProviderHeader:Constructor(header, count)
     self.type = 'header'
+
     if count then
-        self.header = format('%s (%d)', header, count)
+        self.header = format('%s (%d)', header:upper(), count)
     else
         self.header = header
     end
@@ -35,14 +44,11 @@ end
 
 --
 --
----@class ProviderValue: ProviderItem
-local ProviderValue = ns.class(ProviderItem)
+---@class ProviderDisplay: ProviderItem
+local ProviderDisplay = ns.class(ProviderItem)
 
-function ProviderValue:Constructor(object, display)
-    self.type = ns.GetType(object)
-    self.object = object
-    self.value = display or ns.TypeRender(object)
-    self.match = ns.GenMatch(object)
+function ProviderDisplay:Constructor(value)
+    self.value = value
 end
 
 --
@@ -57,9 +63,13 @@ function ProviderKeyValue:Constructor(key, value, star)
 end
 
 function ProviderKeyValue:SetKey(key)
-    self.key = ns.Key:New(key)
+    if key == '' then
+        self.key = ns.Key.Empty
+    else
+        self.key = ns.Key:New(key)
+    end
 end
-
 
 ns.ProviderHeader = ProviderHeader
 ns.ProviderKeyValue = ProviderKeyValue
+ns.ProviderDisplay = ProviderDisplay
