@@ -5,5 +5,5 @@
     <Include file="Core\Core.xml" />
     <Include file="UI\UI.xml" />
     <Script file="Interface.lua" />
-    <Script file="Tests.lua" />
+    <!-- <Script file="Tests.lua" /> -->
 </Ui>

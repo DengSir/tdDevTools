@@ -269,18 +269,11 @@
                     </EditBox>
                 </Frames>
             </Frame>
-            <Button mixin="PanelResizeButtonMixin">
+            <Button>
                 <Size x="12" y="12"/>
                 <Anchors>
                     <Anchor point="BOTTOMRIGHT" />
                 </Anchors>
-                <Scripts>
-                    <OnLoad>
-                        self:Init(self:GetParent(), 260, 120)
-                    </OnLoad>
-                    <OnMouseDown method="OnMouseDown"/>
-                    <OnMouseUp method="OnMouseUp"/>
-                </Scripts>
                 <NormalTexture file="Interface\AddOns\!!!tdDevTools\Media\ArrowBR">
                     <Size x="10" y="10"/>
                     <Anchors>
@@ -299,6 +292,14 @@
                         <Anchor point="BOTTOMRIGHT" x="-3" y="1" />
                     </Anchors>
                 </PushedTexture>
+                <Scripts>
+                    <OnMouseDown>
+                        self:GetParent():StartSizing('BOTTOMRIGHT')
+                    </OnMouseDown>
+                    <OnMouseUp>
+                        self:GetParent():StopMovingOrSizing()
+                    </OnMouseUp>
+                </Scripts>
             </Button>
             <Frame parentKey="Inset" inherits="tdDevToolsBorderFrameTemplate">
                 <Anchors>
@@ -366,5 +367,8 @@
                 </Scripts>
             </EditBox>
         </Frames>
+        <ResizeBounds>
+            <minResize x="260" y="120"/>
+        </ResizeBounds>
     </Frame>
 </Ui>

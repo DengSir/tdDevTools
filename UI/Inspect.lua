@@ -328,7 +328,3 @@ function Inspect:InspectTable(obj, default)
     ins:SetProvider(ns.Provider:New(obj))
     return ins
 end
-
-C_Timer.After(1, function()
-    Inspect:InspectTable(PlayerFrame)
-end)

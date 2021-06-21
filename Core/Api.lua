@@ -122,7 +122,6 @@ end
 local searchables = {uioject = true, string = true, boolean = true, number = true}
 function ns.GenMatch(...)
     local sb = {}
-    local noMatch = false
     for i = 1, select('#', ...) do
         local v = select(i, ...)
         if v and v.object then
@@ -131,14 +130,9 @@ function ns.GenMatch(...)
                 local s = ns.stringify(v.object)
                 if not s:find('\0') then
                     tinsert(sb, s:lower())
-                else
-                    noMatch = true
                 end
             end
         end
-    end
-    if noMatch then
-        dump(sb)
     end
     return table.concat(sb, '\001')
 end

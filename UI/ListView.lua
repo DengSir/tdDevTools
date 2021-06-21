@@ -12,6 +12,13 @@ ns.ListView = ListView
 
 function ListView:Constructor(_, opts)
     self.itemList = opts.itemList
+
+    local OnItemFormatting = opts.OnItemFormatting
+    if OnItemFormatting then
+        self:SetCallback('OnItemFormatting', function(_, ...)
+            return OnItemFormatting(...)
+        end)
+    end
 end
 
 function ListView:update()

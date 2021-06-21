@@ -16,15 +16,8 @@ local ns = select(2, ...)
 local ProviderItem = ns.class()
 
 function ProviderItem:Match(text)
-    local match = self.match or self:GenMatch()
+    local match = self.match
     return not match or match:find(text, nil, true)
-end
-
-function ProviderItem:GenMatch()
-    if self.key or self.value then
-        self.match = ns.GenMatch(self.key, self.value)
-    end
-    return self.match
 end
 
 --
@@ -49,6 +42,7 @@ local ProviderDisplay = ns.class(ProviderItem)
 
 function ProviderDisplay:Constructor(value)
     self.value = value
+    self.match = ns.GenMatch(value)
 end
 
 --
@@ -65,8 +59,10 @@ end
 function ProviderKeyValue:SetKey(key)
     if key == '' then
         self.key = ns.Key.Empty
+        self.match = ns.GenMatch(self.value)
     else
         self.key = ns.Key:New(key)
+        self.match = ns.GenMatch(self.key, self.value)
     end
 end
 
