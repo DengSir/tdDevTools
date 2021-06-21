@@ -50,42 +50,17 @@
                             <Layer level="BORDER">
                                 <Texture inherits="tdDevToolsLineLeftTemplate" />
                             </Layer>
-                            <Layer level="ARTWORK">
-                                <FontString parentKey="FilterLabel" inherits="tdDevToolsFontImportant" text="Filters: ">
-                                    <Anchors>
-                                        <Anchor point="LEFT" x="8" y="0" />
-                                    </Anchors>
-                                </FontString>
-                            </Layer>
                         </Layers>
                         <Frames>
-                            <Button parentKey="ClearButton" hidden="true" inherits="tdDevToolsClearButtonTemplate">
-                                <Anchors>
-                                    <Anchor point="RIGHT" x="-5" y="0" />
-                                </Anchors>
-                                <Scripts>
-                                    <OnClick>
-                                        self:GetParent().FilterBox:SetText('')
-                                    </OnClick>
-                                </Scripts>
-                                <HighlightTexture>
-                                    <Color r="1" g="1" b="1" a="0.2" />
-                                </HighlightTexture>
-                            </Button>
-                            <EditBox parentKey="FilterBox" autoFocus="false" letters="31">
+                            <EditBox parentKey="FilterBox" letters="31" inherits="tdDevToolsSearchBoxTemplate">
                                 <Size y="18" />
                                 <Anchors>
-                                    <Anchor point="LEFT" relativeKey="$parent.FilterLabel" relativePoint="RIGHT" />
-                                    <Anchor point="RIGHT" relativeKey="$parent.ClearButton" relativePoint="LEFT" />
+                                    <Anchor point="LEFT" />
+                                    <Anchor point="RIGHT" />
                                 </Anchors>
-                                <TextInsets left="8" right="8" />
-                                <FontString inherits="tdDevToolsFontHighlight" />
                                 <Scripts>
-                                    <OnEscapePressed function="EditBox_ClearFocus" />
-                                    <OnEnterPressed function="EditBox_ClearFocus" />
-                                    <OnTextChanged>
+                                    <OnTextChanged inherit="append">
                                         local text = self:GetText()
-                                        self:GetParent().ClearButton:SetShown(text:trim() ~= '')
                                         self:GetParent():GetParent():GetParent():OnFilterBoxTextChanged(text)
                                     </OnTextChanged>
                                 </Scripts>

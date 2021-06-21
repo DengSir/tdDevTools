@@ -11,58 +11,6 @@ local tinsert, sort = table.insert, table.sort or sort
 
 local C_Widget = C_Widget
 
----@class ProviderItem: Object
-local ProviderItem = ns.class()
-
-function ProviderItem:Match(text)
-    return not self.match or self.match:find(text, nil, true)
-end
-
----@class ProviderHeader: ProviderItem
-local ProviderHeader = ns.class(ProviderItem)
-
-function ProviderHeader:Constructor(header)
-    self.type = 'header'
-    self.header = header
-end
-
----@class ProviderValue: ProviderItem
-local ProviderValue = ns.class(ProviderItem)
-
-function ProviderValue:Constructor(object, display)
-    self.type = ns.GetType(object)
-    self.object = object
-    self.value = display or ns.TypeRender(object)
-    -- self.match = ns.stringify(object):lower()
-end
-
----@class ProviderKeyValue: ProviderItem
-local ProviderKeyValue = ns.class(ProviderItem)
-
-function ProviderKeyValue:Constructor(object, key, type, star)
-    self.object = object
-    self.value = ns.TypeRender(object)
-    self.type = type or ns.GetType(object)
-    self.star = star
-    self:SetKey(key)
-end
-
-local searchables = {uioject = true, string = true, boolean = true, number = true}
-
-function ProviderKeyValue:SetKey(key)
-    if key then
-        if key == '' then
-            self.key = ''
-        else
-            self.key = ns.KeyRender(key)
-        end
-    end
-
-    if searchables[self.type] then
-        self.match = ns.stringify(self.object):lower()
-    end
-end
-
 ---@class Provider: Object
 ---@field items ProviderItem[]
 ---@field list ProviderItem[]
@@ -70,6 +18,7 @@ local Provider = ns.class()
 ns.Provider = Provider
 
 local function compare(a, b)
+    print(a, b)
     if a.key ~= b.key then
         return a.key < b.key
     end
@@ -87,12 +36,18 @@ function Provider:SetFilter(text)
     self.filter = text ~= '' and text or nil
 end
 
+function Provider:Kill()
+    if self.processThread then
+        self.processThread:Kill()
+        self.processThread = nil
+    end
+end
+
 function Provider:PackType(t, list, map, out)
     local res = list[t] or {}
     if map[t] then
         for _, v in pairs(map[t]) do
             tinsert(res, v)
-            self.processThread:YieldPoint()
         end
     end
 
@@ -100,19 +55,18 @@ function Provider:PackType(t, list, map, out)
         return
     end
 
-    tinsert(out, ProviderHeader:New(t))
+    tinsert(out, ns.ProviderHeader:New(t, #res))
 
     if #res < 2000 then
         sort(res, compare)
     else
-        -- ns.qsort(res, compare, function()
-        --     return self.processThread:YieldPoint()
-        -- end)
+        ns.qsort(res, compare, function()
+            return self.processThread:YieldPoint()
+        end)
     end
 
     for _, v in ipairs(res) do
         tinsert(out, v)
-        self.processThread:YieldPoint()
     end
 end
 
@@ -123,7 +77,7 @@ function Provider:ProcessObjects(objects, map)
         else
             local st = ns.GetUIObjectType(obj)
             map[st] = map[st] or {}
-            map[st][obj] = ProviderKeyValue:New(obj, '')
+            map[st][obj] = ns.ProviderKeyValue:New('', obj)
         end
         self.processThread:YieldPoint()
     end
@@ -136,25 +90,25 @@ function Provider:ProcessData()
     local map = {}
     local more = {}
 
-    local mt = getmetatable(self.target)
-    if mt then
-        tinsert(out, ProviderHeader:New('metatable'))
-        tinsert(out, ProviderValue:New(mt))
-    end
+    -- local mt = getmetatable(self.target)
+    -- if mt then
+    --     tinsert(out, ProviderHeader:New('metatable'))
+    --     tinsert(out, ProviderValue:New(mt))
+    -- end
 
     if self.type == 'uiobject' then
-        if self.target.GetNumPoints then
-            local n = self.target:GetNumPoints()
-            if n and n > 0 then
-                tinsert(out, ProviderHeader:New('anchor'))
+        -- if self.target.GetNumPoints then
+        --     local n = self.target:GetNumPoints()
+        --     if n and n > 0 then
+        --         tinsert(out, ProviderHeader:New('anchor'))
 
-                for i = 1, n do
-                    local point, relative, relativePoint, x, y = self.target:GetPoint(i)
+        --         for i = 1, n do
+        --             local point, relative, relativePoint, x, y = self.target:GetPoint(i)
 
-                    tinsert(out, ProviderValue:New(relative, ns.Render(point, relative, relativePoint, x, y)))
-                end
-            end
-        end
+        --             tinsert(out, ProviderValue:New(relative, ns.Render(point, relative, relativePoint, x, y)))
+        --         end
+        --     end
+        -- end
 
         if self.target.GetChildren then
             self:ProcessObjects({self.target:GetChildren()}, map)
@@ -180,15 +134,15 @@ function Provider:ProcessData()
                     map[st][v]:SetKey(k)
                 else
                     more[t] = more[t] or {}
-                    tinsert(more[t], ProviderKeyValue:New(v, k, t))
+                    tinsert(more[t], ns.ProviderKeyValue:New(k, v))
                 end
             else
                 local isChild = v.GetParent and v:GetParent() == self.target
-                map[st][v] = ProviderKeyValue:New(v, k, t, not isChild)
+                map[st][v] = ns.ProviderKeyValue:New(k, v, not isChild)
             end
         else
             more[t] = more[t] or {}
-            tinsert(more[t], ProviderKeyValue:New(v, k, t))
+            tinsert(more[t], ns.ProviderKeyValue:New(k, v))
         end
 
         thread:YieldPoint()
@@ -209,26 +163,34 @@ function Provider:ProcessData()
 
     self.items = out
     self.list = out
-    self:Fire('OnRefresh')
+
+    C_Timer.After(0, function()
+        self:Fire('OnRefresh')
+    end)
+
+
+    print('done')
 end
 
--- function Provider:ProcessFilter()
---     if self.items and self.filter then
---         local out = {}
---         for _, v in ipairs(self.items) do
---             if v:Match(self.filter) then
---                 tinsert(out, v)
---             end
---         end
---         self.list = out
+function Provider:ProcessFilter()
+    if not self.items then
+        return
+    end
 
---         print(#out)
---     else
---         self.list = self.items
---     end
+    if self.filter then
+        local out = {}
+        for _, v in ipairs(self.items) do
+            if v:Match(self.filter) then
+                tinsert(out, v)
+            end
+        end
+        self.list = out
+    else
+        self.list = self.items
+    end
 
---     self:Fire('OnRefresh')
--- end
+    self:Fire('OnRefresh')
+end
 
 function Provider:Refresh()
     if self.processThread then
@@ -237,24 +199,11 @@ function Provider:Refresh()
     self.processThread = ns.Thread:New()
     self.processThread:Start(function()
         self:ProcessData()
-        -- self:ProcessFilter()
+        self:ProcessFilter()
         self.processThread = nil
     end)
     return not self.processThread
 end
-
--- function Provider:RefreshFilter()
---     if self.filterThread or self.processThread then
---         return
---     end
-
---     self.filterThread = ns.Thread:New()
---     self.filterThread:Start(function()
---         self:ProcessFilter()
---         self.filterThread = nil
---     end)
---     return not self.filterThread
--- end
 
 function Provider:GetParent()
     if self.type == 'uiobject' then

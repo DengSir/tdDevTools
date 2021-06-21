@@ -12,14 +12,20 @@ local ScrollFrame = ns.class('ScrollFrame')
 ns.ScrollFrame = ScrollFrame
 
 function ScrollFrame:Constructor(_, opts)
-    local buttonTemplate = opts.buttonTemplate
-
     self.buttons = setmetatable({}, {
         __index = function(t, i)
             if type(i) ~= 'number' then
                 return
             end
-            local button = CreateFrame('Button', nil, self:GetScrollChild(), buttonTemplate)
+            local button
+            if opts.itemCreate then
+                button = opts.itemCreate(self:GetScrollChild())
+            elseif opts.buttonTemplate then
+                button = CreateFrame('Button', nil, self:GetScrollChild(), opts.buttonTemplate)
+            else
+                error('error')
+            end
+
             t[i] = button
             if i == 1 then
                 button:SetPoint('TOPLEFT')
@@ -51,6 +57,8 @@ function ScrollFrame:OnUpdate()
 end
 
 function ScrollFrame:OnSizeChanged(width, height)
+    self.stepSize = height - self.buttonHeight
+    self.scrollBar.stepSize = self.stepSize
     self:GetScrollChild():SetSize(width - 14, height)
     self:Refresh()
 end

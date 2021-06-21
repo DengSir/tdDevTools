@@ -26,10 +26,22 @@ ns.Thread = Thread
 
 local KILLED = newproxy()
 
+local updater = CreateFrame('Frame')
+updater:Hide()
+updater:SetScript('OnUpdate', function(self)
+    local thread = tremove(self, 1)
+    if thread then
+        thread:Resume()
+    end
+end)
+
 function Thread:Start(func, ...)
     self.co = coroutine.create(func)
     profilestart()
-    coroutine.resume(self.co, ...)
+    local ok, err = coroutine.resume(self.co, ...)
+    if not ok then
+        print(err)
+    end
 end
 
 function Thread:Kill()
@@ -38,41 +50,32 @@ function Thread:Kill()
     coroutine.resume(co, KILLED)
 end
 
-function Thread:Threshold()
-    if not self.co or self.co ~= coroutine.running() then
-        return true
-    end
-
-    if profilestop() > 16 then
-        profilestart()
-
-        local killed = coroutine.yield()
-        if killed == KILLED then
-            return true
-        end
-    end
+function Thread:Pending()
+    tinsert(updater, self)
+    updater:Show()
 end
 
 function Thread:YieldPoint()
     if not self.co or self.co ~= coroutine.running() then
-        return true
+        error(KILLED)
     end
 
     if profilestop() > 16 then
         profilestart()
 
-        C_Timer.After(0, function()
-            self:Resume()
-        end)
+        self:Pending()
 
         local killed = coroutine.yield()
         if killed == KILLED then
-            return true
+            error(KILLED)
         end
     end
 end
 
 function Thread:Resume()
+    if not self.co then
+        return
+    end
     local ok, err = coroutine.resume(self.co)
     if not ok then
         print(err)

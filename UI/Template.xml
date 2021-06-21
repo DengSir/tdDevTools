@@ -263,4 +263,58 @@
             </Layer>
         </Layers>
     </Button>
+
+    <EditBox name="tdDevToolsSearchBoxTemplate" autoFocus="false" virtual="true">
+        <Size y="18" />
+        <Anchors>
+            <Anchor point="BOTTOMLEFT" x="10" y="0" />
+            <Anchor point="BOTTOMRIGHT" x="-10" y="0" />
+        </Anchors>
+        <Layers>
+            <Layer level="ARTWORK">
+                <FontString parentKey="Instructions" justifyH="LEFT" inherits="tdDevToolsFontDisabled" text="Search">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" x="16" y="0" />
+                        <Anchor point="BOTTOMRIGHT" x="-20" y="0" />
+                    </Anchors>
+                    <Color r="0.35" g="0.35" b="0.35"/>
+                </FontString>
+            </Layer>
+            <Layer level="OVERLAY">
+                <Texture file="Interface\AddOns\!!!tdDevTools\Media\Search" parentKey="searchIcon">
+                    <Size x="12" y="12"/>
+                    <Anchors>
+                        <Anchor point="LEFT" x="3" y="0"/>
+                    </Anchors>
+                </Texture>
+            </Layer>
+        </Layers>
+        <Frames>
+            <Button parentKey="clearButton" hidden="true" inherits="tdDevToolsClearButtonTemplate">
+                <Anchors>
+                    <Anchor point="RIGHT" x="-2" y="0" />
+                </Anchors>
+                <Scripts>
+                    <OnClick>
+                        self:GetParent():SetText('')
+                    </OnClick>
+                </Scripts>
+                <HighlightTexture>
+                    <Color r="1" g="1" b="1" a="0.2" />
+                </HighlightTexture>
+            </Button>
+        </Frames>
+        <TextInsets left="16" right="20" top="0" bottom="0"/>
+        <FontString inherits="tdDevToolsFontHighlight" />
+        <Scripts>
+            <OnLoad>
+                self.searchIcon:SetVertexColor(0.6, 0.6, 0.6)
+            </OnLoad>
+            <OnEscapePressed function="EditBox_ClearFocus"/>
+            <OnEnterPressed function="EditBox_ClearFocus"/>
+            <OnEditFocusLost function="SearchBoxTemplate_OnEditFocusLost"/>
+            <OnEditFocusGained function="SearchBoxTemplate_OnEditFocusGained"/>
+            <OnTextChanged function="SearchBoxTemplate_OnTextChanged"/>
+        </Scripts>
+    </EditBox>
 </Ui>

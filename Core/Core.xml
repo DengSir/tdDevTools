@@ -10,6 +10,8 @@
     <Script file="Console.lua" />
     <Script file="Error.lua" />
     <Script file="Event.lua" />
+    <Script file="KeyValue.lua" />
+    <Script file="ProviderItem.lua" />
     <Script file="Provider.lua" />
     <Script file="Inspect.lua" />
     <Script file="Interface.lua" />

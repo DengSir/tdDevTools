@@ -119,6 +119,30 @@ function ns.GetColoredTime()
     return format('|cff00ff00%s.%03d|r', date('%H:%M:%S'), floor(GetTime() * 1000) % 1000)
 end
 
+local searchables = {uioject = true, string = true, boolean = true, number = true}
+function ns.GenMatch(...)
+    local sb = {}
+    local noMatch = false
+    for i = 1, select('#', ...) do
+        local v = select(i, ...)
+        if v ~= '' then
+            local t = ns.GetType(v)
+            if searchables[t] then
+                local s = ns.stringify(v)
+                if not s:find('\0') then
+                    tinsert(sb, s)
+                else
+                    noMatch = true
+                end
+            end
+        end
+    end
+    if noMatch then
+        dump(sb)
+    end
+    return table.concat(sb, '\001')
+end
+
 -- @debug@
 function ns.checkGlobal()
     setfenv(2, setmetatable({}, {

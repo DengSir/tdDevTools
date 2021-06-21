@@ -20,11 +20,60 @@ ns.Inspect = Inspect
 
 Inspect.pool = {}
 
+--
+--
+---@class InspectItemValue: Frame, Object
+local InspectItemValue = ns.class('Frame')
+
+function InspectItemValue:Constructor()
+
+end
+
+---@param object KeyValue
+function InspectItemValue:SetObject(object)
+    self.object = object
+
+    if object then
+        if object == '' then
+            self.Text:SetText('|cff808080n/a|r')
+        else
+            self.Text:SetText(object.display)
+        end
+    else
+        self.Text:SetText('')
+    end
+end
+
+--
+--
+---@class InspectItem: Button, Object
+---@field Key InspectItemValue
+---@field Value InspectItemValue
+local InspectItem = ns.class('Button')
+
+function InspectItem:Constructor()
+    InspectItemValue:Bind(self.Key)
+    InspectItemValue:Bind(self.Value)
+end
+
+---@param item ProviderItem
+function InspectItem:SetProviderItem(item)
+    self.HeaderBackground:SetShown(item.type == 'header')
+    self.Header:SetText('')
+    self.Value.Star:SetShown(item.star)
+
+    self.Header:SetText(item.header)
+    self.Key:SetObject(item.key)
+    self.Value:SetObject(item.value)
+end
+
 function Inspect:Constructor()
     ns.ListView:Bind(self.Fields, {
-        buttonTemplate = 'tdDevToolsInspectItemTemplate',
+        itemCreate = function(parent)
+            return InspectItem:Bind(CreateFrame('Button', nil, parent, 'tdDevToolsInspectItemTemplate'))
+        end,
         OnItemFormatting = function(button, item)
-            return self:OnFieldItemFormatting(button, item)
+            return button:SetProviderItem(item)
         end,
     })
 
@@ -38,6 +87,7 @@ function Inspect:OnHide()
     self:Hide()
     wipe(self.back)
     wipe(self.forward)
+    self.provider:Kill()
     self.provider = nil
     self.highlight = nil
     self.dynamicUpdate = nil
@@ -48,23 +98,24 @@ function Inspect:OnHide()
 end
 
 function Inspect:OnFieldItemFormatting(button, item)
-    button.Key:SetText('')
-    button.Value:SetText('')
-    button.Header:SetText('')
     button.HeaderBackground:SetShown(item.type == 'header')
-    button.Star:SetShown(item.star)
+    button.Header:SetText('')
+
+    button.Key.Text:SetText('')
+    button.Value.Text:SetText('')
+    button.Value.Star:SetShown(item.star)
 
     if item.header then
         button.Header:SetText(item.header:upper())
     end
     if item.value then
-        button.Value:SetText(item.value)
+        button.Value.Text:SetText(item.value)
     end
     if item.key then
-        button.Key:SetText(item.key == '' and '|cff808080n/a|r' or item.key)
-        button.Value:SetPoint('LEFT', button.Key, 'RIGHT', 5, 0)
+        button.Key.Text:SetText(item.key == '' and '|cff808080n/a|r' or item.key)
+        button.Value:SetPoint('TOPLEFT', button.Key, 'TOPRIGHT', 5, 0)
     else
-        button.Value:SetPoint('LEFT', button.Key, 'LEFT')
+        button.Value:SetPoint('TOPLEFT', button.Key, 'TOPLEFT')
     end
 end
 
@@ -82,7 +133,7 @@ function Inspect:SetProvider(provider)
         end
     end)
 
-    if self.provider:Refresh() then
+    if self.provider.list or self.provider:Refresh() then
         self.Fields:Show()
         self.Fields:SetItemList(self.provider.list)
         self.Loading:Hide()
@@ -95,10 +146,10 @@ function Inspect:SetProvider(provider)
     self:Refresh()
 end
 
--- function Inspect:SetFilter(text)
---     self.provider:SetFilter(text)
---     self.provider:RefreshFilter()
--- end
+function Inspect:SetFilter(text)
+    self.provider:SetFilter(text)
+    self.provider:ProcessFilter()
+end
 
 function Inspect:GoParent()
     local parent = self.provider:GetParent()
@@ -138,12 +189,17 @@ function Inspect:Duplicate()
 end
 
 function Inspect:Refresh()
+    if not self.provider then
+        return
+    end
+
     self.Header.Parent:SetEnabled(self.provider:GetParent())
     self.Header.Back:SetEnabled(#self.back > 0)
     self.Header.Forward:SetEnabled(#self.forward > 0)
     self.Header.Title:SetText(self.provider:GetTitle())
 
     self.Controls.DynamicUpdates:SetChecked(self.dynamicUpdate)
+    self.Controls.FilterBox:SetText(self.provider.filter or '')
 
     local isRenderable = self.provider:IsReaderable()
     if isRenderable then
@@ -244,10 +300,18 @@ function Inspect:InspectTable(obj, default)
     local ins = default and Inspect:Default() or Inspect:Acquire()
     if not ins:IsShown() then
         ins:ClearAllPoints()
-        ins:SetPoint('BOTTOMLEFT', 64 + random(64), 64 + random(64))
+        local x = random(64)
+        local y = random(64)
+        print(x, y)
+        ins:SetPoint('BOTTOMLEFT', 64 + x, 64 + y)
         ins:SetSize(300, 250)
     end
     ins:Show()
     ins:SetProvider(ns.Provider:New(obj))
     return ins
 end
+
+C_Timer.After(1, function()
+    Inspect:InspectTable(PlayerFrame)
+end)
+
