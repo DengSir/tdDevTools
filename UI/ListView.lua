@@ -6,7 +6,8 @@
 ---@type ns
 local ns = select(2, ...)
 
----@class ListView: ScrollFrame
+---@class ListView: _ScrollFrame
+---@field itemList any[]
 local ListView = ns.class(ns.ScrollFrame)
 ns.ListView = ListView
 

@@ -9,9 +9,12 @@ local ns = select(2, ...)
 --
 --
 ---@class KeyValue: Object
+---@field _Meta KeyValue
+---@field Empty KeyValue
 ---@field object any
 ---@field display string
 ---@field type string
+---@field empty boolean
 local KeyValue = ns.class()
 
 function KeyValue._Meta:__lt(other)
@@ -23,10 +26,6 @@ function KeyValue._Meta:__lt(other)
     end
     return self.display < other.display
 end
-
--- function KeyValue._Meta:__eq(other)
---     return self.display == other.display
--- end
 
 function KeyValue:IsInspectable()
     return self.type == 'uiobject' or self.type == 'table'

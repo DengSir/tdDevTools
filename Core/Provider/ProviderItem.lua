@@ -12,7 +12,8 @@ local ns = select(2, ...)
 ---@field key KeyValue
 ---@field value KeyValue
 ---@field star boolean
----@field type string
+---@field type WowType
+---@field match string
 local ProviderItem = ns.class()
 
 function ProviderItem:Match(text)

@@ -3,7 +3,7 @@
 -- @Link   : https://dengsir.github.io
 -- @Date   : 10/19/2018, 2:06:08 PM
 --
----@type ns
+---@param ns table
 local ns = select(2, ...)
 
 local select, date, time = select, date, time
@@ -19,6 +19,17 @@ local GRAY_FONT_COLOR = GRAY_FONT_COLOR
 local NORMAL_FONT_COLOR = NORMAL_FONT_COLOR
 local HIGHLIGHT_FONT_COLOR = HIGHLIGHT_FONT_COLOR
 
+---@class tdDevTooslsEvent: __Event
+---@field args unknown
+---@field isRunning boolean
+---@field timelines any[]
+---@field eventsTree any[]
+---@field eventsHash any[]
+---@field ignores table<string, boolean>
+---@field Updater Frame
+---@field EventsList TreeView
+---@field TimelineList ListView
+---@field ArgumentsList ListView
 local Event = ns.Frame.Event
 
 function Event:OnLoad()

@@ -14,6 +14,12 @@ local function compare(a, b)
 end
 
 ---@class Builder: Object
+---@field target any
+---@field cache table<string, KeyValue[]>
+---@field refs table<any, boolean>
+---@field out KeyValue[]
+---@field type WowType
+---@field thread Thread
 local Builder = ns.class()
 
 function Builder:Constructor(target, thread)

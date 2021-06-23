@@ -6,14 +6,18 @@
 ---@type ns
 local ns = select(2, ...)
 
-local ipairs, pairs, getmetatable, print, tostring = ipairs, pairs, getmetatable, print, tostring
-local tinsert, sort = table.insert, table.sort or sort
+local ipairs, print, tostring = ipairs, print, tostring
+local tinsert = table.insert
 
 local C_Widget = C_Widget
 
 ---@class Provider: Object
 ---@field items ProviderItem[]
 ---@field list ProviderItem[]
+---@field target any
+---@field processThread Thread
+---@field filter string | nil
+---@field type WowType
 local Provider = ns.class()
 ns.Provider = Provider
 

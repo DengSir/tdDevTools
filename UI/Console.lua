@@ -3,16 +3,21 @@
 -- @Link   : https://dengsir.github.io
 -- @Date   : 10/16/2018, 3:59:57 PM
 --
----@type ns
-local ns = select(2, ...)
-
 local assert, ipairs = assert, ipairs
 local format = string.format
 local floor = math.floor
-local tinsert, unpack, wipe = table.insert, table.unpack or unpack, table.wipe or wipe
+local tinsert, unpack, wipe = table.insert, unpack, table.wipe or wipe
 
 local PlaySound = PlaySound
 
+---@type ns
+local ns = select(2, ...)
+
+---@class tdDevToolsConsole: __Console
+---@field filterText string
+---@field filteringThread Thread
+---@field savedMessages any[]
+---@field waitingMessages any[]
 local Console = ns.Frame.Console
 local Thread = ns.Thread
 
@@ -56,14 +61,14 @@ function Console:OnLoad()
         HybridScrollFrame_UpdateButtonStates(self:GetParent(), value)
     end)
 
-    self.MessageFrame.scrollUp:SetScript('OnClick', function(_, _, down)
+    self.MessageFrame.scrollBar.scrollUp:SetScript('OnClick', function(_, _, down)
         if down then
             self.MessageFrame:ScrollUp()
             PlaySound(1115) -- SOUNDKIT.U_CHAT_SCROLL_BUTTON
         end
     end)
 
-    self.MessageFrame.scrollDown:SetScript('OnClick', function(_, _, down)
+    self.MessageFrame.scrollBar.scrollDown:SetScript('OnClick', function(_, _, down)
         if down then
             self.MessageFrame:ScrollDown()
             PlaySound(1115) -- SOUNDKIT.U_CHAT_SCROLL_BUTTON
@@ -138,11 +143,16 @@ function Console:AddMessage(text, r, g, b)
     end
 end
 
-local levelColors = {DEBUG = {1, 1, 1}, INFO = {1, 1, 1}, WARN = {1, .5, 0}, ERROR = {1, 0, 0}}
+local LEVEL_COLORS = { --
+    DEBUG = {1, 1, 1},
+    INFO = {1, 1, 1},
+    WARN = {1, .5, 0},
+    ERROR = {1, 0, 0},
+}
 
 function Console:RawLog(level, path, text)
     return self:AddMessage(format('%s %s %s|cffffffff:|r %s', level, ns.GetColoredTime(), path, text),
-                           unpack(assert(levelColors[level])))
+                           unpack(assert(LEVEL_COLORS[level])))
 end
 
 function Console:Log(level, depth, ...)

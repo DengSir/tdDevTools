@@ -4,6 +4,20 @@
 -- @Date   : 6/19/2021, 8:15:03 PM
 --
 ---@class ns
+---@field Frame _tdDevToolsFrame
+---@field Builder Builder
+---@field Thread Thread
+---@field TypeRender TypeRender
+---@field Key KeyValue
+---@field Value Value
+---@field Point Value
+---@field ScrollFrame _ScrollFrame
+---@field ListView ListView
+---@field TreeView ListView
+---@field ProviderKeyValue ProviderKeyValue
+---@field ProviderDisplay ProviderDisplay
+---@field ProviderHeader ProviderHeader
+---@field PointValue PointValue
 local ns = select(2, ...)
 
 local LibClass = LibStub('LibClass-2.0')
@@ -17,6 +31,22 @@ local tinsert, tconcat = table.insert, table.concat
 local GetTime = GetTime
 local UIParentLoadAddOn = UIParentLoadAddOn
 
+function ns.stringify(value)
+    local t = ns.GetType(value)
+    local name
+    if t == 'uiobject' then
+        if value.GetDebugName then
+            name = value:GetDebugName()
+        elseif value.GetName then
+            name = value:GetName()
+        end
+    elseif t == 'table' then
+        name = tostring(value)
+    end
+    return name or tostring(value) or ''
+end
+
+---@return Object
 function ns.class(...)
     return LibClass:New(...)
 end
@@ -53,6 +83,17 @@ function ns.qsort(list, comp, yield)
     return qsort(list, 1, #list, comp, yield)
 end
 
+---@alias WowType type
+---| '"uiobject"'
+
+---@alias WowUIType
+---| '"Frame"'
+---| '"Region"'
+---| '"AnimationGroup"'
+---| '"Animation"'
+---| '"Font"'
+
+---@return WowType
 function ns.GetType(obj)
     local t = type(obj)
     if t == 'table' and type(rawget(obj, 0)) == 'userdata' and obj.GetObjectType then
@@ -63,6 +104,7 @@ function ns.GetType(obj)
     return t
 end
 
+---@return WowUIType
 function ns.GetUIObjectType(obj)
     if obj:IsObjectType('Frame') then
         return 'Frame'

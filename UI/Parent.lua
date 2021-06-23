@@ -3,7 +3,7 @@
 -- @Link   : https://dengsir.github.io
 -- @Date   : 6/18/2021, 8:28:49 PM
 --
----@type ns
+---@see ns
 local ns = select(2, ...)
 
 local IsAddOnLoaded = IsAddOnLoaded
@@ -14,8 +14,8 @@ local Parent = tdDevToolsParent
 ns.Parent = Parent
 
 function Parent:OnLoad()
-    self.DISPLAY_SIZE_CHANGED = self.UpdateSize
-    self.UI_SCALE_CHANGED = self.UpdateSize
+    self.DISPLAY_SIZE_CHANGED = self.RequestUpdateSize
+    self.UI_SCALE_CHANGED = self.RequestUpdateSize
 
     self:RegisterEvent('DISPLAY_SIZE_CHANGED')
     self:RegisterEvent('UI_SCALE_CHANGED')
@@ -28,6 +28,15 @@ end
 
 function Parent:OnEvent(event, ...)
     self[event](self, ...)
+end
+
+function Parent:RequestUpdateSize()
+    self:SetScript('OnUpdate', self.OnUpdate)
+end
+
+function Parent:OnUpdate()
+    self:SetScript('OnUpdate', nil)
+    self:UpdateSize()
 end
 
 function Parent:UpdateSize()

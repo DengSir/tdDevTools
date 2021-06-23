@@ -9,6 +9,7 @@ local ns = select(2, ...)
 local tostring = tostring
 local format = string.format
 
+---@class TypeRender
 local TypeRender = setmetatable({}, {
     __index = function(t)
         return t.other
@@ -23,21 +24,6 @@ local widgets = setmetatable({}, {__mode = 'v'})
 local tables = setmetatable({}, {__mode = 'v'})
 
 ns.TypeRender = TypeRender
-
-function ns.stringify(value)
-    local t = ns.GetType(value)
-    local name
-    if t == 'uiobject' then
-        if value.GetDebugName then
-            name = value:GetDebugName()
-        elseif value.GetName then
-            name = value:GetName()
-        end
-    elseif t == 'table' then
-        name = tostring(value)
-    end
-    return name or tostring(value) or ''
-end
 
 local function colorFactory(r, g, b, formatter)
     local formatter = formatter or ns.stringify

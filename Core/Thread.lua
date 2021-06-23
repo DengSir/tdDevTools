@@ -21,6 +21,7 @@ do
 end
 
 ---@class Thread: Object
+---@field co thread
 local Thread = ns.class()
 ns.Thread = Thread
 

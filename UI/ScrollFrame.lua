@@ -6,8 +6,11 @@
 ---@type ns
 local ns = select(2, ...)
 
----@class ScrollFrame: Frame, Object
+---@class _ScrollFrame: ScrollFrame, Object
 ---@field scrollBar Slider
+---@field buttons Button[]
+---@field buttonHeight number
+---@field update fun()
 local ScrollFrame = ns.class('ScrollFrame')
 ns.ScrollFrame = ScrollFrame
 

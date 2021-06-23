@@ -9,6 +9,14 @@ local ns = select(2, ...)
 local GetBindingKey = GetBindingKey
 local GetCurrentKeyBoardFocus = GetCurrentKeyBoardFocus
 
+---@class _tdDevToolsFrame: tdDevToolsFrame
+---@field tabs Button[]
+---@field tabFrames Frame[]
+---@field numTabs number
+---@field selectedTab number
+---@field Console tdDevToolsConsole
+---@field Event __Event
+---@field Error tdDevToolsError
 local Frame = tdDevToolsFrame
 ns.Frame = Frame
 
@@ -18,6 +26,10 @@ function Frame:OnLoad()
     self:SetScript('OnKeyDown', self.OnKeyDown)
     self:SetScript('OnShow', function(self)
         self:SetFrameLevel(self:GetParent():GetFrameLevel() + 100)
+    end)
+    self:GetParent():HookScript('OnSizeChanged', function()
+        self:SetPoint('TOPLEFT')
+        self:SetPoint('TOPRIGHT')
     end)
 end
 

@@ -3,7 +3,7 @@
 -- @Link   : https://dengsir.github.io
 -- @Date   : 10/20/2018, 4:28:53 PM
 --
----@type ns
+---@param ns table
 local ns = select(2, ...)
 
 local ipairs, type, setmetatable = ipairs, type, setmetatable
@@ -14,6 +14,9 @@ local HybridScrollFrame_GetOffset = HybridScrollFrame_GetOffset
 local HybridScrollFrame_Update = HybridScrollFrame_Update
 
 ---@class TreeStatus: Object
+---@field depth number
+---@field extends any
+---@field itemTree any
 local TreeStatus = ns.class()
 
 function TreeStatus:Constructor(itemTree, depth)
@@ -63,7 +66,9 @@ function TreeStatus:GetCount()
     return GetCount(self.itemTree, 1)
 end
 
----@class TreeView: ScrollFrame
+---@class TreeView: _ScrollFrame
+---@field treeStatus TreeStatus
+---@field OnItemFormatting function
 local TreeView = ns.class(ns.ScrollFrame)
 ns.TreeView = TreeView
 

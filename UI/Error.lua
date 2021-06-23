@@ -14,6 +14,12 @@ local tinsert, tremove, wipe = table.insert, table.remove, table.wipe or wipe
 
 local tIndexOf = tIndexOf
 
+---@class tdDevToolsError: __Error
+---@field ErrorList ListView
+---@field EditBox EditBox
+---@field Tab Button
+---@field errors any[]
+---@field selectedErr any
 local Error = ns.Frame.Error
 local Console = ns.Frame.Console
 
