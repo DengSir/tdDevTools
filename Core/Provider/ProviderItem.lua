@@ -14,6 +14,7 @@ local ns = select(2, ...)
 ---@field star boolean
 ---@field type WowType
 ---@field match string
+---@field header string
 local ProviderItem = ns.class()
 
 function ProviderItem:Match(text)

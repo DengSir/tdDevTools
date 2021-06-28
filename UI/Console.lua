@@ -13,15 +13,16 @@ local PlaySound = PlaySound
 ---@type ns
 local ns = select(2, ...)
 
----@class tdDevToolsConsole: __Console
+local Thread = ns.Thread
+
+---@class tdDevToolsConsole: Object, __Console
 ---@field filterText string
 ---@field filteringThread Thread
 ---@field savedMessages any[]
 ---@field waitingMessages any[]
-local Console = ns.Frame.Console
-local Thread = ns.Thread
+local Console = ns.class('Frame')
 
-function Console:OnLoad()
+function Console:Constructor()
     self.filterText = ''
     self.savedMessages = {}
     self.waitingMessages = {}
@@ -175,4 +176,4 @@ function Console:Clear()
     wipe(self.waitingMessages)
 end
 
-Console:OnLoad()
+ns.Console = Console:Bind(ns.Frame.Console)

@@ -10,10 +10,10 @@ local IsAddOnLoaded = IsAddOnLoaded
 local GetScreenWidth = GetScreenWidth
 local GetPhysicalScreenSize = GetPhysicalScreenSize
 
-local Parent = tdDevToolsParent
-ns.Parent = Parent
+---@class Parent: Object, Frame
+local Parent = ns.class('Frame')
 
-function Parent:OnLoad()
+function Parent:Constructor()
     self.DISPLAY_SIZE_CHANGED = self.RequestUpdateSize
     self.UI_SCALE_CHANGED = self.RequestUpdateSize
 
@@ -68,4 +68,4 @@ function Parent:ADDON_LOADED(addon)
     end
 end
 
-Parent:OnLoad()
+ns.Parent = Parent:Bind(tdDevToolsParent)

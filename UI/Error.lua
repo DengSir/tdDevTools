@@ -14,16 +14,17 @@ local tinsert, tremove, wipe = table.insert, table.remove, table.wipe or wipe
 
 local tIndexOf = tIndexOf
 
----@class tdDevToolsError: __Error
+local Console = ns.Console
+
+---@class tdDevToolsError: Object, __Error
 ---@field ErrorList ListView
 ---@field EditBox EditBox
 ---@field Tab Button
 ---@field errors any[]
 ---@field selectedErr any
-local Error = ns.Frame.Error
-local Console = ns.Frame.Console
+local Error = ns.class('Frame')
 
-function Error:OnLoad()
+function Error:Constructor()
     self.index = 0
     self.EditBox = self.RightSide.EditBoxScroll.EditBox
     self.Tab = ns.Frame.Tab2
@@ -241,4 +242,4 @@ function Error:Clear()
     self:UpdateCount()
 end
 
-Error:OnLoad()
+ns.Error = Error:Bind(ns.Frame.Error)

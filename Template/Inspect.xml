@@ -1,17 +1,9 @@
 <Ui xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\FrameXML\UI.xsd">
-    <Button name="tdDevToolsInspectValueTemplate" virtual="true">
-        <Layers>
-            <Layer level="ARTWORK">
-                <FontString parentKey="Text" inherits="tdDevToolsFontHighlight" justifyH="LEFT" wordWrap="false" setAllPoints="true" />
-            </Layer>
-        </Layers>
-        <HighlightTexture>
-            <Color r="1" g="1" b="1" a="0.2" />
-        </HighlightTexture>
+    <Frame name="tdDevToolsInspectAutoTooltipFrameTemplate" virtual="true">
         <Scripts>
             <OnEnter>
-                if self.Text:GetStringWidth() > self:GetWidth() then
+                if self.Text:GetStringWidth() > self.Text:GetWidth() then
                     GameTooltip:SetOwner(self, 'ANCHOR_TOPRIGHT')
                     GameTooltip:SetText(self.Text:GetText(), nil, nil, nil, nil, true)
                     GameTooltip:Show()
@@ -21,6 +13,16 @@
                 GameTooltip:Hide()
             </OnLeave>
         </Scripts>
+    </Frame>
+    <Button name="tdDevToolsInspectValueTemplate" inherits="tdDevToolsInspectAutoTooltipFrameTemplate" virtual="true">
+        <Layers>
+            <Layer level="ARTWORK">
+                <FontString parentKey="Text" inherits="tdDevToolsFontHighlight" justifyH="LEFT" wordWrap="false" setAllPoints="true" />
+            </Layer>
+        </Layers>
+        <HighlightTexture>
+            <Color r="1" g="1" b="1" a="0.2" />
+        </HighlightTexture>
     </Button>
     <Button name="tdDevToolsInspectItemTemplate" virtual="true">
         <Size x="80" y="16" />
@@ -77,7 +79,7 @@
             <Anchor point="BOTTOMLEFT" x="100" y="100" />
         </Anchors>
         <Frames>
-            <Frame parentKey="Header" enableMouse="true">
+            <Frame parentKey="Header" inherits="tdDevToolsInspectAutoTooltipFrameTemplate" enableMouse="true">
                 <Size y="18" />
                 <Anchors>
                     <Anchor point="TOPLEFT" />
@@ -200,7 +202,7 @@
                         </Texture>
                     </Layer>
                     <Layer level="ARTWORK">
-                        <FontString parentKey="Title" inherits="tdDevToolsFontImportant" justifyH="LEFT">
+                        <FontString parentKey="Text" inherits="tdDevToolsFontImportant" wordWrap="false" justifyH="LEFT">
                             <Anchors>
                                 <Anchor point="LEFT" relativeKey="$parent.Forward" relativePoint="RIGHT" x="5" y="0"/>
                                 <Anchor point="RIGHT" relativeKey="$parent.Close" relativePoint="LEFT" x="-5" y="0"/>

@@ -39,7 +39,7 @@ function ListView:update()
     for i = 1, buttonCount do
         local index = i + offset
         local button = buttons[i]
-        button:Hide()
+
         if index > itemCount then
         else
             local item = itemList[index]
@@ -55,6 +55,8 @@ function ListView:update()
         buttons[i]:Hide()
     end
     HybridScrollFrame_Update(self, itemCount * buttonHeight, containerHeight)
+
+    self:Fire('OnRefresh')
 end
 
 function ListView:SetItemList(itemList)

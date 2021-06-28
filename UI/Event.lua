@@ -19,7 +19,7 @@ local GRAY_FONT_COLOR = GRAY_FONT_COLOR
 local NORMAL_FONT_COLOR = NORMAL_FONT_COLOR
 local HIGHLIGHT_FONT_COLOR = HIGHLIGHT_FONT_COLOR
 
----@class tdDevTooslsEvent: __Event
+---@class tdDevTooslsEvent: Object, __Event
 ---@field args unknown
 ---@field isRunning boolean
 ---@field timelines any[]
@@ -30,9 +30,9 @@ local HIGHLIGHT_FONT_COLOR = HIGHLIGHT_FONT_COLOR
 ---@field EventsList TreeView
 ---@field TimelineList ListView
 ---@field ArgumentsList ListView
-local Event = ns.Frame.Event
+local Event = ns.class('Frame')
 
-function Event:OnLoad()
+function Event:Constructor()
     self.isRunning = false
     self.timelines = {}
     self.ignores = {}
@@ -281,6 +281,7 @@ function Event:OnEventsItemFormatting2(button, item)
 end
 
 function Event:OnEventsItemClick(button)
+    print(button)
     if button.depth == 1 then
         self.EventsList:ToggleItem(button.item)
     elseif button.depth == 2 then
@@ -318,4 +319,4 @@ function Event:Refresh()
     self.EventsList:Refresh()
 end
 
-Event:OnLoad()
+ns.Event = Event:Bind(ns.Frame.Event)

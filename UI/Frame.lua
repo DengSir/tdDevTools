@@ -9,7 +9,7 @@ local ns = select(2, ...)
 local GetBindingKey = GetBindingKey
 local GetCurrentKeyBoardFocus = GetCurrentKeyBoardFocus
 
----@class _tdDevToolsFrame: tdDevToolsFrame
+---@class _tdDevToolsFrame: Object, tdDevToolsFrame
 ---@field tabs Button[]
 ---@field tabFrames Frame[]
 ---@field numTabs number
@@ -17,10 +17,9 @@ local GetCurrentKeyBoardFocus = GetCurrentKeyBoardFocus
 ---@field Console tdDevToolsConsole
 ---@field Event __Event
 ---@field Error tdDevToolsError
-local Frame = tdDevToolsFrame
-ns.Frame = Frame
+local Frame = ns.class('Frame')
 
-function Frame:OnLoad()
+function Frame:Constructor()
     self.numTabs = #self.tabs
     self:SetTab(1)
     self:SetScript('OnKeyDown', self.OnKeyDown)
@@ -65,4 +64,4 @@ function Frame:OnTargetClick(showHidden)
     FrameStackTooltip_Toggle(showHidden, true, true)
 end
 
-Frame:OnLoad()
+ns.Frame = Frame:Bind(tdDevToolsFrame)

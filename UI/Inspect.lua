@@ -13,8 +13,15 @@ local tremove, tinsert, wipe = table.remove, table.insert, table.wipe
 local CreateFrame = CreateFrame
 
 ---@class Inspect: Object, Frame, tdDevToolsInspectTemplate
+---@field focus KeyValue
 ---@field provider Provider
 ---@field default Inspect
+---@field Fields ListView
+---@field back KeyValue[]
+---@field forward KeyValue[]
+---@field noRelease boolean
+---@field dynamicUpdate boolean
+---@field highlight boolean
 local Inspect = ns.class('Frame')
 ns.Inspect = Inspect
 
@@ -24,6 +31,7 @@ Inspect.pool = {}
 --
 ---@class InspectItemValue: Button, Object
 ---@field owner Inspect
+---@field object KeyValue
 local InspectValueFrame = ns.class('Button')
 
 function InspectValueFrame:Constructor(_, owner)
@@ -57,7 +65,7 @@ end
 
 --
 --
----@class InspectItem: Button, Object
+---@class InspectItem: Button, Object, tdDevToolsInspectItemTemplate
 ---@field Key InspectItemValue
 ---@field Value InspectItemValue
 local InspectItem = ns.class('Button')
@@ -95,6 +103,20 @@ function Inspect:Constructor()
 
     self.Fields:SetCallback('OnItemFormatting', function(_, button, item)
         button:SetProviderItem(item)
+    end)
+
+    self.Fields:SetCallback('OnRefresh', function()
+        if not self.CopyBox:IsShown() then
+            return
+        end
+
+        if self.focus then
+            ---@type InspectItemValue
+            local frame = self.CopyBox:GetParent()
+            if frame.object ~= self.focus then
+                self.CopyBox:Hide()
+            end
+        end
     end)
 
     self.back = {}
@@ -194,7 +216,7 @@ function Inspect:Refresh()
     self.Header.Parent:SetEnabled(self.provider:GetParent())
     self.Header.Back:SetEnabled(#self.back > 0)
     self.Header.Forward:SetEnabled(#self.forward > 0)
-    self.Header.Title:SetText(self.provider:GetTitle())
+    self.Header.Text:SetText(self.provider:GetTitle())
 
     self.Controls.DynamicUpdates:SetChecked(self.dynamicUpdate)
     self.Controls.FilterBox:SetText(self.provider.filter or '')
