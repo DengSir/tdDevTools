@@ -50,6 +50,11 @@
                     <Anchor point="TOPLEFT" relativeKey="$parent.Tab2" relativePoint="TOPRIGHT" x="5" y="0" />
                 </Anchors>
             </Button>
+            <Button parentKey="Tab4" parentArray="tabs" inherits="tdDevToolsTabButtonTemplate" text="Document" id="4">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.Tab3" relativePoint="TOPRIGHT" x="5" y="0" />
+                </Anchors>
+            </Button>
             <Button parentKey="Resize" inherits="tdDevToolsOutsideButtonTemplate">
                 <Size x="200" y="10" />
                 <Anchors>

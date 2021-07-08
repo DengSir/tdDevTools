@@ -16,6 +16,7 @@ local GetCurrentKeyBoardFocus = GetCurrentKeyBoardFocus
 ---@field selectedTab number
 ---@field Console tdDevToolsConsole
 ---@field Event __Event
+---@field Document tdDevToolsDocument
 ---@field Error tdDevToolsError
 local Frame = ns.class('Frame')
 

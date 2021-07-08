@@ -8,5 +8,6 @@
     <Script file="Console.lua" />
     <Script file="Error.lua" />
     <Script file="Event.lua" />
+    <Script file="Document.lua" />
     <Script file="Inspect.lua" />
 </Ui>

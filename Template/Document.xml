@@ -1,0 +1,103 @@
+<Ui xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\FrameXML\UI.xsd">
+    <Button name="tdDevToolsDocumentBaseItemTemplate" virtual="true">
+        <Size x="80" y="18" />
+        <Layers>
+            <Layer level="BACKGROUND">
+                <Texture parentKey="Selected" hidden="true">
+                    <Color r="1" g="1" b="1" a="0.2" />
+                </Texture>
+            </Layer>
+            <Layer level="ARTWORK">
+                <FontString parentKey="Text" inherits="tdDevToolsFontHighlight" justifyH="LEFT" wordWrap="false">
+                    <Anchors>
+                        <Anchor point="LEFT" x="5" y="0" />
+                        <Anchor point="RIGHT" x="-5" y="0" />
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+        <HighlightTexture>
+            <Color r="1" g="1" b="1" a="0.2" />
+        </HighlightTexture>
+    </Button>
+
+    <Button name="tdDevToolsDocumentSystemItemTemplate" inherits="tdDevToolsDocumentBaseItemTemplate" virtual="true">
+        <Scripts>
+            <OnClick>
+                self.scrollFrame:GetParent():OnSystemItemClick(self)
+            </OnClick>
+        </Scripts>
+    </Button>
+
+    <Button name="tdDevToolsDocumentContentItemTemplate" inherits="tdDevToolsDocumentBaseItemTemplate" virtual="true">
+        <Scripts>
+            <OnClick>
+                self.scrollFrame:GetParent():OnContentItemClick(self)
+            </OnClick>
+        </Scripts>
+    </Button>
+
+    <Frame parentKey="Document" parent="tdDevToolsFrame" parentArray="tabFrames" hidden="true">
+        <Anchors>
+            <Anchor point="TOPLEFT" relativeKey="$parent.Inset" relativePoint="TOPLEFT" />
+            <Anchor point="BOTTOMRIGHT" relativeKey="$parent.Inset" relativePoint="BOTTOMRIGHT" />
+        </Anchors>
+        <Frames>
+            <Frame parentKey="Header">
+                <Size y="18" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" />
+                    <Anchor point="TOPRIGHT" />
+                </Anchors>
+                <Layers>
+                    <Layer level="BORDER">
+                        <Texture inherits="_tdDevToolsLineTemplate">
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" />
+                                <Anchor point="TOPRIGHT" relativePoint="BOTTOMRIGHT" />
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                    <Layer level="ARTWORK">
+                        <FontString inherits="tdDevToolsFontImportant" text="Document">
+                            <Anchors>
+                                <Anchor point="LEFT" x="5" y="0"/>
+                            </Anchors>
+                        </FontString>
+                        <FontString inherits="tdDevToolsFontImportant" text="Content">
+                            <Anchors>
+                                <Anchor point="LEFT" relativePoint="CENTER" x="5" y="0"/>
+                            </Anchors>
+                        </FontString>
+                    </Layer>
+                </Layers>
+            </Frame>
+            <ScrollFrame parentKey="SystemList" inherits="tdDevToolsHybridScrollFrameTemplate">
+                <Size x="200" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.Header" relativePoint="BOTTOMLEFT" x="0" y="-1" />
+                    <Anchor point="BOTTOMLEFT" x="0" y="1" />
+                </Anchors>
+                <Layers>
+                    <Layer level="BORDER">
+                        <Texture inherits="tdDevToolsLineRightTemplate" />
+                    </Layer>
+                </Layers>
+            </ScrollFrame>
+            <ScrollFrame parentKey="FieldList" inherits="tdDevToolsHybridScrollFrameTemplate">
+                <Size x="400" />
+                <Anchors>
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.Header" relativePoint="BOTTOMRIGHT" x="0" y="-1" />
+                    <Anchor point="BOTTOMRIGHT" x="0" y="1" />
+                </Anchors>
+            </ScrollFrame>
+            <ScrollFrame parentKey="ContentList" inherits="tdDevToolsHybridScrollFrameTemplate">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.SystemList" relativePoint="TOPRIGHT" x="0" y="0" />
+                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent.FieldList" relativePoint="BOTTOMLEFT" x="0" y="0" />
+                </Anchors>
+            </ScrollFrame>
+        </Frames>
+    </Frame>
+</Ui>

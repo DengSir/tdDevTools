@@ -5,5 +5,6 @@
     <Include file="Console.xml" />
     <Include file="Error.xml" />
     <Include file="Event.xml" />
+    <Include file="Document.xml" />
     <Include file="Inspect.xml" />
 </Ui>
