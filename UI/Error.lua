@@ -64,12 +64,9 @@ function Error:Constructor()
 end
 
 function Error:PLAYER_LOGIN()
-    _G.TDDB_DEVTOOLS = _G.TDDB_DEVTOOLS or {}
-    _G.TDDB_DEVTOOLS.errors = _G.TDDB_DEVTOOLS.errors or {}
-
-    if self.errors ~= _G.TDDB_DEVTOOLS.errors then
+    if self.errors ~= ns.db.global.errors then
         local errors = self.errors
-        self.errors = _G.TDDB_DEVTOOLS.errors
+        self.errors = ns.db.global.errors
 
         for _, v in ipairs(errors) do
             local info = self:TakeError(v.err)
@@ -167,6 +164,10 @@ function Error:UpdateCount()
 end
 
 function Error:AddWarning(err)
+    if err:match('Error loading.+Blizzard_APIDocumentation') then
+        return
+    end
+
     local info = self:TakeError(err) or {err = err}
     info.count = (info.count or 0) + 1
 

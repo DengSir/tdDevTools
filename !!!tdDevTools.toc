@@ -5,6 +5,6 @@
 ## Title: tdDevTools
 ## Author: DengSir
 ## Version: @project-version@
-## SavedVariables: TDDB_DEVTOOLS
+## SavedVariables: TDDB_DEVTOOLS, TDDB_DEVTOOLS_NEW
 
 Load.xml

@@ -4,6 +4,7 @@
 -- @Date   : 6/19/2021, 8:15:03 PM
 --
 ---@class ns
+---@field db PROFILE
 ---@field Frame _tdDevToolsFrame
 ---@field Builder Builder
 ---@field Thread Thread
@@ -192,3 +193,16 @@ function ns.checkGlobal()
     }))
 end
 -- @end-debug@
+
+---@class PROFILE
+ns.PROFILE = { --
+    global = { --
+        errors = {},
+    },
+    profile = { --
+        window = { --
+            minimap = {},
+            frame = {height = 60},
+        },
+    },
+}

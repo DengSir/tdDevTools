@@ -19,6 +19,7 @@ function Parent:Constructor()
 
     self:RegisterEvent('DISPLAY_SIZE_CHANGED')
     self:RegisterEvent('UI_SCALE_CHANGED')
+    self:RegisterEvent('PLAYER_LOGIN')
 
     self:SetScript('OnEvent', self.OnEvent)
 
@@ -28,6 +29,50 @@ end
 
 function Parent:OnEvent(event, ...)
     self[event](self, ...)
+end
+
+function Parent:PLAYER_LOGIN()
+    self:SetupDatabase()
+    self:SetupMinimap()
+end
+
+function Parent:SetupDatabase()
+    ns.db = LibStub('AceDB-3.0'):New('TDDB_DEVTOOLS_NEW', ns.PROFILE)
+
+    if _G.TDDB_DEVTOOLS then
+        if _G.TDDB_DEVTOOLS.errors then
+            for _, v in ipairs(_G.TDDB_DEVTOOLS.errors) do
+                tinsert(ns.db.global.errors, v)
+            end
+        end
+
+        _G.TDDB_DEVTOOLS = nil
+    end
+end
+
+function Parent:SetupMinimap()
+    local ADDON = 'tdDevTools'
+    local LDB = LibStub('LibDataBroker-1.1')
+    local LDBIcon = LibStub('LibDBIcon-1.0')
+
+    local obj = LDB:NewDataObject(ADDON, {
+        type = 'data source',
+        icon = [[Interface\HelpFrame\helpicon-bug]],
+        iconCoords = {0.1, 0.9, 0.1, 0.9},
+        OnEnter = function(button)
+            GameTooltip:SetOwner(button, 'ANCHOR_LEFT')
+            GameTooltip:SetText(ADDON)
+        end,
+        OnLeave = GameTooltip_Hide,
+        OnClick = function(_, clicked)
+            if clicked == 'LeftButton' then
+                ns.Frame:SetShown(not ns.Frame:IsShown())
+            else
+            end
+        end,
+    })
+
+    LDBIcon:Register(ADDON, obj, ns.db.profile.window.minimap)
 end
 
 function Parent:RequestUpdateSize()
