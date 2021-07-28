@@ -1,6 +1,10 @@
 {
     "Lua.diagnostics.globals": [
-        "APIDocumentation"
+        "APIDocumentation",
+        "GRAY_FONT_COLOR",
+        "NORMAL_FONT_COLOR",
+        "HIGHLIGHT_FONT_COLOR",
+        "FrameStackTooltip_Toggle"
     ],
     "Lua.diagnostics.disable": [
         "lowercase-global"

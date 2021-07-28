@@ -42,18 +42,6 @@ function Console:Constructor()
             self.scrollBar:SetValue(maxValue)
         end
     end)
-    MessageFrame:RegisterEvent('ADDON_LOADED')
-    MessageFrame:SetScript('OnEvent', function(_, ev, addon)
-        if ev ~= 'ADDON_LOADED' or addon ~= 'Blizzard_APIDocumentation' then
-            return
-        end
-
-        function APIDocumentation.WriteLine(obj, msg)
-            local info = ChatTypeInfo['SYSTEM']
-            self:AddMessage(msg, info.r, info.g, info.b)
-        end
-        MessageFrame:UnregisterEvent('ADDON_LOADED')
-    end)
 
     self.MessageFrame.scrollBar:SetScript('OnValueChanged', function(self, value)
         local minValue, maxValue = self:GetMinMaxValues()
