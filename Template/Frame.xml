@@ -17,6 +17,41 @@
         </Anchors>
     </Frame>
 
+    <GameTooltip name="tdDevToolsTip" parent="tdDevToolsParent" clampedToScreen="true" frameStrata="TOOLTIP" hidden="true" inherits="tdDevToolsBackdropFrameTemplate">
+        <Layers>
+            <Layer level="ARTWORK">
+                <FontString name="$parentTextLeft1" parentKey="TextLeft1" inherits="tdConsoleFontSmall" hidden="true">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" x="10" y="-10"/>
+                    </Anchors>
+                </FontString>
+                <FontString name="$parentTextRight1" parentKey="TextRight1" inherits="tdConsoleFontSmall" hidden="true">
+                    <Anchors>
+                        <Anchor point="RIGHT" relativeKey="$parent.TextLeft1" relativePoint="LEFT" x="40" y="0"/>
+                    </Anchors>
+                </FontString>
+                <FontString name="$parentTextLeft2" parentKey="TextLeft2" inherits="tdConsoleFontSmall" hidden="true">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent.TextLeft1" relativePoint="BOTTOMLEFT" x="0" y="-2"/>
+                    </Anchors>
+                </FontString>
+                <FontString name="$parentTextRight2" parentKey="TextRight2" inherits="tdConsoleFontSmall" hidden="true">
+                    <Anchors>
+                        <Anchor point="RIGHT" relativeKey="$parent.TextLeft2" relativePoint="LEFT" x="40" y="0"/>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+        <Scripts>
+            <OnHide>
+                self:Hide()
+            </OnHide>
+            <OnTooltipSetDefaultAnchor>
+                GameTooltip_SetDefaultAnchor(self, UIParent)
+            </OnTooltipSetDefaultAnchor>
+        </Scripts>
+    </GameTooltip>
+
     <Frame name="tdDevToolsFrame" inherits="tdDevToolsBackdropFrameTemplate" toplevel="ture" resizable="true" enableMouse="true" hidden="true" parent="tdDevToolsParent">
         <Size y="300" />
         <Anchors>

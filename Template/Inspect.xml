@@ -4,13 +4,13 @@
         <Scripts>
             <OnEnter>
                 if self.Text:GetStringWidth() > self.Text:GetWidth() then
-                    GameTooltip:SetOwner(self, 'ANCHOR_TOPRIGHT')
-                    GameTooltip:SetText(self.Text:GetText(), nil, nil, nil, nil, true)
-                    GameTooltip:Show()
+                    tdDevToolsTip:SetOwner(self, 'ANCHOR_TOPRIGHT')
+                    tdDevToolsTip:SetText(self.Text:GetText(), nil, nil, nil, nil, true)
+                    tdDevToolsTip:Show()
                 end
             </OnEnter>
             <OnLeave>
-                GameTooltip:Hide()
+                tdDevToolsTip:Hide()
             </OnLeave>
         </Scripts>
     </Frame>

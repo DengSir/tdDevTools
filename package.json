@@ -21,8 +21,11 @@
     "curse_id": 305394,
     "builds": {
       "classic": "11307",
-      "bcc": "20501",
+      "lkc": "30400",
       "retail": "90005"
-    }
+    },
+    "res_filters": [
+      ".ttf"
+    ]
   }
 }

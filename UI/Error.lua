@@ -68,17 +68,23 @@ function Error:PLAYER_LOGIN()
         local errors = self.errors
         self.errors = ns.db.global.errors
 
+        for _, v in ipairs(self.errors) do
+            v.old = true
+        end
+
         for _, v in ipairs(errors) do
             local info = self:TakeError(v.err)
             if info then
                 info.count = info.count + v.count
                 info.time = max(info.time or 0, v.time or 0)
+                info.old = nil
             else
                 info = v
             end
             tinsert(self.errors, 1, info)
         end
         self.ErrorList:SetItemList(self.errors)
+        self:UpdateCount()
     end
 end
 
@@ -125,8 +131,10 @@ function Error:OnItemDeleteClick(button)
 end
 
 function Error:OnItemFormatting(button, info)
+    local font = info.old and 'tdDevToolsFontDisabled' or 'tdDevToolsFontHighlight'
     button.Count:SetFormattedText('(%d)', info.count)
     button.Text:SetText(info.full or info.err)
+    button.Text:SetFontObject(font)
     button.Selected:SetShown(self.selectedErr and info.err == self.selectedErr.err)
 end
 
@@ -170,6 +178,7 @@ function Error:AddWarning(err)
 
     local info = self:TakeError(err) or {err = err}
     info.count = (info.count or 0) + 1
+    info.old = nil
 
     tinsert(self.errors, 1, info)
     self:Refresh()
@@ -183,6 +192,7 @@ function Error:AddError(err)
 
     info.count = info.count + 1
     info.time = time()
+    info.old = nil
 
     tinsert(self.errors, 1, info)
     self:Refresh()
