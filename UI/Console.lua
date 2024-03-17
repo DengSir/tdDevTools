@@ -34,14 +34,14 @@ function Console:Constructor()
     MessageFrame:SetJustifyH('LEFT')
     MessageFrame:SetFading(false)
     MessageFrame:SetHyperlinksEnabled(true)
-    MessageFrame:SetOnDisplayRefreshedCallback(function(self)
-        local maxValue = self:GetMaxScrollRange()
-        local atBottom = self:AtBottom()
-        self.scrollBar:SetMinMaxValues(0, maxValue)
-        if atBottom then
-            self.scrollBar:SetValue(maxValue)
-        end
-    end)
+    -- MessageFrame:SetOnDisplayRefreshedCallback(function(self)
+    --     local maxValue = self:GetMaxScrollRange()
+    --     local atBottom = self:AtBottom()
+    --     self.scrollBar:SetMinMaxValues(0, maxValue)
+    --     if atBottom then
+    --         self.scrollBar:SetValue(maxValue)
+    --     end
+    -- end)
 
     self.MessageFrame.scrollBar:SetScript('OnValueChanged', function(self, value)
         local minValue, maxValue = self:GetMinMaxValues()
@@ -165,3 +165,7 @@ function Console:Clear()
 end
 
 ns.Console = Console:Bind(ns.Frame.Console)
+
+C_Timer.After(5, function()
+    print(ns.Console)
+end)

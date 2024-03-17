@@ -29,7 +29,7 @@ Inspect.pool = {}
 
 --
 --
----@class InspectItemValue: Button, Object
+---@class InspectItemValue: tdDevToolsInspectValueTemplate, Object
 ---@field owner Inspect
 ---@field object KeyValue
 local InspectValueFrame = ns.class('Button')
@@ -78,14 +78,15 @@ end
 ---@param item ProviderItem
 function InspectItem:SetProviderItem(item)
     self.HeaderBackground:SetShown(item.type == 'header')
-    self.Header:SetText('')
-    self.Value.Star:SetShown(item.star)
 
     self.Header:SetText(item.header)
+
     self.Key:SetObject(item.key)
     self.Key:SetShown(item.key)
+
     self.Value:SetObject(item.value)
     self.Value:SetShown(item.value)
+    self.Value.Star:SetShown(item.star)
 
     if not item.key then
         self.Value:SetPoint('TOPLEFT', self.Key, 'TOPLEFT')

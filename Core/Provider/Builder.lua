@@ -112,7 +112,9 @@ function Builder:Process()
     if ns.GetType(self.target) == 'uiobject' then
         if self.target.GetNumPoints then
             for i = 1, self.target:GetNumPoints() do
-                self:Add('Anchor', ns.ProviderDisplay:New(ns.PointValue:New(self.target:GetPoint(i))))
+                pcall(function()
+                    self:Add('Anchor', ns.ProviderDisplay:New(ns.PointValue:New(self.target:GetPoint(i))))
+                end)
             end
         end
 
