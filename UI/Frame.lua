@@ -23,7 +23,7 @@ local Frame = ns.class('Frame')
 function Frame:Constructor()
     self.numTabs = #self.tabs
     self:SetTab(1)
-    self:SetScript('OnKeyDown', self.OnKeyDown)
+    -- self:SetScript('OnKeyDown', self.OnKeyDown)
     self:SetScript('OnShow', function(self)
         self:SetFrameLevel(self:GetParent():GetFrameLevel() + 100)
     end)
@@ -31,16 +31,18 @@ function Frame:Constructor()
         self:SetPoint('TOPLEFT')
         self:SetPoint('TOPRIGHT')
     end)
+
+    tinsert(UISpecialFrames, self:GetName())
 end
 
-function Frame:OnKeyDown(key)
-    if key == GetBindingKey('TOGGLEGAMEMENU') and self:IsShown() and not GetCurrentKeyBoardFocus() then
-        self:Hide()
-        self:SetPropagateKeyboardInput(false)
-        return
-    end
-    self:SetPropagateKeyboardInput(true)
-end
+-- function Frame:OnKeyDown(key)
+--     if key == GetBindingKey('TOGGLEGAMEMENU') and self:IsShown() and not GetCurrentKeyBoardFocus() then
+--         self:Hide()
+--         self:SetPropagateKeyboardInput(false)
+--         return
+--     end
+--     self:SetPropagateKeyboardInput(true)
+-- end
 
 function Frame:SetTab(id)
     self.selectedTab = id

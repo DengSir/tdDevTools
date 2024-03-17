@@ -281,7 +281,6 @@ function Event:OnEventsItemFormatting2(button, item)
 end
 
 function Event:OnEventsItemClick(button)
-    print(button)
     if button.depth == 1 then
         self.EventsList:ToggleItem(button.item)
     elseif button.depth == 2 then

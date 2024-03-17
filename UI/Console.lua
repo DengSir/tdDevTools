@@ -34,14 +34,14 @@ function Console:Constructor()
     MessageFrame:SetJustifyH('LEFT')
     MessageFrame:SetFading(false)
     MessageFrame:SetHyperlinksEnabled(true)
-    -- MessageFrame:SetOnDisplayRefreshedCallback(function(self)
-    --     local maxValue = self:GetMaxScrollRange()
-    --     local atBottom = self:AtBottom()
-    --     self.scrollBar:SetMinMaxValues(0, maxValue)
-    --     if atBottom then
-    --         self.scrollBar:SetValue(maxValue)
-    --     end
-    -- end)
+    MessageFrame:SetOnScrollChangedCallback(function(self)
+        local maxValue = self:GetMaxScrollRange()
+        local atBottom = self:AtBottom()
+        self.scrollBar:SetMinMaxValues(0, maxValue)
+        if atBottom then
+            self.scrollBar:SetValue(maxValue)
+        end
+    end)
 
     self.MessageFrame.scrollBar:SetScript('OnValueChanged', function(self, value)
         local minValue, maxValue = self:GetMinMaxValues()
@@ -133,15 +133,15 @@ function Console:AddMessage(text, r, g, b)
 end
 
 local LEVEL_COLORS = { --
-    DEBUG = {1, 1, 1},
-    INFO = {1, 1, 1},
-    WARN = {1, .5, 0},
-    ERROR = {1, 0, 0},
+    DEBUG = { 1, 1, 1 },
+    INFO = { 1, 1, 1 },
+    WARN = { 1, .5, 0 },
+    ERROR = { 1, 0, 0 },
 }
 
 function Console:RawLog(level, path, text)
     return self:AddMessage(format('%s %s %s|cffffffff:|r %s', level, ns.GetColoredTime(), path, text),
-                           unpack(assert(LEVEL_COLORS[level])))
+        unpack(assert(LEVEL_COLORS[level])))
 end
 
 function Console:Log(level, depth, ...)
@@ -165,7 +165,3 @@ function Console:Clear()
 end
 
 ns.Console = Console:Bind(ns.Frame.Console)
-
-C_Timer.After(5, function()
-    print(ns.Console)
-end)
