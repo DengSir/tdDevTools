@@ -23,6 +23,7 @@ jobs:
         uses: curse-action/update@master
         with:
           curse-forge-token: ${{ secrets.CURSE_FORGE_TOKEN }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Commit changes
         uses: EndBug/add-and-commit@v9
