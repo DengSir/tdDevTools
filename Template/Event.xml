@@ -163,6 +163,12 @@
             <OnClick>
                 self.scrollFrame:GetParent():GetParent():OnArgumentItemClick(self)
             </OnClick>
+            <OnEnter>
+                self.scrollFrame:GetParent():GetParent():OnArgumentItemEnter(self)
+            </OnEnter>
+            <OnLeave>
+                tdDevToolsTip:Hide()
+            </OnLeave>
         </Scripts>
     </Button>
 
@@ -294,7 +300,7 @@
                                 </Texture>
                             </Layer>
                             <Layer level="ARTWORK">
-                                <FontString inherits="tdDevToolsFontImportant" text="Arguments">
+                                <FontString parentKey="Label" inherits="tdDevToolsFontImportant" text="Arguments">
                                     <Anchors>
                                         <Anchor point="LEFT" x="5" y="0"/>
                                     </Anchors>

@@ -35,6 +35,9 @@ function Console:Constructor()
     MessageFrame:SetFading(false)
     MessageFrame:SetHyperlinksEnabled(true)
     MessageFrame:SetOnScrollChangedCallback(function(self)
+        self.scrollBar:SetValue(self:GetMaxScrollRange() - self:GetScrollOffset())
+    end)
+    MessageFrame:AddOnDisplayRefreshedCallback(function(self)
         local maxValue = self:GetMaxScrollRange()
         local atBottom = self:AtBottom()
         self.scrollBar:SetMinMaxValues(0, maxValue)
@@ -43,25 +46,29 @@ function Console:Constructor()
         end
     end)
 
-    self.MessageFrame.scrollBar:SetScript('OnValueChanged', function(self, value)
+    MessageFrame.scrollBar:SetScript('OnValueChanged', function(self, value)
         local minValue, maxValue = self:GetMinMaxValues()
         local value = floor(value + 0.5)
         self:GetParent():SetScrollOffset(maxValue - value)
         HybridScrollFrame_UpdateButtonStates(self:GetParent(), value)
     end)
 
-    self.MessageFrame.scrollBar.scrollUp:SetScript('OnClick', function(_, _, down)
+    MessageFrame.scrollBar.scrollUp:SetScript('OnClick', function(_, _, down)
         if down then
             self.MessageFrame:ScrollUp()
             PlaySound(1115) -- SOUNDKIT.U_CHAT_SCROLL_BUTTON
         end
     end)
 
-    self.MessageFrame.scrollBar.scrollDown:SetScript('OnClick', function(_, _, down)
+    MessageFrame.scrollBar.scrollDown:SetScript('OnClick', function(_, _, down)
         if down then
             self.MessageFrame:ScrollDown()
             PlaySound(1115) -- SOUNDKIT.U_CHAT_SCROLL_BUTTON
         end
+    end)
+
+    setprinthandler(function(...)
+        return self:Log('DEBUG', 8, ...)
     end)
 end
 
@@ -133,15 +140,15 @@ function Console:AddMessage(text, r, g, b)
 end
 
 local LEVEL_COLORS = { --
-    DEBUG = { 1, 1, 1 },
-    INFO = { 1, 1, 1 },
-    WARN = { 1, .5, 0 },
-    ERROR = { 1, 0, 0 },
+    DEBUG = {1, 1, 1},
+    INFO = {1, 1, 1},
+    WARN = {1, .5, 0},
+    ERROR = {1, 0, 0},
 }
 
 function Console:RawLog(level, path, text)
     return self:AddMessage(format('%s %s %s|cffffffff:|r %s', level, ns.GetColoredTime(), path, text),
-        unpack(assert(LEVEL_COLORS[level])))
+                           unpack(assert(LEVEL_COLORS[level])))
 end
 
 function Console:Log(level, depth, ...)

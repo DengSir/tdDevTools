@@ -53,6 +53,12 @@ function Event:Constructor()
         end,
     })
 
+    self.TimelineList.scrollBar:HookScript('OnMinMaxChanged', function(bar, _, max)
+        if not self.args then
+            bar:SetValue(max)
+        end
+    end)
+
     ns.ListView:Bind(self.ArgumentsList, {
         itemList = {},
         buttonTemplate = 'tdDevToolsArgumentItemTemplate',
@@ -80,13 +86,18 @@ function Event:Constructor()
         return self:OnFrame()
     end)
 
-    self:SetScript('OnShow', self.Refresh)
+    self:SetScript('OnShow', self.OnShow)
     self:SetScript('OnEvent', self.OnEvent)
     self:SetScript('OnSizeChanged', self.OnSizeChanged)
 end
 
+function Event:OnShow()
+    self:OnSizeChanged()
+    self:Refresh()
+end
+
 function Event:OnSizeChanged()
-    local width = self:GetWidth() / 3
+    local width = self:GetWidth() / 4
     self.Events:SetWidth(width)
     self.Timeline:SetWidth(width)
 end
@@ -111,7 +122,7 @@ function Event:Clear()
     wipe(self.timelines)
     wipe(self.eventsTree)
     wipe(self.eventsHash)
-    self.args = {}
+    self.args = nil
     self:Refresh()
 end
 
@@ -150,6 +161,7 @@ function Event:OnEvent(event, ...)
     local item
     if event == 'COMBAT_LOG_EVENT' or event == 'COMBAT_LOG_EVENT_UNFILTERED' then
         item = self:PackItem(event, currentTime, CombatLogGetCurrentEventInfo())
+        item.args[0] = 'CombatLogGetCurrentEventInfo'
     else
         item = self:PackItem(event, currentTime, ...)
     end
@@ -257,6 +269,14 @@ function Event:OnArgumentItemClick(button)
     end
 end
 
+function Event:OnArgumentItemEnter(button)
+    if button.Text:GetStringWidth() > button.Text:GetWidth() then
+        tdDevToolsTip:SetOwner(button, 'ANCHOR_BOTTOMLEFT')
+        tdDevToolsTip:SetText(button.item, nil, nil, nil, nil, true)
+        tdDevToolsTip:Show()
+    end
+end
+
 function Event:OnEventsItemFormatting1(button, item)
     local expend = self.EventsList:IsItemExpend(item)
     button.Text:SetText(item.event)
@@ -316,6 +336,8 @@ function Event:Refresh()
     self.TimelineList:SetItemList(self.timelines)
     self.ArgumentsList:SetItemList(self.args)
     self.EventsList:Refresh()
+    self.Arguments.Header.Label:SetText(self.args and self.args[0] and format('Arguments (From: %s)', self.args[0]) or
+                                            'Arguments')
 end
 
 ns.Event = Event:Bind(ns.Frame.Event)

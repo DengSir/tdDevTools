@@ -5,7 +5,7 @@
             <OnEnter>
                 if self.Text:GetStringWidth() > self.Text:GetWidth() then
                     tdDevToolsTip:SetOwner(self, 'ANCHOR_TOPRIGHT')
-                    tdDevToolsTip:SetText(self.Text:GetText(), nil, nil, nil, nil, true)
+                    tdDevToolsTip:AddLine(self.Text:GetText(), nil, nil, nil, nil, true)
                     tdDevToolsTip:Show()
                 end
             </OnEnter>
