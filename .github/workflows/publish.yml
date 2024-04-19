@@ -1,0 +1,27 @@
+name: Publish 🚛
+on:
+  push:
+    tags:
+      - v*
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Publish to curseforge
+        uses: curse-action/publish@master
+        with:
+          curse-wow-token: ${{ secrets.CURSE_TOKEN }}
+
+      - name: Release to github
+        uses: softprops/action-gh-release@v2
+        with:
+          body_path: changelog.txt
+          files: |
+            *.zip
