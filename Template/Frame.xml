@@ -10,7 +10,7 @@
         <DisabledFont style="tdDevToolsFontImportant"/>
     </Button>
 
-    <Frame name="tdDevToolsParent" parent="UIParent" userPlaced="false" frameLevel="9000" frameStrata="FULLSCREEN_DIALOG">
+    <Frame name="tdDevToolsParent" parent="UIParent" frameLevel="9000" frameStrata="FULLSCREEN_DIALOG">
         <Anchors>
             <Anchor point="TOPLEFT" />
             <Anchor point="BOTTOMRIGHT" />
