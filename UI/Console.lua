@@ -46,11 +46,13 @@ function Console:Constructor()
         end
     end)
 
-    MessageFrame.scrollBar:SetScript('OnValueChanged', function(self, value)
-        local minValue, maxValue = self:GetMinMaxValues()
-        local value = floor(value + 0.5)
-        self:GetParent():SetScrollOffset(maxValue - value)
-        HybridScrollFrame_UpdateButtonStates(self:GetParent(), value)
+    MessageFrame.scrollBar:SetScript('OnValueChanged', function(self, value, userInput)
+        if userInput then
+            local minValue, maxValue = self:GetMinMaxValues()
+            local value = floor(value + 0.5)
+            self:GetParent():SetScrollOffset(maxValue - value)
+            HybridScrollFrame_UpdateButtonStates(self:GetParent(), value)
+        end
     end)
 
     MessageFrame.scrollBar.scrollUp:SetScript('OnClick', function(_, _, down)

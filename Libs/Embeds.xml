@@ -2,6 +2,7 @@
 ..\FrameXML\UI.xsd">
     <Script remote="curse@Ace3" file="LibStub\LibStub.lua" />
     <Script remote="curse@Ace3" file="CallbackHandler-1.0\CallbackHandler-1.0.lua" />
+    <Include remote="curse@Ace3" file="AceDB-3.0\AceDB-3.0.xml" />
 
     <Script file="LibDataBroker-1.1\LibDataBroker-1.1.lua" />
     <Script file="LibLog-1.0\LibLog-1.0.lua" />
