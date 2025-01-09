@@ -20,9 +20,9 @@
     "name": "!!!tdDevTools",
     "curse_id": 305394,
     "builds": {
-      "Vanilla": "11502",
+      "Vanilla": "11505",
       "Wrath": "30403",
-      "Mainline": "100206"
+      "Mainline": "110007"
     },
     "res-filters": [
       "**.ttf"
