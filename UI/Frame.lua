@@ -58,10 +58,10 @@ function Frame:SetTab(id)
 
         if tab:IsShown() then
             tab:ClearAllPoints()
-            if prev then
-                tab:SetPoint('TOPLEFT', prev, 'BOTTOMLEFT', 10, 1)
+            if not prev then
+                tab:SetPoint('TOPLEFT', self, 'BOTTOMLEFT', 10, 1)
             else
-                tab:SetPoint('TOPLEFT', self, 'TOPLEFT', 5, -5)
+                tab:SetPoint('TOPLEFT', prev, 'TOPRIGHT', 5, 0)
             end
             prev = tab
         end
@@ -76,6 +76,7 @@ function Frame:AddTab(text, frame)
 
     self.tabs[id] = tab
     self.tabFrames[id] = frame
+    self.numTabs = id
 
     self:SetTab(self.selectedTab or 1)
 
