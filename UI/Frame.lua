@@ -47,11 +47,39 @@ end
 function Frame:SetTab(id)
     self.selectedTab = id
 
+    local prev
     for i = 1, self.numTabs do
-        self.tabFrames[i]:SetShown(i == id)
-        self.tabs[i]:SetEnabled(i ~= id)
-        self.tabs[i]:SetHeight(i == id and 22 or 19)
+        local tab = self.tabs[i]
+        local tabFrame = self.tabFrames[i]
+
+        tabFrame:SetShown(i == id)
+        tab:SetEnabled(i ~= id)
+        tab:SetHeight(i == id and 22 or 19)
+
+        if tab:IsShown() then
+            tab:ClearAllPoints()
+            if prev then
+                tab:SetPoint('TOPLEFT', prev, 'BOTTOMLEFT', 10, 1)
+            else
+                tab:SetPoint('TOPLEFT', self, 'TOPLEFT', 5, -5)
+            end
+            prev = tab
+        end
     end
+end
+
+function Frame:AddTab(text, frame)
+    local id = self.numTabs + 1
+
+    local tab = CreateFrame('Button', nil, self, 'tdDevToolsTabButtonTemplate', id)
+    tab:SetText(text)
+
+    self.tabs[id] = tab
+    self.tabFrames[id] = frame
+
+    self:SetTab(self.selectedTab or 1)
+
+    return tab
 end
 
 function Frame:Toggle(tab)
