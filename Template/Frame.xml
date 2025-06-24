@@ -112,6 +112,7 @@
                     </OnMouseDown>
                     <OnMouseUp>
                         self:GetParent():StopMovingOrSizing()
+                        self:GetParent():SavePosition()
                     </OnMouseUp>
                 </Scripts>
             </Button>

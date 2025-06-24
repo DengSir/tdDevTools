@@ -26,10 +26,12 @@ function Frame:Constructor()
     -- self:SetScript('OnKeyDown', self.OnKeyDown)
     self:SetScript('OnShow', function(self)
         self:SetFrameLevel(self:GetParent():GetFrameLevel() + 100)
+        self:RestorePosition()
     end)
     self:GetParent():HookScript('OnSizeChanged', function()
         self:SetPoint('TOPLEFT')
         self:SetPoint('TOPRIGHT')
+        self:RestorePosition()
     end)
 
     tinsert(UISpecialFrames, self:GetName())
@@ -94,6 +96,15 @@ end
 function Frame:OnTargetClick(showHidden)
     ns.CheckBlizzardDebugTools()
     FrameStackTooltip_Toggle(showHidden, true, true)
+end
+
+function Frame:SavePosition()
+    self:SetUserPlaced(false)
+    ns.db.profile.window.height = self:GetHeight() / self:GetParent():GetHeight()
+end
+
+function Frame:RestorePosition()
+    self:SetHeight(ns.db.profile.window.height * self:GetParent():GetHeight())
 end
 
 ns.Frame = Frame:Bind(tdDevToolsFrame)

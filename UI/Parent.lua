@@ -3,7 +3,7 @@
 -- @Link   : https://dengsir.github.io
 -- @Date   : 6/18/2021, 8:28:49 PM
 --
----@see ns
+---@type ns
 local ns = select(2, ...)
 
 local IsAddOnLoaded = IsAddOnLoaded
@@ -85,7 +85,7 @@ function Parent:OnUpdate()
 end
 
 function Parent:UpdateSize()
-    self:SetScale(GetScreenWidth() / GetPhysicalScreenSize() * 2)
+    self:SetScale(GetScreenWidth() / GetPhysicalScreenSize() * 2 * GetScreenDPIScale())
 end
 
 function Parent:OnBlizzardDebugToolsLoaded()
