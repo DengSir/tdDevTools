@@ -104,6 +104,9 @@ function Frame:SavePosition()
 end
 
 function Frame:RestorePosition()
+    if not ns.db then
+        return
+    end
     self:SetHeight(ns.db.profile.window.height * self:GetParent():GetHeight())
 end
 
