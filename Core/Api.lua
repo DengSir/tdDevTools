@@ -202,7 +202,7 @@ ns.PROFILE = { --
     profile = { --
         window = { --
             minimap = {},
-            frame = {height = 0.33},
+            height = 0.33,
         },
     },
 }
