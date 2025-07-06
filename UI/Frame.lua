@@ -22,6 +22,7 @@ local Frame = ns.class('Frame')
 
 function Frame:Constructor()
     self.numTabs = #self.tabs
+    self:SetUserPlaced(false)
     self:SetTab(1)
     -- self:SetScript('OnKeyDown', self.OnKeyDown)
     self:SetScript('OnShow', function(self)

@@ -37,7 +37,7 @@ function Parent:PLAYER_LOGIN()
 end
 
 function Parent:SetupDatabase()
-    ns.db = LibStub('AceDB-3.0'):New('TDDB_DEVTOOLS_NEW', ns.PROFILE)
+    ns.db = LibStub('AceDB-3.0'):New('TDDB_DEVTOOLS_NEW', ns.PROFILE, true)
 
     if _G.TDDB_DEVTOOLS then
         if _G.TDDB_DEVTOOLS.errors then
