@@ -41,6 +41,10 @@ function Error:Constructor()
     SetCVar('scriptErrors', 0)
     UIParent:UnregisterEvent('LUA_WARNING')
 
+    if ScriptErrorsFrame then
+        ScriptErrorsFrame:UnregisterEvent('LUA_WARNING')
+    end
+
     -- @debug@
     -- local old = geterrorhandler()
     -- @end-debug@
@@ -104,7 +108,7 @@ function Error:MACRO_ACTION_FORBIDDEN(event, port)
     self:AddError(format('Macro forbidden from using %s (Only usable by Blizzard)', port))
 end
 
-function Error:LUA_WARNING(_, warnType, err)
+function Error:LUA_WARNING(_, err)
     self:AddWarning(err)
 end
 

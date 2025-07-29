@@ -6,9 +6,6 @@
 ---@type ns
 local ns = select(2, ...)
 
-local GetBindingKey = GetBindingKey
-local GetCurrentKeyBoardFocus = GetCurrentKeyBoardFocus
-
 ---@class _tdDevToolsFrame: Object, tdDevToolsFrame
 ---@field tabs Button[]
 ---@field tabFrames Frame[]
@@ -24,7 +21,6 @@ function Frame:Constructor()
     self.numTabs = #self.tabs
     self:SetUserPlaced(false)
     self:SetTab(1)
-    -- self:SetScript('OnKeyDown', self.OnKeyDown)
     self:SetScript('OnShow', function(self)
         self:SetFrameLevel(self:GetParent():GetFrameLevel() + 100)
         self:RestorePosition()
@@ -35,17 +31,8 @@ function Frame:Constructor()
         self:RestorePosition()
     end)
 
-    tinsert(UISpecialFrames, self:GetName())
+    tinsert(UIMenus, self:GetName())
 end
-
--- function Frame:OnKeyDown(key)
---     if key == GetBindingKey('TOGGLEGAMEMENU') and self:IsShown() and not GetCurrentKeyBoardFocus() then
---         self:Hide()
---         self:SetPropagateKeyboardInput(false)
---         return
---     end
---     self:SetPropagateKeyboardInput(true)
--- end
 
 function Frame:SetTab(id)
     self.selectedTab = id
