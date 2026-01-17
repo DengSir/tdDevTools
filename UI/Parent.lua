@@ -6,7 +6,7 @@
 ---@type ns
 local ns = select(2, ...)
 
-local IsAddOnLoaded = IsAddOnLoaded
+local IsAddOnLoaded =  IsAddOnLoaded or (C_AddOns and C_AddOns.IsAddOnLoaded)
 local GetScreenWidth = GetScreenWidth
 local GetPhysicalScreenSize = GetPhysicalScreenSize
 
