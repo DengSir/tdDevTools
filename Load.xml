@@ -3,6 +3,7 @@
     <Include file="Libs\Embeds.xml" />
     <Include file="Template\Template.xml" />
     <Include file="Core\Core.xml" />
+    <Script file="Data\ItemSparse.lua" />
     <Include file="UI\UI.xml" />
     <Script file="Interface.lua" />
     <!-- <Script file="Tests.lua" /> -->

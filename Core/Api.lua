@@ -21,6 +21,9 @@
 ---@field PointValue PointValue
 local ns = select(2, ...)
 
+-- expose namespace to XML/global scripts for template callbacks
+_G.tdDevTools = ns
+
 local LibClass = LibStub('LibClass-2.0')
 
 local type, select, error, rawget = type, select, error, rawget

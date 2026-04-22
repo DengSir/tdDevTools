@@ -1,0 +1,285 @@
+<Ui xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\FrameXML\UI.xsd">
+    <Button name="tdDevToolsItemCategoryTemplate" virtual="true">
+        <Size x="80" y="18" />
+        <Layers>
+            <Layer level="BACKGROUND">
+                <Texture parentKey="Selected" hidden="true">
+                    <Color r="1" g="1" b="1" a="0.15" />
+                </Texture>
+            </Layer>
+            <Layer level="ARTWORK">
+                <FontString parentKey="Label" inherits="tdDevToolsFontNormal" justifyH="LEFT" wordWrap="false">
+                    <Anchors>
+                        <Anchor point="LEFT" x="4" y="0" />
+                        <Anchor point="RIGHT" x="-4" y="0" />
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+        <HighlightTexture>
+            <Color r="1" g="1" b="1" a="0.15" />
+        </HighlightTexture>
+        <Scripts>
+            <OnClick>
+                self.scrollFrame:GetParent():GetParent():GetParent():OnCategoryClick(self)
+            </OnClick>
+        </Scripts>
+    </Button>
+    <Button name="tdDevToolsItemRowTemplate" virtual="true">
+        <Size x="80" y="18" />
+        <Layers>
+            <Layer level="BACKGROUND">
+                <Texture parentKey="Selected" hidden="true">
+                    <Color r="1" g="1" b="1" a="0.2" />
+                </Texture>
+            </Layer>
+            <Layer level="ARTWORK">
+                <FontString parentKey="IdText" inherits="tdDevToolsFontImportant" justifyH="LEFT" wordWrap="false">
+                    <Size x="40" />
+                    <Anchors>
+                        <Anchor point="LEFT" x="5" y="0" />
+                    </Anchors>
+                </FontString>
+                <FontString parentKey="IlvlText" inherits="tdDevToolsFontNormal" justifyH="LEFT" wordWrap="false">
+                    <Size x="36" />
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.IdText" relativePoint="RIGHT" x="2" y="0" />
+                    </Anchors>
+                </FontString>
+                <FontString parentKey="NameText" inherits="tdDevToolsFontHighlight" justifyH="LEFT" wordWrap="false">
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.IlvlText" relativePoint="RIGHT" x="2" y="0" />
+                        <Anchor point="RIGHT" x="-5" y="0" />
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+        <HighlightTexture>
+            <Color r="1" g="1" b="1" a="0.2" />
+        </HighlightTexture>
+        <Scripts>
+            <OnClick>
+                self.scrollFrame:GetParent():GetParent():GetParent():OnItemClick(self)
+            </OnClick>
+        </Scripts>
+    </Button>
+
+    <Frame parentKey="Item" parent="tdDevToolsFrame" parentArray="tabFrames" hidden="true">
+        <Anchors>
+            <Anchor point="TOPLEFT" relativeKey="$parent.Inset" relativePoint="TOPLEFT" />
+            <Anchor point="BOTTOMRIGHT" relativeKey="$parent.Inset" relativePoint="BOTTOMRIGHT" />
+        </Anchors>
+        <Frames>
+            <!-- Full-width header: title + search -->
+            <Frame parentKey="Header">
+                <Size y="20" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" />
+                    <Anchor point="TOPRIGHT" />
+                </Anchors>
+                <Layers>
+                    <Layer level="ARTWORK">
+                        <FontString inherits="tdDevToolsFontImportant" text="Item">
+                            <Anchors>
+                                <Anchor point="LEFT" x="5" y="0" />
+                            </Anchors>
+                        </FontString>
+                    </Layer>
+                    <Layer level="BORDER">
+                        <Texture inherits="_tdDevToolsLineTemplate">
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" />
+                                <Anchor point="TOPRIGHT" relativePoint="BOTTOMRIGHT" />
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                </Layers>
+                <Frames>
+                    <EditBox parentKey="SearchBox" letters="100" inherits="tdDevToolsSearchBoxTemplate">
+                        <Size y="18" />
+                        <Anchors>
+                            <Anchor point="LEFT" x="35" y="0" />
+                            <Anchor point="RIGHT" x="-2" y="0" />
+                            <Anchor point="TOP" />
+                            <Anchor point="BOTTOM" />
+                        </Anchors>
+                        <Scripts>
+                            <OnTextChanged inherit="append">
+                                self:GetParent():GetParent():OnSearchTextChanged(self:GetText())
+                            </OnTextChanged>
+                        </Scripts>
+                    </EditBox>
+                </Frames>
+            </Frame>
+            <!-- Left panel: category sidebar + item list -->
+            <Frame parentKey="Left">
+                <Size x="380" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.Header" relativePoint="BOTTOMLEFT" />
+                    <Anchor point="BOTTOMLEFT" />
+                </Anchors>
+                <Layers>
+                    <Layer level="BORDER">
+                        <Texture inherits="tdDevToolsLineRightTemplate" />
+                    </Layer>
+                </Layers>
+                <Frames>
+                    <!-- Category sidebar -->
+                    <Frame parentKey="CategoryPanel">
+                        <Size x="130" />
+                        <Anchors>
+                            <Anchor point="TOPLEFT" />
+                            <Anchor point="BOTTOMLEFT" />
+                        </Anchors>
+                        <Layers>
+                            <Layer level="BORDER">
+                                <Texture inherits="tdDevToolsLineRightTemplate" />
+                            </Layer>
+                        </Layers>
+                        <Frames>
+                            <ScrollFrame parentKey="CategoryList" inherits="tdDevToolsHybridScrollFrameTemplate">
+                                <Anchors>
+                                    <Anchor point="TOPLEFT" x="1" y="-1" />
+                                    <Anchor point="BOTTOMRIGHT" x="0" y="1" />
+                                </Anchors>
+                            </ScrollFrame>
+                        </Frames>
+                    </Frame>
+                    <!-- Content: sort + item list -->
+                    <Frame parentKey="Content">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.CategoryPanel" relativePoint="TOPRIGHT" />
+                            <Anchor point="BOTTOMRIGHT" />
+                        </Anchors>
+                        <Frames>
+                            <Frame parentKey="ColHeader">
+                                <Size y="16" />
+                                <Anchors>
+                                    <Anchor point="TOPLEFT" x="0" y="-1" />
+                                    <Anchor point="TOPRIGHT" x="0" y="-1" />
+                                </Anchors>
+                                <Layers>
+                                    <Layer level="BORDER">
+                                        <Texture inherits="_tdDevToolsLineTemplate">
+                                            <Anchors>
+                                                <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" />
+                                                <Anchor point="TOPRIGHT" relativePoint="BOTTOMRIGHT" />
+                                            </Anchors>
+                                        </Texture>
+                                    </Layer>
+                                </Layers>
+                                <Frames>
+                                    <Button parentKey="SortID">
+                                        <Size x="45" />
+                                        <Anchors>
+                                            <Anchor point="LEFT" />
+                                            <Anchor point="TOP" />
+                                            <Anchor point="BOTTOM" />
+                                        </Anchors>
+                                        <Layers>
+                                            <Layer level="ARTWORK">
+                                                <FontString parentKey="Label" inherits="tdDevToolsFontImportant" text="ID" justifyH="LEFT" wordWrap="false">
+                                                    <Anchors>
+                                                        <Anchor point="LEFT" x="5" y="0" />
+                                                        <Anchor point="RIGHT" />
+                                                    </Anchors>
+                                                </FontString>
+                                            </Layer>
+                                        </Layers>
+                                        <HighlightTexture>
+                                            <Color r="1" g="1" b="1" a="0.1" />
+                                        </HighlightTexture>
+                                        <Scripts>
+                                            <OnClick>self:GetParent():GetParent():GetParent():GetParent():OnSortClick('id')</OnClick>
+                                        </Scripts>
+                                    </Button>
+                                    <Button parentKey="SortIlvl">
+                                        <Size x="36" />
+                                        <Anchors>
+                                            <Anchor point="LEFT" relativeKey="$parent.SortID" relativePoint="RIGHT" x="2" y="0" />
+                                            <Anchor point="TOP" />
+                                            <Anchor point="BOTTOM" />
+                                        </Anchors>
+                                        <Layers>
+                                            <Layer level="ARTWORK">
+                                                <FontString parentKey="Label" inherits="tdDevToolsFontNormal" text="iLvl" justifyH="LEFT" wordWrap="false" setAllPoints="true" />
+                                            </Layer>
+                                        </Layers>
+                                        <HighlightTexture>
+                                            <Color r="1" g="1" b="1" a="0.1" />
+                                        </HighlightTexture>
+                                        <Scripts>
+                                            <OnClick>self:GetParent():GetParent():GetParent():GetParent():OnSortClick('ilvl')</OnClick>
+                                        </Scripts>
+                                    </Button>
+                                    <Button parentKey="SortQuality">
+                                        <Anchors>
+                                            <Anchor point="LEFT" relativeKey="$parent.SortIlvl" relativePoint="RIGHT" x="2" y="0" />
+                                            <Anchor point="RIGHT" x="-5" y="0" />
+                                            <Anchor point="TOP" />
+                                            <Anchor point="BOTTOM" />
+                                        </Anchors>
+                                        <Layers>
+                                            <Layer level="ARTWORK">
+                                                <FontString parentKey="Label" inherits="tdDevToolsFontNormal" text="Name/Quality" justifyH="LEFT" wordWrap="false" setAllPoints="true" />
+                                            </Layer>
+                                        </Layers>
+                                        <HighlightTexture>
+                                            <Color r="1" g="1" b="1" a="0.1" />
+                                        </HighlightTexture>
+                                        <Scripts>
+                                            <OnClick>self:GetParent():GetParent():GetParent():GetParent():OnSortClick('quality')</OnClick>
+                                        </Scripts>
+                                    </Button>
+                                </Frames>
+                            </Frame>
+                            <ScrollFrame parentKey="ItemList" inherits="tdDevToolsHybridScrollFrameTemplate">
+                                <Anchors>
+                                    <Anchor point="TOPLEFT" relativeKey="$parent.ColHeader" relativePoint="BOTTOMLEFT" x="0" y="-1" />
+                                    <Anchor point="BOTTOMRIGHT" x="0" y="1" />
+                                </Anchors>
+                            </ScrollFrame>
+                        </Frames>
+                    </Frame>
+                </Frames>
+            </Frame>
+            <!-- Right panel: embedded item tooltip -->
+            <Frame parentKey="InfoPanel">
+                <Size x="300" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.Left" relativePoint="TOPRIGHT" />
+                    <Anchor point="BOTTOMLEFT" />
+                </Anchors>
+                <Frames>
+                    <ScrollFrame parentKey="ScrollFrame" inherits="tdDevToolsPanelScrollFrameTemplate">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" x="1" y="-1" />
+                            <Anchor point="BOTTOMRIGHT" x="-16" y="1" />
+                        </Anchors>
+                        <ScrollChild>
+                            <Frame name="tdDevToolsItemScrollChild">
+                                <Size x="100" y="100" />
+                                <Frames>
+                                    <GameTooltip name="tdDevToolsItemTip" inherits="tdDevToolsTooltipTemplate" clampedToScreen="false" setAllPoints="true">
+                                        <KeyValues>
+                                            <KeyValue key="IsEmbedded" value="true" type="boolean"/>
+                                        </KeyValues>
+                                        <Scripts>
+                                            <OnLoad>
+                                                if self.HideBackdrop then self:HideBackdrop() end
+                                                self:SetMinimumWidth(280)
+                                                self:SetMaximumWidth(280)
+                                            </OnLoad>
+                                            <!-- <OnUpdate function="GameTooltip_OnUpdate" /> -->
+                                        </Scripts>
+                                    </GameTooltip>
+                                </Frames>
+                            </Frame>
+                        </ScrollChild>
+                    </ScrollFrame>
+                </Frames>
+            </Frame>
+        </Frames>
+    </Frame>
+</Ui>

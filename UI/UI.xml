@@ -10,4 +10,5 @@
     <Script file="Event.lua" />
     <Script file="Document.lua" />
     <Script file="Inspect.lua" />
+    <Script file="Item.lua" />
 </Ui>

@@ -7,4 +7,5 @@
     <Include file="Event.xml" />
     <Include file="Document.xml" />
     <Include file="Inspect.xml" />
+    <Include file="Item.xml" />
 </Ui>

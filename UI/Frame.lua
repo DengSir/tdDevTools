@@ -31,7 +31,28 @@ function Frame:Constructor()
         self:RestorePosition()
     end)
 
-    tinsert(UIMenus, self:GetName())
+    local name = self:GetName()
+    local key = name .. fastrandom(1, 10000)
+    UIMenus[key] = name
+
+    local Holder = CreateFrame('Frame', nil, MainMenuMicroButton)
+    Holder:SetAllPoints(MainMenuMicroButton)
+    Holder:SetFrameLevel(MainMenuMicroButton:GetFrameLevel() + 10)
+    Holder:SetPropagateMouseMotion(true)
+    Holder:SetPropagateMouseClicks(true)
+
+    Holder:SetScript('OnMouseDown', function()
+        UIMenus[key] = nil
+    end)
+    Holder:SetScript('OnMouseUp', function()
+        C_Timer.After(0.01, function()
+            UIMenus[key] = name
+        end)
+    end)
+
+    hooksecurefunc('CloseMenus', function()
+        self:Hide()
+    end)
 end
 
 function Frame:SetTab(id)
