@@ -12,21 +12,30 @@ local tostring = tostring
 ---@class tdDevToolsItem: Frame, Object
 local Item = ns.class('Frame')
 
-local QUALITY_COLORS = {
-    [0] = {0.62, 0.62, 0.62}, -- Poor
-    [1] = {1.00, 1.00, 1.00}, -- Common
-    [2] = {0.12, 1.00, 0.00}, -- Uncommon
-    [3] = {0.00, 0.44, 0.87}, -- Rare
-    [4] = {0.64, 0.21, 0.93}, -- Epic
-    [5] = {1.00, 0.50, 0.00}, -- Legendary
-    [6] = {0.90, 0.80, 0.50}, -- Artifact
-    [7] = {0.00, 0.80, 1.00}, -- Heirloom
-    [8] = {0.00, 0.80, 1.00}, -- WoW Token
+local PREVIEWABLE_INVTYPES = {
+    [1] = true, -- Head
+    [3] = true, -- Shoulder
+    [4] = true, -- Body/Shirt
+    [5] = true, -- Chest
+    [6] = true, -- Waist
+    [7] = true, -- Legs
+    [8] = true, -- Feet
+    [9] = true, -- Wrist
+    [10] = true, -- Hands
+    [13] = true, -- One-hand
+    [14] = true, -- Shield
+    [15] = true, -- Ranged
+    [16] = true, -- Cloak
+    [17] = true, -- Two-hand
+    [19] = true, -- Tabard
+    [20] = true, -- Robe
+    [21] = true, -- Main hand
+    [22] = true, -- Off hand
+    [26] = true, -- Wand/Ranged right
 }
 
--- ---- Filter Popup ----
-
--- ---- Item Panel ----
+local ES = [[|TInterface\Buttons\Micro-Highlight.blp:8:8:0:0:64:64:32:64:32:64|t]] .. ' '
+local ES2 = string.rep(ES, 2)
 
 function Item:Constructor()
     self.searchText = ''
@@ -34,8 +43,42 @@ function Item:Constructor()
     self.sortKey = 'id'
     self.sortDir = 1 -- 1=asc, -1=desc
     self.selectedNode = nil
+    self.qualityFilter = nil
     self.displayList = ns.ItemSparse
     self.categoryTree = {}
+    self.colWidths = {id = 45, ilvl = 36}
+
+    -- drag-to-rotate on preview model
+    do
+        local model = self.PreviewPanel.Model
+        model:EnableMouse(true)
+        model:SetScript('OnMouseDown', function(m, btn)
+            if btn == 'LeftButton' then
+                m._rotating = true
+                m._lastX = GetCursorPosition()
+            end
+        end)
+        model:SetScript('OnMouseUp', function(m)
+            m._rotating = false
+        end)
+        model:SetScript('OnUpdate', function(m)
+            if m._rotating then
+                local x = GetCursorPosition()
+                local dx = x - (m._lastX or x)
+                m:SetFacing(m:GetFacing() + dx * 0.01)
+                m._lastX = x
+
+                print('facing', m:GetFacing())
+            end
+        end)
+    end
+
+    self.Tip = tdDevToolsItemTip
+    self.Tip.UpdateTooltip = function()
+        if self.selectedItem then
+            self.Tip:SetItemByID(self.selectedItem)
+        end
+    end
 
     local catSelf = self
     ns.TreeView:Bind(self.Left.CategoryPanel.CategoryList, {
@@ -47,8 +90,13 @@ function Item:Constructor()
                 local catList = button.scrollFrame
                 local hasChildren = #item > 0
                 local isExpanded = hasChildren and catList:IsItemExpend(item)
-                local prefix = hasChildren and (isExpanded and [[|TInterface\AddOns\!!!tdDevTools\Media\ArrowBR.BLP:8:8|t ]] or [[|TInterface\AddOns\!!!tdDevTools\Media\ArrowDown.BLP:8:8|t ]]) or '  '
-                button.Label:SetText(prefix .. item.name)
+
+                button.ExpandIcon:SetPoint('LEFT', 4, 0)
+                button.ExpandIcon:SetTexture(isExpanded and [[Interface\AddOns\!!!tdDevTools\Media\ArrowBR.BLP]] or
+                                                 [[Interface\AddOns\!!!tdDevTools\Media\ArrowDown.BLP]])
+                button.ExpandIcon:SetShown(hasChildren)
+
+                button.Label:SetText(item.name)
                 local selected = item.isAll and not catSelf.selectedNode or catSelf.selectedNode == item
                 button.Selected:SetShown(selected or false)
             end,
@@ -56,12 +104,19 @@ function Item:Constructor()
                 local catList = button.scrollFrame
                 local hasChildren = #item > 0
                 local isExpanded = hasChildren and catList:IsItemExpend(item)
-                local prefix = hasChildren and (isExpanded and [[|TInterface\AddOns\!!!tdDevTools\Media\ArrowBR.BLP:8:8|t ]] or [[|TInterface\AddOns\!!!tdDevTools\Media\ArrowDown.BLP:8:8|t ]]) or '  '
-                button.Label:SetText('  ' .. prefix .. item.name)
+
+                button.ExpandIcon:SetPoint('LEFT', 16, 0)
+                button.ExpandIcon:SetTexture(isExpanded and [[Interface\AddOns\!!!tdDevTools\Media\ArrowBR.BLP]] or
+                                                 [[Interface\AddOns\!!!tdDevTools\Media\ArrowDown.BLP]])
+                button.ExpandIcon:SetShown(hasChildren)
+
+                button.Label:SetText(item.name)
                 button.Selected:SetShown(catSelf.selectedNode == item)
             end,
             [3] = function(button, item)
-                button.Label:SetText('        ' .. item.name)
+                button.ExpandIcon:SetPoint('LEFT', 24, 0)
+                button.ExpandIcon:Hide()
+                button.Label:SetText(item.name)
                 button.Selected:SetShown(catSelf.selectedNode == item)
             end,
         },
@@ -85,6 +140,10 @@ function Item:OnShow()
         self:BuildCategoryTree()
         self.Left.CategoryPanel.CategoryList:Refresh()
         self:ApplySort()
+    end
+    local w = self.Left.Content.ColHeader:GetWidth()
+    if w > 0 then
+        self:UpdateColumnWidths(w)
     end
 end
 
@@ -115,7 +174,9 @@ function Item:BuildCategoryTree()
             else
                 subName = GetItemClassInfo(cID)
             end
-            if not subName or subName == '' then return nil end
+            if not subName or subName == '' then
+                return nil
+            end
             local child = makeNode(subName, cID, scID, invT)
             self[#self + 1] = child
             return child
@@ -134,7 +195,9 @@ function Item:BuildCategoryTree()
 
         function node:FindSubCategoryByName(n)
             for _, child in ipairs(self) do
-                if child.name == n then return child end
+                if child.name == n then
+                    return child
+                end
             end
         end
 
@@ -149,7 +212,9 @@ function Item:BuildCategoryTree()
 
     local function newNode(classID)
         local name = GetItemClassInfo(classID)
-        if not name then return nil end
+        if not name then
+            return nil
+        end
         local node = makeNode(name, classID)
         tree[#tree + 1] = node
         return node
@@ -182,75 +247,74 @@ function Item:BuildCategoryTree()
     -- Armor
     do
         local MiscArmorInventoryTypes = {
-            Enum.InventoryType.IndexHeadType,
-            Enum.InventoryType.IndexNeckType,
-            Enum.InventoryType.IndexBodyType,
-            Enum.InventoryType.IndexFingerType,
-            Enum.InventoryType.IndexTrinketType,
+            Enum.InventoryType.IndexHeadType, Enum.InventoryType.IndexNeckType, Enum.InventoryType.IndexBodyType,
+            Enum.InventoryType.IndexFingerType, Enum.InventoryType.IndexTrinketType,
             Enum.InventoryType.IndexHoldableType,
         }
         local ClothArmorInventoryTypes = {
-            Enum.InventoryType.IndexHeadType,
-            Enum.InventoryType.IndexShoulderType,
-            Enum.InventoryType.IndexChestType,
-            Enum.InventoryType.IndexWaistType,
-            Enum.InventoryType.IndexLegsType,
-            Enum.InventoryType.IndexFeetType,
-            Enum.InventoryType.IndexWristType,
-            Enum.InventoryType.IndexHandType,
-            Enum.InventoryType.IndexCloakType, -- 布甲独有
+            Enum.InventoryType.IndexHeadType, Enum.InventoryType.IndexShoulderType, Enum.InventoryType.IndexChestType,
+            Enum.InventoryType.IndexWaistType, Enum.InventoryType.IndexLegsType, Enum.InventoryType.IndexFeetType,
+            Enum.InventoryType.IndexWristType, Enum.InventoryType.IndexHandType, Enum.InventoryType.IndexCloakType, -- 布甲独有
         }
         local ArmorInventoryTypes = {
-            Enum.InventoryType.IndexHeadType,
-            Enum.InventoryType.IndexShoulderType,
-            Enum.InventoryType.IndexChestType,
-            Enum.InventoryType.IndexWaistType,
-            Enum.InventoryType.IndexLegsType,
-            Enum.InventoryType.IndexFeetType,
-            Enum.InventoryType.IndexWristType,
-            Enum.InventoryType.IndexHandType,
+            Enum.InventoryType.IndexHeadType, Enum.InventoryType.IndexShoulderType, Enum.InventoryType.IndexChestType,
+            Enum.InventoryType.IndexWaistType, Enum.InventoryType.IndexLegsType, Enum.InventoryType.IndexFeetType,
+            Enum.InventoryType.IndexWristType, Enum.InventoryType.IndexHandType,
         }
 
         local cat = newNode(Enum.ItemClass.Armor)
         if cat then
             local miscCat = cat:CreateSubCategoryAndFilter(Enum.ItemClass.Armor, Enum.ItemArmorSubclass.Generic)
             if miscCat then
-                miscCat:AddBulkInventoryTypeCategories(Enum.ItemClass.Armor, Enum.ItemArmorSubclass.Generic, MiscArmorInventoryTypes)
+                miscCat:AddBulkInventoryTypeCategories(Enum.ItemClass.Armor, Enum.ItemArmorSubclass.Generic,
+                                                       MiscArmorInventoryTypes)
             end
 
             local clothCat = cat:CreateSubCategoryAndFilter(Enum.ItemClass.Armor, Enum.ItemArmorSubclass.Cloth)
             if clothCat then
-                clothCat:AddBulkInventoryTypeCategories(Enum.ItemClass.Armor, Enum.ItemArmorSubclass.Cloth, ClothArmorInventoryTypes)
-                local chestCat = clothCat:FindSubCategoryByName(C_Item.GetItemInventorySlotInfo(Enum.InventoryType.IndexChestType))
+                clothCat:AddBulkInventoryTypeCategories(Enum.ItemClass.Armor, Enum.ItemArmorSubclass.Cloth,
+                                                        ClothArmorInventoryTypes)
+                local chestCat = clothCat:FindSubCategoryByName(
+                                     C_Item.GetItemInventorySlotInfo(Enum.InventoryType.IndexChestType))
                 if chestCat then
-                    chestCat:AddFilter(Enum.ItemClass.Armor, Enum.ItemArmorSubclass.Cloth, Enum.InventoryType.IndexRobeType)
+                    chestCat:AddFilter(Enum.ItemClass.Armor, Enum.ItemArmorSubclass.Cloth,
+                                       Enum.InventoryType.IndexRobeType)
                 end
             end
 
             local leatherCat = cat:CreateSubCategoryAndFilter(Enum.ItemClass.Armor, Enum.ItemArmorSubclass.Leather)
             if leatherCat then
-                leatherCat:AddBulkInventoryTypeCategories(Enum.ItemClass.Armor, Enum.ItemArmorSubclass.Leather, ArmorInventoryTypes)
-                local chestCat = leatherCat:FindSubCategoryByName(C_Item.GetItemInventorySlotInfo(Enum.InventoryType.IndexChestType))
+                leatherCat:AddBulkInventoryTypeCategories(Enum.ItemClass.Armor, Enum.ItemArmorSubclass.Leather,
+                                                          ArmorInventoryTypes)
+                local chestCat = leatherCat:FindSubCategoryByName(
+                                     C_Item.GetItemInventorySlotInfo(Enum.InventoryType.IndexChestType))
                 if chestCat then
-                    chestCat:AddFilter(Enum.ItemClass.Armor, Enum.ItemArmorSubclass.Leather, Enum.InventoryType.IndexRobeType)
+                    chestCat:AddFilter(Enum.ItemClass.Armor, Enum.ItemArmorSubclass.Leather,
+                                       Enum.InventoryType.IndexRobeType)
                 end
             end
 
             local mailCat = cat:CreateSubCategoryAndFilter(Enum.ItemClass.Armor, Enum.ItemArmorSubclass.Mail)
             if mailCat then
-                mailCat:AddBulkInventoryTypeCategories(Enum.ItemClass.Armor, Enum.ItemArmorSubclass.Mail, ArmorInventoryTypes)
-                local chestCat = mailCat:FindSubCategoryByName(C_Item.GetItemInventorySlotInfo(Enum.InventoryType.IndexChestType))
+                mailCat:AddBulkInventoryTypeCategories(Enum.ItemClass.Armor, Enum.ItemArmorSubclass.Mail,
+                                                       ArmorInventoryTypes)
+                local chestCat = mailCat:FindSubCategoryByName(
+                                     C_Item.GetItemInventorySlotInfo(Enum.InventoryType.IndexChestType))
                 if chestCat then
-                    chestCat:AddFilter(Enum.ItemClass.Armor, Enum.ItemArmorSubclass.Mail, Enum.InventoryType.IndexRobeType)
+                    chestCat:AddFilter(Enum.ItemClass.Armor, Enum.ItemArmorSubclass.Mail,
+                                       Enum.InventoryType.IndexRobeType)
                 end
             end
 
             local plateCat = cat:CreateSubCategoryAndFilter(Enum.ItemClass.Armor, Enum.ItemArmorSubclass.Plate)
             if plateCat then
-                plateCat:AddBulkInventoryTypeCategories(Enum.ItemClass.Armor, Enum.ItemArmorSubclass.Plate, ArmorInventoryTypes)
-                local chestCat = plateCat:FindSubCategoryByName(C_Item.GetItemInventorySlotInfo(Enum.InventoryType.IndexChestType))
+                plateCat:AddBulkInventoryTypeCategories(Enum.ItemClass.Armor, Enum.ItemArmorSubclass.Plate,
+                                                        ArmorInventoryTypes)
+                local chestCat = plateCat:FindSubCategoryByName(
+                                     C_Item.GetItemInventorySlotInfo(Enum.InventoryType.IndexChestType))
                 if chestCat then
-                    chestCat:AddFilter(Enum.ItemClass.Armor, Enum.ItemArmorSubclass.Plate, Enum.InventoryType.IndexRobeType)
+                    chestCat:AddFilter(Enum.ItemClass.Armor, Enum.ItemArmorSubclass.Plate,
+                                       Enum.InventoryType.IndexRobeType)
                 end
             end
 
@@ -342,7 +406,8 @@ function Item:BuildCategoryTree()
                 cat:CreateSubCategoryAndFilter(Enum.ItemClass.Miscellaneous, Enum.ItemMiscellaneousSubclass.Junk)
                 cat:CreateSubCategoryAndFilter(Enum.ItemClass.Miscellaneous, Enum.ItemMiscellaneousSubclass.Reagent)
                 if not (ClassicExpansionAtLeast and ClassicExpansionAtLeast(LE_EXPANSION_MISTS_OF_PANDARIA)) then
-                    cat:CreateSubCategoryAndFilter(Enum.ItemClass.Miscellaneous, Enum.ItemMiscellaneousSubclass.CompanionPet)
+                    cat:CreateSubCategoryAndFilter(Enum.ItemClass.Miscellaneous,
+                                                   Enum.ItemMiscellaneousSubclass.CompanionPet)
                 end
                 cat:CreateSubCategoryAndFilter(Enum.ItemClass.Miscellaneous, Enum.ItemMiscellaneousSubclass.Holiday)
                 cat:CreateSubCategoryAndFilter(Enum.ItemClass.Miscellaneous, Enum.ItemMiscellaneousSubclass.Other)
@@ -399,37 +464,46 @@ function Item:OnSearchTextChanged(text)
     end)
 end
 
+function Item:FilterItem(entry)
+    if self.qualityFilter and entry.quality ~= self.qualityFilter then
+        return false
+    end
+    if self.searchText and self.searchText ~= '' then
+        local lower = self.searchText:lower()
+        local id = entry.id
+        if not entry.name:lower():find(lower, 1, true) and not tostring(id):find(lower, 1, true) then
+            return false
+        end
+    end
+    local filters = self.selectedNode and self.selectedNode.filters
+    if filters then
+        local matched = false
+        for _, f in ipairs(filters) do
+            if (not f.classID or entry.classID == f.classID) and (not f.subClassID or entry.subclassID == f.subClassID) and
+                (not f.inventoryType or entry.invType == f.inventoryType) then
+                matched = true
+                break
+            end
+        end
+        if not matched then
+            return false
+        end
+    end
+    return true
+end
+
 function Item:Rebuild(searchText)
     local filters = self.selectedNode and self.selectedNode.filters
     local hasSearch = searchText ~= ''
+    local hasQuality = self.qualityFilter
 
     local base
-    if not hasSearch and not filters then
+    if not hasSearch and not filters and not hasQuality then
         base = ns.ItemSparse
     else
         base = {}
-        local lower = hasSearch and searchText:lower() or nil
         for _, entry in ipairs(ns.ItemSparse) do
-            local pass = true
-            if filters then
-                local matched = false
-                for _, f in ipairs(filters) do
-                    if (not f.classID or entry[5] == f.classID)
-                        and (not f.subClassID or entry[6] == f.subClassID)
-                        and (not f.inventoryType or entry[7] == f.inventoryType) then
-                        matched = true
-                        break
-                    end
-                end
-                if not matched then pass = false end
-            end
-            if pass and lower then
-                local id, name = entry[1], entry[2]
-                if not name:lower():find(lower, 1, true) and not tostring(id):find(lower, 1, true) then
-                    pass = false
-                end
-            end
-            if pass then
+            if self:FilterItem(entry) then
                 tinsert(base, entry)
             end
         end
@@ -441,16 +515,19 @@ end
 
 local SORT_FUNCS = {
     id = function(a, b)
-        return a[1] < b[1]
+        return a.id < b.id
     end,
     ilvl = function(a, b)
-        return (a[4] or 0) < (b[4] or 0)
+        return (a.ilvl or 0) < (b.ilvl or 0)
     end,
     quality = function(a, b)
-        if a[3] ~= b[3] then
-            return a[3] < b[3]
+        if a.quality ~= b.quality then
+            return a.quality < b.quality
         end
-        return (a[4] or 0) < (b[4] or 0)
+        if a.ilvl ~= b.ilvl then
+            return (a.ilvl or 0) < (b.ilvl or 0)
+        end
+        return a.id < b.id
     end,
 }
 
@@ -472,6 +549,57 @@ function Item:ApplySort()
     self:UpdateSortLabels()
 end
 
+function Item:UpdateColumnWidths(w)
+    if w <= 0 then
+        return
+    end
+    local idW = math.max(45, math.floor(w * 0.13))
+    local ilvlW = math.max(32, math.floor(w * 0.09))
+    self.colWidths = {id = idW, ilvl = ilvlW}
+    local ch = self.Left.Content.ColHeader
+    ch.SortID:SetWidth(idW)
+    ch.SortIlvl:SetWidth(ilvlW)
+    if self.inited then
+        self.Left.Content.ItemList:Refresh()
+    end
+end
+
+function Item:ShowPreview(itemID, invType)
+    if not PREVIEWABLE_INVTYPES[invType] then
+        self:HidePreview()
+        return
+    end
+    local panel = self.PreviewPanel
+    local model = panel.Model
+    if not panel:IsShown() then
+        model:SetUnit('player')
+        model:SetFacing(-0.48)
+        model:SetCamera(0)
+        panel:Show()
+    end
+    local link = select(2, GetItemInfo(itemID))
+    if link then
+        model:TryOn(link)
+    else
+        C_Timer.After(0.2, function()
+            if self.selectedItem and self.selectedItem.id == itemID then
+                local l = select(2, GetItemInfo(itemID))
+                if l then
+                    model:TryOn(l)
+                end
+            end
+        end)
+    end
+end
+
+function Item:HidePreview()
+    local panel = self.PreviewPanel
+    if panel:IsShown() then
+        panel.Model:Undress()
+        panel:Hide()
+    end
+end
+
 function Item:UpdateSortLabels()
     local arrow = self.sortDir == 1 and [[ |TInterface\AddOns\!!!tdDevTools\Media\ArrowUp.BLP:8:8|t]] or
                       [[ |TInterface\AddOns\!!!tdDevTools\Media\ArrowDown.BLP:8:8|t]]
@@ -491,13 +619,41 @@ function Item:OnSortClick(key)
     self:ApplySort()
 end
 
+function Item:UpdateQualityBtns()
+    for q = 0, 7 do
+        local btn = self.Header['Q' .. q]
+        if btn then
+            btn.Sel:SetShown(self.qualityFilter == q)
+        end
+    end
+end
+
+function Item:OnQualityFilterClick(q)
+    if self.qualityFilter == q then
+        self.qualityFilter = nil
+    else
+        self.qualityFilter = q
+    end
+    self:UpdateQualityBtns()
+    self:Rebuild(self.searchText)
+end
+
 function Item:OnItemFormatting(button, item)
-    local id, name, quality, ilvl = item[1], item[2], item[3], item[4]
+    local id, name, quality, ilvl = item.id, item.name, item.quality, item.ilvl
+    local icon = item.icon ~= 0 and item.icon or C_Item.GetItemIconByID(id)
+    button.IdText:SetWidth(self.colWidths.id - 5)
+    button.IlvlText:SetWidth(self.colWidths.ilvl)
     button.IdText:SetText(id)
     button.IlvlText:SetText(ilvl or '')
     button.NameText:SetText(name)
-    local c = QUALITY_COLORS[quality] or QUALITY_COLORS[1]
-    button.NameText:SetTextColor(c[1], c[2], c[3])
+    if icon then
+        button.Icon:SetTexture(icon)
+        button.Icon:Show()
+    else
+        button.Icon:Hide()
+    end
+    local c = ITEM_QUALITY_COLORS[quality] or ITEM_QUALITY_COLORS[1]
+    button.NameText:SetTextColor(c.r, c.g, c.b)
     button.Selected:SetShown(self.selectedItem == item)
 end
 
@@ -505,7 +661,8 @@ function Item:OnItemClick(button)
     self.selectedItem = button.item
     self.Left.Content.ItemList:Refresh()
 
-    local itemID = button.item[1]
+    local item = button.item
+    local itemID = item.id
     if IsShiftKeyDown() then
         local link = select(2, GetItemInfo(itemID))
         if link then
@@ -515,9 +672,10 @@ function Item:OnItemClick(button)
             end
         end
     else
-        tdDevToolsItemTip:SetOwner(tdDevToolsItemScrollChild, 'ANCHOR_PRESERVE')
-        tdDevToolsItemTip:SetItemByID(itemID)
-        tdDevToolsItemTip:Show()
+        self.Tip:SetOwner(tdDevToolsItemScrollChild, 'ANCHOR_PRESERVE')
+        self.Tip:SetItemByID(itemID)
+        self.Tip:Show()
+        self:ShowPreview(itemID, item.invType)
     end
 end
 

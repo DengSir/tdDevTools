@@ -9,9 +9,15 @@
                 </Texture>
             </Layer>
             <Layer level="ARTWORK">
-                <FontString parentKey="Label" inherits="tdDevToolsFontNormal" justifyH="LEFT" wordWrap="false">
+                <Texture parentKey="ExpandIcon" hidden="true">
+                    <Size x="8" y="8" />
                     <Anchors>
                         <Anchor point="LEFT" x="4" y="0" />
+                    </Anchors>
+                </Texture>
+                <FontString parentKey="Label" inherits="tdDevToolsFontNormal" justifyH="LEFT" wordWrap="false">
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.ExpandIcon" relativePoint="RIGHT" x="4" y="0" />
                         <Anchor point="RIGHT" x="-4" y="0" />
                     </Anchors>
                 </FontString>
@@ -47,9 +53,15 @@
                         <Anchor point="LEFT" relativeKey="$parent.IdText" relativePoint="RIGHT" x="2" y="0" />
                     </Anchors>
                 </FontString>
-                <FontString parentKey="NameText" inherits="tdDevToolsFontHighlight" justifyH="LEFT" wordWrap="false">
+                <Texture parentKey="Icon" hidden="true">
+                    <Size x="16" y="16" />
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.IlvlText" relativePoint="RIGHT" x="2" y="0" />
+                    </Anchors>
+                </Texture>
+                <FontString parentKey="NameText" inherits="tdDevToolsFontHighlight" justifyH="LEFT" wordWrap="false">
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.Icon" relativePoint="RIGHT" x="2" y="0" />
                         <Anchor point="RIGHT" x="-5" y="0" />
                     </Anchors>
                 </FontString>
@@ -71,7 +83,6 @@
             <Anchor point="BOTTOMRIGHT" relativeKey="$parent.Inset" relativePoint="BOTTOMRIGHT" />
         </Anchors>
         <Frames>
-            <!-- Full-width header: title + search -->
             <Frame parentKey="Header">
                 <Size y="20" />
                 <Anchors>
@@ -80,7 +91,7 @@
                 </Anchors>
                 <Layers>
                     <Layer level="ARTWORK">
-                        <FontString inherits="tdDevToolsFontImportant" text="Item">
+                        <FontString inherits="tdDevToolsFontImportant" text="Items">
                             <Anchors>
                                 <Anchor point="LEFT" x="5" y="0" />
                             </Anchors>
@@ -96,10 +107,170 @@
                     </Layer>
                 </Layers>
                 <Frames>
+                    <Button parentKey="Q0">
+                        <Size x="14" y="14" />
+                        <Anchors>
+                            <Anchor point="LEFT" x="35" y="0" />
+                        </Anchors>
+                        <NormalTexture file="Interface\Buttons\WHITE8X8">
+                            <Color r="0.62" g="0.62" b="0.62" a="0.4" />
+                        </NormalTexture>
+                        <HighlightTexture file="Interface\Buttons\WHITE8X8">
+                            <Color r="1" g="1" b="1" a="0.2" />
+                        </HighlightTexture>
+                        <Layers>
+                            <Layer level="OVERLAY">
+                                <Texture parentKey="Sel" hidden="true" file="Interface\AddOns\!!!tdDevTools\Media\Checked.BLP" />
+                            </Layer>
+                        </Layers>
+                        <Scripts>
+                            <OnClick>self:GetParent():GetParent():OnQualityFilterClick(0)</OnClick>
+                        </Scripts>
+                    </Button>
+                    <Button parentKey="Q1">
+                        <Size x="14" y="14" />
+                        <Anchors>
+                            <Anchor point="LEFT" relativeKey="$parent.Q0" relativePoint="RIGHT" x="2" y="0" />
+                        </Anchors>
+                        <NormalTexture file="Interface\Buttons\WHITE8X8">
+                            <Color r="1.00" g="1.00" b="1.00" a="0.4" />
+                        </NormalTexture>
+                        <HighlightTexture file="Interface\Buttons\WHITE8X8">
+                            <Color r="1" g="1" b="1" a="0.2" />
+                        </HighlightTexture>
+                        <Layers>
+                            <Layer level="OVERLAY">
+                                <Texture parentKey="Sel" hidden="true" file="Interface\AddOns\!!!tdDevTools\Media\Checked.BLP" />
+                            </Layer>
+                        </Layers>
+                        <Scripts>
+                            <OnClick>self:GetParent():GetParent():OnQualityFilterClick(1)</OnClick>
+                        </Scripts>
+                    </Button>
+                    <Button parentKey="Q2">
+                        <Size x="14" y="14" />
+                        <Anchors>
+                            <Anchor point="LEFT" relativeKey="$parent.Q1" relativePoint="RIGHT" x="2" y="0" />
+                        </Anchors>
+                        <NormalTexture file="Interface\Buttons\WHITE8X8">
+                            <Color r="0.12" g="1.00" b="0.00" a="0.4" />
+                        </NormalTexture>
+                        <HighlightTexture file="Interface\Buttons\WHITE8X8">
+                            <Color r="1" g="1" b="1" a="0.2" />
+                        </HighlightTexture>
+                        <Layers>
+                            <Layer level="OVERLAY">
+                                <Texture parentKey="Sel" hidden="true" file="Interface\AddOns\!!!tdDevTools\Media\Checked.BLP" />
+                            </Layer>
+                        </Layers>
+                        <Scripts>
+                            <OnClick>self:GetParent():GetParent():OnQualityFilterClick(2)</OnClick>
+                        </Scripts>
+                    </Button>
+                    <Button parentKey="Q3">
+                        <Size x="14" y="14" />
+                        <Anchors>
+                            <Anchor point="LEFT" relativeKey="$parent.Q2" relativePoint="RIGHT" x="2" y="0" />
+                        </Anchors>
+                        <NormalTexture file="Interface\Buttons\WHITE8X8">
+                            <Color r="0.00" g="0.44" b="0.87" a="0.4" />
+                        </NormalTexture>
+                        <HighlightTexture file="Interface\Buttons\WHITE8X8">
+                            <Color r="1" g="1" b="1" a="0.2" />
+                        </HighlightTexture>
+                        <Layers>
+                            <Layer level="OVERLAY">
+                                <Texture parentKey="Sel" hidden="true" file="Interface\AddOns\!!!tdDevTools\Media\Checked.BLP" />
+                            </Layer>
+                        </Layers>
+                        <Scripts>
+                            <OnClick>self:GetParent():GetParent():OnQualityFilterClick(3)</OnClick>
+                        </Scripts>
+                    </Button>
+                    <Button parentKey="Q4">
+                        <Size x="14" y="14" />
+                        <Anchors>
+                            <Anchor point="LEFT" relativeKey="$parent.Q3" relativePoint="RIGHT" x="2" y="0" />
+                        </Anchors>
+                        <NormalTexture file="Interface\Buttons\WHITE8X8">
+                            <Color r="0.64" g="0.21" b="0.93" a="0.4" />
+                        </NormalTexture>
+                        <HighlightTexture file="Interface\Buttons\WHITE8X8">
+                            <Color r="1" g="1" b="1" a="0.2" />
+                        </HighlightTexture>
+                        <Layers>
+                            <Layer level="OVERLAY">
+                                <Texture parentKey="Sel" hidden="true" file="Interface\AddOns\!!!tdDevTools\Media\Checked.BLP" />
+                            </Layer>
+                        </Layers>
+                        <Scripts>
+                            <OnClick>self:GetParent():GetParent():OnQualityFilterClick(4)</OnClick>
+                        </Scripts>
+                    </Button>
+                    <Button parentKey="Q5">
+                        <Size x="14" y="14" />
+                        <Anchors>
+                            <Anchor point="LEFT" relativeKey="$parent.Q4" relativePoint="RIGHT" x="2" y="0" />
+                        </Anchors>
+                        <NormalTexture file="Interface\Buttons\WHITE8X8">
+                            <Color r="1.00" g="0.50" b="0.00" a="0.4" />
+                        </NormalTexture>
+                        <HighlightTexture file="Interface\Buttons\WHITE8X8">
+                            <Color r="1" g="1" b="1" a="0.2" />
+                        </HighlightTexture>
+                        <Layers>
+                            <Layer level="OVERLAY">
+                                <Texture parentKey="Sel" hidden="true" file="Interface\AddOns\!!!tdDevTools\Media\Checked.BLP" />
+                            </Layer>
+                        </Layers>
+                        <Scripts>
+                            <OnClick>self:GetParent():GetParent():OnQualityFilterClick(5)</OnClick>
+                        </Scripts>
+                    </Button>
+                    <Button parentKey="Q6">
+                        <Size x="14" y="14" />
+                        <Anchors>
+                            <Anchor point="LEFT" relativeKey="$parent.Q5" relativePoint="RIGHT" x="2" y="0" />
+                        </Anchors>
+                        <NormalTexture file="Interface\Buttons\WHITE8X8">
+                            <Color r="0.90" g="0.80" b="0.50" a="0.4" />
+                        </NormalTexture>
+                        <HighlightTexture file="Interface\Buttons\WHITE8X8">
+                            <Color r="1" g="1" b="1" a="0.2" />
+                        </HighlightTexture>
+                        <Layers>
+                            <Layer level="OVERLAY">
+                                <Texture parentKey="Sel" hidden="true" file="Interface\AddOns\!!!tdDevTools\Media\Checked.BLP" />
+                            </Layer>
+                        </Layers>
+                        <Scripts>
+                            <OnClick>self:GetParent():GetParent():OnQualityFilterClick(6)</OnClick>
+                        </Scripts>
+                    </Button>
+                    <Button parentKey="Q7">
+                        <Size x="14" y="14" />
+                        <Anchors>
+                            <Anchor point="LEFT" relativeKey="$parent.Q6" relativePoint="RIGHT" x="2" y="0" />
+                        </Anchors>
+                        <NormalTexture file="Interface\Buttons\WHITE8X8">
+                            <Color r="0.00" g="0.80" b="1.00" a="0.4" />
+                        </NormalTexture>
+                        <HighlightTexture file="Interface\Buttons\WHITE8X8">
+                            <Color r="1" g="1" b="1" a="0.2" />
+                        </HighlightTexture>
+                        <Layers>
+                            <Layer level="OVERLAY">
+                                <Texture parentKey="Sel" hidden="true" file="Interface\AddOns\!!!tdDevTools\Media\Checked.BLP" />
+                            </Layer>
+                        </Layers>
+                        <Scripts>
+                            <OnClick>self:GetParent():GetParent():OnQualityFilterClick(7)</OnClick>
+                        </Scripts>
+                    </Button>
                     <EditBox parentKey="SearchBox" letters="100" inherits="tdDevToolsSearchBoxTemplate">
                         <Size y="18" />
                         <Anchors>
-                            <Anchor point="LEFT" x="35" y="0" />
+                            <Anchor point="LEFT" relativeKey="$parent.Q7" relativePoint="RIGHT" x="4" y="0" />
                             <Anchor point="RIGHT" x="-2" y="0" />
                             <Anchor point="TOP" />
                             <Anchor point="BOTTOM" />
@@ -112,9 +283,8 @@
                     </EditBox>
                 </Frames>
             </Frame>
-            <!-- Left panel: category sidebar + item list -->
             <Frame parentKey="Left">
-                <Size x="380" />
+                <Size x="480" />
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent.Header" relativePoint="BOTTOMLEFT" />
                     <Anchor point="BOTTOMLEFT" />
@@ -125,7 +295,6 @@
                     </Layer>
                 </Layers>
                 <Frames>
-                    <!-- Category sidebar -->
                     <Frame parentKey="CategoryPanel">
                         <Size x="130" />
                         <Anchors>
@@ -146,7 +315,6 @@
                             </ScrollFrame>
                         </Frames>
                     </Frame>
-                    <!-- Content: sort + item list -->
                     <Frame parentKey="Content">
                         <Anchors>
                             <Anchor point="TOPLEFT" relativeKey="$parent.CategoryPanel" relativePoint="TOPRIGHT" />
@@ -169,9 +337,11 @@
                                         </Texture>
                                     </Layer>
                                 </Layers>
+                                <Scripts>
+                                    <OnSizeChanged>self:GetParent():GetParent():GetParent():UpdateColumnWidths(self:GetWidth())</OnSizeChanged>
+                                </Scripts>
                                 <Frames>
                                     <Button parentKey="SortID">
-                                        <Size x="45" />
                                         <Anchors>
                                             <Anchor point="LEFT" />
                                             <Anchor point="TOP" />
@@ -195,7 +365,6 @@
                                         </Scripts>
                                     </Button>
                                     <Button parentKey="SortIlvl">
-                                        <Size x="36" />
                                         <Anchors>
                                             <Anchor point="LEFT" relativeKey="$parent.SortID" relativePoint="RIGHT" x="2" y="0" />
                                             <Anchor point="TOP" />
@@ -255,7 +424,7 @@
                     <ScrollFrame parentKey="ScrollFrame" inherits="tdDevToolsPanelScrollFrameTemplate">
                         <Anchors>
                             <Anchor point="TOPLEFT" x="1" y="-1" />
-                            <Anchor point="BOTTOMRIGHT" x="-16" y="1" />
+                            <Anchor point="BOTTOMRIGHT" x="0" y="1" />
                         </Anchors>
                         <ScrollChild>
                             <Frame name="tdDevToolsItemScrollChild">
@@ -278,6 +447,21 @@
                             </Frame>
                         </ScrollChild>
                     </ScrollFrame>
+                </Frames>
+            </Frame>
+            <Frame parentKey="PreviewPanel" hidden="true">
+                <Size y="250" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.InfoPanel" relativePoint="TOPRIGHT" />
+                    <Anchor point="BOTTOMRIGHT" />
+                </Anchors>
+                <Layers>
+                    <Layer level="BORDER">
+                        <Texture inherits="tdDevToolsLineTopTemplate" />
+                    </Layer>
+                </Layers>
+                <Frames>
+                    <DressUpModel parentKey="Model" setAllPoints="true" />
                 </Frames>
             </Frame>
         </Frames>

@@ -4,8 +4,8 @@
 import { CsvParseStream } from "jsr:@std/csv/parse-stream";
 
 const SPARSE_PATH = "E:/Users/Dencer/Downloads/ItemSparse.3.80.1.66991.csv";
-const ITEM_PATH   = "E:/Users/Dencer/Downloads/Item.3.80.1.66991.csv";
-const OUT_PATH    = "../Data/ItemSparse.lua";
+const ITEM_PATH = "E:/Users/Dencer/Downloads/Item.3.80.1.66991.csv";
+const OUT_PATH = "../Data/ItemSparse.lua";
 
 // Escape a string for use inside a Lua double-quoted string literal
 function luaEscape(s: string): string {
@@ -27,26 +27,28 @@ async function readCsvRows(path: string): Promise<string[][]> {
 // ---- Step 1: build id -> {classID, subclassID} from Item.csv ----
 console.log("Reading Item.csv...");
 const itemRows = await readCsvRows(ITEM_PATH);
-const classMap = new Map<number, { classID: number; subclassID: number; invType: number }>();
+const classMap = new Map<number, { classID: number; subclassID: number; invType: number; icon: number }>();
 {
   const header = itemRows[0];
-  let COL_ID = 0, COL_CLASS = 1, COL_SUB = 2, COL_INV = 4;
+  let COL_ID = 0, COL_CLASS = 1, COL_SUB = 2, COL_INV = 4, COL_ICON = -1;
   for (let i = 0; i < header.length; i++) {
     const c = header[i].trim();
     if (c === 'ID') COL_ID = i;
     else if (c === 'ClassID') COL_CLASS = i;
     else if (c === 'SubclassID') COL_SUB = i;
     else if (c === 'InventoryType') COL_INV = i;
+    else if (c === 'IconFileDataID') COL_ICON = i;
   }
-  console.log(`Item.csv columns: ID=${COL_ID}, ClassID=${COL_CLASS}, SubclassID=${COL_SUB}, InventoryType=${COL_INV}`);
+  console.log(`Item.csv columns: ID=${COL_ID}, ClassID=${COL_CLASS}, SubclassID=${COL_SUB}, InventoryType=${COL_INV}, Icon=${COL_ICON}`);
   for (let r = 1; r < itemRows.length; r++) {
     const row = itemRows[r];
     const id = parseInt(row[COL_ID], 10);
     if (isNaN(id)) continue;
     classMap.set(id, {
-      classID:    parseInt(row[COL_CLASS],    10) || 0,
-      subclassID: parseInt(row[COL_SUB],      10) || 0,
-      invType:    parseInt(row[COL_INV],      10) || 0,
+      classID: parseInt(row[COL_CLASS], 10) || 0,
+      subclassID: parseInt(row[COL_SUB], 10) || 0,
+      invType: parseInt(row[COL_INV], 10) || 0,
+      icon: COL_ICON >= 0 ? (parseInt(row[COL_ICON], 10) || 0) : 0,
     });
   }
   console.log(`Loaded ${classMap.size} entries from Item.csv`);
@@ -64,6 +66,7 @@ interface Item {
   classID: number;
   subclassID: number;
   invType: number;
+  icon: number;
 }
 
 const items: Item[] = [];
@@ -85,13 +88,14 @@ const items: Item[] = [];
     const name = row[COL_NAME];
     if (!name || isNaN(id)) continue;
     const quality = parseInt(row[COL_QUALITY], 10) || 0;
-    const ilvl    = parseInt(row[COL_ILVL],    10) || 0;
+    const ilvl = parseInt(row[COL_ILVL], 10) || 0;
     const cls = classMap.get(id);
     items.push({
       id, name, quality, ilvl,
-      classID:    cls?.classID    ?? 0,
+      classID: cls?.classID ?? 0,
       subclassID: cls?.subclassID ?? 0,
-      invType:    cls?.invType    ?? 0,
+      invType: cls?.invType ?? 0,
+      icon: cls?.icon ?? 0,
     });
   }
 }
@@ -105,14 +109,17 @@ const out: string[] = [
   "---@type ns",
   "local ns = select(2, ...)",
   "",
-  "-- {id, name, quality, ilvl, classID, subclassID, invType}",
-  "ns.ItemSparse = {",
+  "ns.ItemSparse = {}",
+  "local t = ns.ItemSparse",
+  "local function a(id, name, quality, ilvl, classID, subclassID, invType, icon)",
+  "    t[#t+1] = {id=id, name=name, quality=quality, ilvl=ilvl, classID=classID, subclassID=subclassID, invType=invType, icon=icon}",
+  "end",
+  "",
 ];
 
 for (const item of items) {
-  out.push(`    {${item.id}, "${luaEscape(item.name)}", ${item.quality}, ${item.ilvl}, ${item.classID}, ${item.subclassID}, ${item.invType}},`);
+  out.push(`a(${item.id}, "${luaEscape(item.name)}", ${item.quality}, ${item.ilvl}, ${item.classID}, ${item.subclassID}, ${item.invType}, ${item.icon})`);
 }
-out.push("}");
 
 await Deno.writeTextFile(OUT_PATH, out.join("\n"));
 console.log(`Done: ${OUT_PATH}`);
