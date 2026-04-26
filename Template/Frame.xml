@@ -57,7 +57,7 @@
                     <Anchor point="TOPLEFT" relativeKey="$parent.Tab3" relativePoint="TOPRIGHT" x="5" y="0" />
                 </Anchors>
             </Button>
-            <Button parentKey="Tab5" parentArray="tabs" inherits="tdDevToolsTabButtonTemplate" text="Item" id="5">
+            <Button parentKey="Tab5" parentArray="tabs" inherits="tdDevToolsTabButtonTemplate" text="Items" id="5">
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent.Tab4" relativePoint="TOPRIGHT" x="5" y="0" />
                 </Anchors>

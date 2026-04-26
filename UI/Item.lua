@@ -34,9 +34,6 @@ local PREVIEWABLE_INVTYPES = {
     [26] = true, -- Wand/Ranged right
 }
 
-local ES = [[|TInterface\Buttons\Micro-Highlight.blp:8:8:0:0:64:64:32:64:32:64|t]] .. ' '
-local ES2 = string.rep(ES, 2)
-
 function Item:Constructor()
     self.searchText = ''
     self.debounceTimer = nil
@@ -48,30 +45,7 @@ function Item:Constructor()
     self.categoryTree = {}
     self.colWidths = {id = 45, ilvl = 36}
 
-    -- drag-to-rotate on preview model
-    do
-        local model = self.PreviewPanel.Model
-        model:EnableMouse(true)
-        model:SetScript('OnMouseDown', function(m, btn)
-            if btn == 'LeftButton' then
-                m._rotating = true
-                m._lastX = GetCursorPosition()
-            end
-        end)
-        model:SetScript('OnMouseUp', function(m)
-            m._rotating = false
-        end)
-        model:SetScript('OnUpdate', function(m)
-            if m._rotating then
-                local x = GetCursorPosition()
-                local dx = x - (m._lastX or x)
-                m:SetFacing(m:GetFacing() + dx * 0.01)
-                m._lastX = x
-
-                print('facing', m:GetFacing())
-            end
-        end)
-    end
+    Model_SetDefaultRotation(self.PreviewPanel.Model, 6)
 
     self.Tip = tdDevToolsItemTip
     self.Tip.UpdateTooltip = function()
@@ -573,8 +547,6 @@ function Item:ShowPreview(itemID, invType)
     local model = panel.Model
     if not panel:IsShown() then
         model:SetUnit('player')
-        model:SetFacing(-0.48)
-        model:SetCamera(0)
         panel:Show()
     end
     local link = select(2, GetItemInfo(itemID))

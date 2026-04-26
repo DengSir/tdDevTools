@@ -461,8 +461,18 @@
                     </Layer>
                 </Layers>
                 <Frames>
-                    <DressUpModel parentKey="Model" setAllPoints="true" />
+                    <DressUpModel parentKey="Model" inherits="ModelWithControlsTemplate">
+                        <Anchors>
+                            <Anchor point="CENTER" />
+                        </Anchors>
+                    </DressUpModel>
                 </Frames>
+                <Scripts>
+                    <OnSizeChanged>
+                        local size = math.min(self:GetWidth(), self:GetHeight())
+                        self.Model:SetSize(size, size)
+                    </OnSizeChanged>
+                </Scripts>
             </Frame>
         </Frames>
     </Frame>
