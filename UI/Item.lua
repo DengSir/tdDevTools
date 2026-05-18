@@ -54,6 +54,11 @@ function Item:Constructor()
         end
     end
 
+    local AtlasLoot = AtlasLootClassic or AtlasLootMY
+    if AtlasLoot and AtlasLoot.Tooltip then
+        AtlasLoot.Tooltip:AddTooltipSource(self.Tip)
+    end
+
     local catSelf = self
     ns.TreeView:Bind(self.Left.CategoryPanel.CategoryList, {
         itemTree = self.categoryTree,
@@ -428,6 +433,7 @@ function Item:OnSearchTextChanged(text)
         return
     end
     self.searchText = text
+    self.searchNum = tonumber(text)
 
     if self.debounceTimer then
         self.debounceTimer:Cancel()
@@ -442,10 +448,14 @@ function Item:FilterItem(entry)
     if self.qualityFilter and entry.quality ~= self.qualityFilter then
         return false
     end
-    if self.searchText and self.searchText ~= '' then
+    if self.searchNum then
+        if entry.ilvl ~= self.searchNum and entry.id ~= self.searchNum then
+            return false
+        end
+    elseif self.searchText and self.searchText ~= '' then
         local lower = self.searchText:lower()
         local id = entry.id
-        if not entry.name:lower():find(lower, 1, true) and not tostring(id):find(lower, 1, true) then
+        if not entry.name:lower():find(lower, 1, true) then
             return false
         end
     end
